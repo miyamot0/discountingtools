@@ -30,6 +30,8 @@ results <- discountingModelSelection(dat,
                                      lineSize = 1.5)
 ```
 
+![Alt text](Figure_ED50.png?raw=true "ED50 Visuals")
+
 #### Model-based Area
 
 ```r
@@ -41,6 +43,8 @@ results <- discountingModelSelection(dat,
                                      lineSize = 1.5)
 ```
 
+![Alt text](Figure_Model_AUC.png?raw=true "Model AUC Visuals")
+
 #### Model-based Area (logarithmic scaling)
 
 ```r
@@ -51,3 +55,5 @@ results <- discountingModelSelection(dat,
                                      figures = "logauc",
                                      lineSize = 1.5)
 ```
+
+![Alt text](Figure_Model_AUC_Log10.png?raw=true "Log10 Model AUC Visuals")
