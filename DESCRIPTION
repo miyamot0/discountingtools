@@ -4,6 +4,8 @@ Version: 0.0.0.0001
 Authors@R: person("Shawn", "Gilroy", email = "shawn.gilroy@temple.edu", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.3.3)
-License: GPLv2+
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+Imports: minpack.lm
+RoxygenNote: 6.0.1
