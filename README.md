@@ -1,6 +1,9 @@
 # discountingtools
 R package for performing delay discounting analyses.  Features include approximate Bayesian model selection, derivation of the Effective Delay 50 (ED50) and both normal and log10 transformation model area using Numerical Integration
 
+### Version
+0.0.0.0001 (alpha)
+
 ### Installation
 ----------------
 1) Install and load the devtools package. 
@@ -57,3 +60,23 @@ results <- discountingModelSelection(dat,
 ```
 
 ![Alt text](Figure_Model_AUC_Log10.png?raw=true "Log10 Model AUC Visuals")
+
+### Referenced Works (academic works)
+The Small N Stats Discounting Model Selector is based on the following academic works:
+* Franck, C. T., Koffarnus, M. N., House, L. L. & Bickel W. K. (2015). Accurate characterization of delay discounting: a multiple model approach using approximate Bayesian model selection and a unified discounting measure. Journal of the Experimental Analysis of Behavior, 103, 218-33.
+* Gilroy, S. P., Franck, C. T. & Hantula, D. A. (2017). The Discounting Model Selector: Statistical software for delay discounting applications. Journal of the Experimental Analysis of Behavior.
+
+### Acknowledgments
+-------------------
+* Donald A. Hantula, Decision Making Laboratory, Temple University [Site](http://astro.temple.edu/~hantula/)
+* Chris Franck, Laboratory for Interdisciplinary Statistical Analysis - Virginia Tech
+
+### Questions, Suggestions, and Contributions
+---------------------------------------------
+
+Questions? Suggestions for features? <shawn.gilroy@temple.edu>.
+
+### License
+-----------
+
+GPL Version 2+
