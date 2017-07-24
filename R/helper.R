@@ -180,22 +180,25 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 
 #' Scoring for the log ED50
 #'
+#' @param dat observed data
 #' @param results Results of analyses for data series
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
 #' @return natural logarithm of the Effective Delay 50%
-getED50 <- function(results) {
+getED50 <- function(dat, results) {
   returnValue <- NaN
 
-  if (results[["probable.model"]] == "hyperbolic") {
+  if (results[["probable.model"]] == "Mazur") {
     returnValue <- log(1/(exp(results[["Mazur.lnk"]])))
-  } else if (results[["probable.model"]] == "exponential") {
+  } else if (results[["probable.model"]] == "exp") {
     returnValue <- log(log(2)/exp(results[["exp.lnk"]]))
-  } else if (results[["probable.model"]] == "bd") {
+  } else if (results[["probable.model"]] == "BD") {
     returnValue <- log(log( (1/(2*results[["BD.beta"]])),base=results[["BD.delta"]]))
-  } else if (results[["probable.model"]] == "mg") {
+  } else if (results[["probable.model"]] == "MG") {
     returnValue <- log( (2^(1/results[["MG.s"]])-1)/exp(results[["MG.lnk"]]))
   } else if (results[["probable.model"]] == "Rachlin") {
     returnValue <- log( (1/(exp(results[["Rachlin.lnk"]])))^(1/results[["Rachlin.s"]]))
+  } else if (results[["probable.model"]] == "CS") {
+    returnValue <- getED50CS(dat, results)
   }
 
   returnValue
@@ -287,6 +290,57 @@ integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 #' @return Numerical Integration Projection
 integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
 
+#' Ebert & Prelec's CS Integrand helper
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return Numerical Integration Projection
+integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
+
+#' Ebert & Prelec's CS Integrand helper (log10)
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return Numerical Integration Projection
+integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
+
+#' Numerically solve for ED50 value for Ebert & Prelec
+#'
+#' @param dat observed data
+#' @param results Results of analyses for data series
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return effective delay (value) for Ebert & Prelec CS
+getED50CS <- function(dat, results) {
+  lowDelay <- 0
+  highDelay <- max(dat$X)*2
+
+  for (i in seq(1, 20)) {
+    lowEst <- integrandEbertPrelec(lowDelay, results[["CS.lnk"]], results[["CS.s"]])
+    midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["CS.lnk"]], results[["CS.s"]])
+    highEst <- integrandEbertPrelec(highDelay, results[["CS.lnk"]], results[["CS.s"]])
+
+    if (lowEst > 0.5 && midEst > 0.5) {
+      # Above 50% mark range
+      lowDelay <- (lowDelay+highDelay)/2
+      highDelay <- highDelay
+
+    } else if (highEst < 0.5 && midEst < 0.5) {
+      # Below 50% mark range
+      lowDelay <- lowDelay
+      highDelay <- (lowDelay+highDelay)/2
+
+    }
+  }
+
+  returnValue <- log((lowDelay+highDelay)/2)
+
+  returnValue
+}
+
 #' Scoring for the most probable model area
 #'
 #' @param dat observed data
@@ -332,7 +386,14 @@ getModelAUC <- function(dat, results) {
                              lnK = results[["Rachlin.lnk"]],
                              s = results[["Rachlin.s"]])$value/maximumArea
 
-  } else {
+  } else if (results[["probable.model"]] == "CS") {
+    returnValue <- stats::integrate(integrandEbertPrelec,
+                                    lower = min(dat$X),
+                                    upper = max(dat$X),
+                                    lnK = results[["CS.lnk"]],
+                                    s = results[["CS.s"]])$value/maximumArea
+
+  } else if (results[["probable.model"]] == "noise") {
     returnValue <- results[["noise.mean"]]
   }
 
@@ -384,7 +445,14 @@ getModelAUCLog10Scaled <- function(dat, results) {
                              lnK = results[["Rachlin.lnk"]],
                              s = results[["Rachlin.s"]])$value/maximumArea
 
-  } else {
+  } else if (results[["probable.model"]] == "CS") {
+    returnValue <- stats::integrate(integrandEbertPrelecLog,
+                                    lower = log10(min(dat$X)),
+                                    upper = log10(max(dat$X)),
+                                    lnK = results[["CS.lnk"]],
+                                    s = results[["CS.s"]])$value/maximumArea
+
+  } else if (results[["probable.model"]] == "noise") {
     returnValue <- results[["noise.mean"]]
   }
 
@@ -408,6 +476,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   myerS <- NA
   rachK <- NA
   rachS <- NA
+  csK <- NA
+  csS <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -416,6 +486,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   quaSeries  = rep(NA,endDelay+1)
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
+  csSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -463,6 +534,15 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "orange")
   }
 
+  if ("CS.lnk" %in% names(results)) {
+    csK <- results[["CS.lnk"]]
+    csS <- results[["CS.s"]]
+    legend = c(legend, paste("EbertPrelec: ",
+                             round(results[["CS.prob"]], 5),
+                             sep = ""))
+    colors = c(colors, "black")
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -491,6 +571,11 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     {
       rachSeries[delay] = 1.0 * (1 + exp(rachK)*(delay^rachS))^(-1)
     }
+
+    if(!is.na(csK))
+    {
+      csSeries[delay] = 1.0 * exp(-(exp(csK)*delay)^csS)
+    }
   }
 
   totalFrame = data.frame(Delays = delaySeries)
@@ -502,7 +587,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           Hyperbolic = hypSeries,
                           QuasiHyperbolic = quaSeries,
                           HyperboloidM = myerSeries,
-                          HyperboloidR = rachSeries)
+                          HyperboloidR = rachSeries,
+                          EbertPrelec = csSeries)
 
   totalFrame$Noise <- results[["noise.mean"]]
 
@@ -535,6 +621,10 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
         totalFrame$HyperboloidR,
         col = "orange",
         lwd = lineWidth)
+  graphics::lines(totalFrame$Delays,
+                  totalFrame$EbertPrelec,
+                  col = "black",
+                  lwd = lineWidth)
 
   graphics::points(dat$X,
          dat$Y,
@@ -549,7 +639,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                                    results[["Mazur.prob"]],
                                    results[["BD.prob"]],
                                    results[["MG.prob"]],
-                                   results[["Rachlin.prob"]]))
+                                   results[["Rachlin.prob"]],
+                                   results[["CS.prob"]]))
 
   sortShowFrame <- mShowFrame[order(-mShowFrame$prob),]
 
@@ -578,6 +669,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   myerS <- NA
   rachK <- NA
   rachS <- NA
+  csK <- NA
+  csS <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -586,6 +679,7 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   quaSeries  = rep(NA,endDelay+1)
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
+  csSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -633,6 +727,15 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "orange")
   }
 
+  if ("CS.lnk" %in% names(results)) {
+    csK <- results[["CS.lnk"]]
+    csS <- results[["CS.s"]]
+    legend = c(legend, paste("EbertPrelec: ",
+                             round(results[["CS.prob"]], 5),
+                             sep = ""))
+    colors = c(colors, "black")
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -661,6 +764,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     {
       rachSeries[delay] = 1.0 * (1 + exp(rachK)*(delay^rachS))^(-1)
     }
+
+    if(!is.na(csK))
+    {
+      csSeries[delay] = 1.0 * exp(-(exp(csK)*delay)^csS)
+    }
   }
 
   mData <- data.frame(X = dat$X, Y = dat$Y)
@@ -687,6 +795,10 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = rachSeries)
     lineColor <- "orange"
+  } else if (results[["probable.model"]] == "CS") {
+    totalFrame = data.frame(Delays = delaySeries,
+                            ModelArea = csSeries)
+    lineColor <- "black"
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
@@ -734,6 +846,8 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   myerS <- NA
   rachK <- NA
   rachS <- NA
+  csK <- NA
+  csS <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -742,6 +856,7 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   quaSeries  = rep(NA,endDelay+1)
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
+  csSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -789,6 +904,15 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "orange")
   }
 
+  if ("CS.lnk" %in% names(results)) {
+    csK <- results[["CS.lnk"]]
+    csS <- results[["CS.s"]]
+    legend = c(legend, paste("EbertPrelec: ",
+                             round(results[["CS.prob"]], 5),
+                             sep = ""))
+    colors = c(colors, "black")
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -817,6 +941,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     {
       rachSeries[delay] = 1.0 * (1 + exp(rachK)*(delay^rachS))^(-1)
     }
+
+    if(!is.na(csK))
+    {
+      csSeries[delay] = 1.0 * exp(-(exp(csK)*delay)^csS)
+    }
   }
 
   mData <- data.frame(X = dat$X, Y = dat$Y)
@@ -843,6 +972,10 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = rachSeries)
     lineColor <- "orange"
+  } else if (results[["probable.model"]] == "CS") {
+    totalFrame = data.frame(Delays = delaySeries,
+                            ModelArea = csSeries)
+    lineColor <- "black"
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),

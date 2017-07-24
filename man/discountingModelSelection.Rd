@@ -30,12 +30,12 @@ Information Criterion and returns the log of the Effective Delay
 50 and numerical integration area.
 }
 \details{
-Models: Exponential, Hyperbolic, BetaDelta, MyersonGreen, & Rachlin
+Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
 }
 \examples{
 discountingModelSelection(data.frame(X=c(1,30,180,540,1080,2160),
 Y=c(1.0,0.9,0.8,0.7,0.6,0.4)),
-models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin",
+models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "cs",
 Figures = FALSE))
 }
 \author{

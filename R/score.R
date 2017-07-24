@@ -6,7 +6,7 @@
 #' Information Criterion and returns the log of the Effective Delay
 #' 50 and numerical integration area.
 #'
-#' Models: Exponential, Hyperbolic, BetaDelta, MyersonGreen, & Rachlin
+#' Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
 #'
 #' @param dat data frame with X column and Y column (0 <= Y <= 1)
 #' @param models vector of models to include in selection
@@ -15,13 +15,13 @@
 #' @param lineSize OPTIONAL: Modify line sizes for figures
 #' @return A data frame of model parameters
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
-#' @importFrom stats lm
+#' @importFrom stats lm nls
 #' @importFrom minpack.lm nls.lm nls.lm.control
 #' @return data frame of fitted model parameters
 #' @examples
 #' discountingModelSelection(data.frame(X=c(1,30,180,540,1080,2160),
 #' Y=c(1.0,0.9,0.8,0.7,0.6,0.4)),
-#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin",
+#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "cs",
 #' Figures = FALSE))
 #' @export
 discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
@@ -30,10 +30,10 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
     models <- c("noise", models)
   }
 
-  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin")
+  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "cs")
 
   if (length(intersect(models, mModels)) < 2) {
-    stop("At least two models must be provided to make a comparison")
+    stop("At least one model must be specified to perform a comparison")
   }
 
   lengthX <- length(dat$X)
@@ -345,6 +345,54 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
     }
   }
 
+  if ('cs' %in% models) {
+    startlnK <- seq(-12, 12, 0.1)
+    starts <- seq(.01, 1, 0.01)
+
+    lengthLnK <- length(startlnK)
+    lengthS <- length(starts)
+
+    SSlnK <- rep(startlnK,lengthS)
+    SSs <- sort(rep(starts,lengthLnK))
+
+    sumSquares <- rep(NA,lengthS*lengthLnK)
+
+    SlnK <- rep(sort(rep(startlnK,lengthX)),lengthS)
+    Ss <- sort(rep(starts,lengthX*lengthLnK))
+
+    SY <- rep(dat$Y,lengthS*lengthLnK)
+
+    projection <- exp(-(exp(SlnK)*dat$X)^Ss)#(1+exp(SlnK)*dat$X)^(-Ss)
+    sqResidual <- (SY-projection)^2
+
+    for(j in 1:(lengthS*lengthLnK)){
+      sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+    }
+
+    presort <- data.frame(SSlnK,SSs,sumSquares)
+    sorted <- presort[order(presort[,"sumSquares"]),]
+    ini.par <- c(lnk=sorted$SSlnK[1],
+                 s=sorted$SSs[1])
+
+    if (!is.character(try(nls(Y ~ exp(-(exp(lnk)*X)^s),
+                              start = ini.par,
+                              data = dat), silent=FALSE))) {
+      modelFitCS<-nls(Y ~ exp(-(exp(lnk)*X)^s),
+                      start = ini.par,
+                      data = dat)
+
+      tempList <- list(CS.lnk  = stats::coef(modelFitCS)[["lnk"]],
+                       CS.s  = stats::coef(modelFitCS)[["s"]],
+                       CS.RMSE = summary(modelFitCS)[["sigma"]],
+                       CS.BIC  = stats::BIC(modelFitCS),
+                       CS.AIC  = stats::AIC(modelFitCS))
+
+      returnList <- c(returnList, tempList)
+
+      bicList <- c(bicList, list(CS.BIC = tempList$CS.BIC))
+    }
+  }
+
   ### bfs
   bfList <- list()
   bfSum <- 0.0
@@ -372,7 +420,7 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
   probableModel = gsub(".prob", "", mostProb)
   returnList <- c(returnList, list(probable.model=probableModel))
 
-  probableED50 <- getED50(returnList)
+  probableED50 <- getED50(dat, returnList)
   probableAUC <- getModelAUC(dat, returnList)
   probableAUCLog <- getModelAUCLog10Scaled(dat, returnList)
   returnList <- c(returnList, list(probable.ED50=probableED50,
