@@ -30,16 +30,50 @@ dat <- data.frame(X=c(1,30,180,540,1080, 2160), Y=c(1,0.9,0.8,0.7,0.6, 0.4))
 results <- discountingModelSelection(dat, 
                                      models = c("exponential", "hyperbolic", "bd", "mg", "rachlin"), 
                                      figures = "ed50",
+                                     summarize = TRUE,
                                      lineSize = 1.5)
+                                     
+Model Comparison Summary:
+Rank #:  1  =  CS
+ Probability  =  0.759601
+ BIC  =  -22.2279
+
+Rank #:  2  =  Rachlin
+ Probability  =  0.18008
+ BIC  =  -19.349116
+
+Rank #:  3  =  MG
+ Probability  =  0.033585
+ BIC  =  -15.990462
+
+Rank #:  4  =  Mazur
+ Probability  =  0.022795
+ BIC  =  -15.215414
+
+Rank #:  5  =  exp
+ Probability  =  0.003675
+ BIC  =  -11.565193
+
+Rank #:  6  =  BD
+ Probability  =  0.000258
+ BIC  =  -6.252941
+
+Rank #:  7  =  noise
+ Probability  =  6e-06
+ BIC  =  1.128501
+ 
+print(results)
                                      
   noise.mean noise.RMSE noise.BIC noise.AIC   exp.lnk   exp.RMSE   exp.BIC   exp.AIC Mazur.lnk Mazur.RMSE Mazur.BIC Mazur.AIC
 1  0.7333333  0.2160247  1.128501  1.544982 -7.615692 0.07500726 -11.56519 -11.14871 -7.217119 0.05533467 -15.21541 -14.79893
     BD.beta  BD.delta   BD.RMSE    BD.BIC   BD.AIC    MG.lnk     MG.s    MG.RMSE    MG.BIC    MG.AIC Rachlin.lnk Rachlin.s
 1 0.9999994 0.9993449 0.1124525 -6.252941 -5.62822 -5.657531 0.378083 0.04995242 -15.99046 -15.36574          -5      0.68
-  Rachlin.RMSE Rachlin.BIC Rachlin.AIC noise.BF   exp.BF Mazur.BF    BD.BF    MG.BF Rachlin.BF   noise.prob   exp.prob
-1   0.03775746   -19.34912   -18.72439        1 570.6905 3540.268 40.07374 5215.976   27967.79 2.678395e-05 0.01528535
-  Mazur.prob     BD.prob   MG.prob Rachlin.prob probable.model probable.ED50 probable.AUC probable.Log10AUC
-1 0.09482236 0.001073333 0.1397044    0.7490878        Rachlin      7.352941    0.5972851         0.8461974
+  Rachlin.RMSE Rachlin.BIC Rachlin.AIC    CS.lnk      CS.s    CS.RMSE   CS.BIC    CS.AIC noise.BF   exp.BF Mazur.BF    BD.BF
+1   0.03775746   -19.34912   -18.72439 -7.976814 0.5702152 0.02970408 -22.2279 -21.60318        1 570.6905 3540.268 40.07374
+     MG.BF Rachlin.BF    CS.BF   noise.prob    exp.prob Mazur.prob      BD.prob    MG.prob Rachlin.prob   CS.prob probable.model
+1 5215.976   27967.79 117971.8 6.438837e-06 0.003674583 0.02279521 0.0002580283 0.03358482      0.18008 0.7596009             CS
+  probable.ED50 probable.AUC probable.Log10AUC
+1      7.334051    0.5976186         0.8438519
 ```
 
 ![Alt text](Figure_ED50.png?raw=true "ED50 Visuals")
@@ -52,16 +86,50 @@ dat <- data.frame(X=c(1,30,180,540,1080, 2160), Y=c(1,0.9,0.8,0.7,0.6, 0.4))
 results <- discountingModelSelection(dat, 
                                      models = c("exponential", "hyperbolic", "bd", "mg", "rachlin"), 
                                      figures = "auc",
+                                     summarize = TRUE,
                                      lineSize = 1.5)
+                                     
+Model Comparison Summary:
+Rank #:  1  =  CS
+ Probability  =  0.759601
+ BIC  =  -22.2279
+
+Rank #:  2  =  Rachlin
+ Probability  =  0.18008
+ BIC  =  -19.349116
+
+Rank #:  3  =  MG
+ Probability  =  0.033585
+ BIC  =  -15.990462
+
+Rank #:  4  =  Mazur
+ Probability  =  0.022795
+ BIC  =  -15.215414
+
+Rank #:  5  =  exp
+ Probability  =  0.003675
+ BIC  =  -11.565193
+
+Rank #:  6  =  BD
+ Probability  =  0.000258
+ BIC  =  -6.252941
+
+Rank #:  7  =  noise
+ Probability  =  6e-06
+ BIC  =  1.128501
+ 
+print(results)
                                      
   noise.mean noise.RMSE noise.BIC noise.AIC   exp.lnk   exp.RMSE   exp.BIC   exp.AIC Mazur.lnk Mazur.RMSE Mazur.BIC Mazur.AIC
 1  0.7333333  0.2160247  1.128501  1.544982 -7.615692 0.07500726 -11.56519 -11.14871 -7.217119 0.05533467 -15.21541 -14.79893
     BD.beta  BD.delta   BD.RMSE    BD.BIC   BD.AIC    MG.lnk     MG.s    MG.RMSE    MG.BIC    MG.AIC Rachlin.lnk Rachlin.s
 1 0.9999994 0.9993449 0.1124525 -6.252941 -5.62822 -5.657531 0.378083 0.04995242 -15.99046 -15.36574          -5      0.68
-  Rachlin.RMSE Rachlin.BIC Rachlin.AIC noise.BF   exp.BF Mazur.BF    BD.BF    MG.BF Rachlin.BF   noise.prob   exp.prob
-1   0.03775746   -19.34912   -18.72439        1 570.6905 3540.268 40.07374 5215.976   27967.79 2.678395e-05 0.01528535
-  Mazur.prob     BD.prob   MG.prob Rachlin.prob probable.model probable.ED50 probable.AUC probable.Log10AUC
-1 0.09482236 0.001073333 0.1397044    0.7490878        Rachlin      7.352941    0.5972851         0.8461974
+  Rachlin.RMSE Rachlin.BIC Rachlin.AIC    CS.lnk      CS.s    CS.RMSE   CS.BIC    CS.AIC noise.BF   exp.BF Mazur.BF    BD.BF
+1   0.03775746   -19.34912   -18.72439 -7.976814 0.5702152 0.02970408 -22.2279 -21.60318        1 570.6905 3540.268 40.07374
+     MG.BF Rachlin.BF    CS.BF   noise.prob    exp.prob Mazur.prob      BD.prob    MG.prob Rachlin.prob   CS.prob probable.model
+1 5215.976   27967.79 117971.8 6.438837e-06 0.003674583 0.02279521 0.0002580283 0.03358482      0.18008 0.7596009             CS
+  probable.ED50 probable.AUC probable.Log10AUC
+1      7.334051    0.5976186         0.8438519
 ```
 
 ![Alt text](Figure_Model_AUC.png?raw=true "Model AUC Visuals")
@@ -74,16 +142,50 @@ dat <- data.frame(X=c(1,30,180,540,1080, 2160), Y=c(1,0.9,0.8,0.7,0.6, 0.4))
 results <- discountingModelSelection(dat, 
                                      models = c("exponential", "hyperbolic", "bd", "mg", "rachlin"), 
                                      figures = "logauc",
+                                     summarize = TRUE,
                                      lineSize = 1.5)
+                                     
+Model Comparison Summary:
+Rank #:  1  =  CS
+ Probability  =  0.759601
+ BIC  =  -22.2279
+
+Rank #:  2  =  Rachlin
+ Probability  =  0.18008
+ BIC  =  -19.349116
+
+Rank #:  3  =  MG
+ Probability  =  0.033585
+ BIC  =  -15.990462
+
+Rank #:  4  =  Mazur
+ Probability  =  0.022795
+ BIC  =  -15.215414
+
+Rank #:  5  =  exp
+ Probability  =  0.003675
+ BIC  =  -11.565193
+
+Rank #:  6  =  BD
+ Probability  =  0.000258
+ BIC  =  -6.252941
+
+Rank #:  7  =  noise
+ Probability  =  6e-06
+ BIC  =  1.128501
+ 
+print(results)
 
   noise.mean noise.RMSE noise.BIC noise.AIC   exp.lnk   exp.RMSE   exp.BIC   exp.AIC Mazur.lnk Mazur.RMSE Mazur.BIC Mazur.AIC
 1  0.7333333  0.2160247  1.128501  1.544982 -7.615692 0.07500726 -11.56519 -11.14871 -7.217119 0.05533467 -15.21541 -14.79893
     BD.beta  BD.delta   BD.RMSE    BD.BIC   BD.AIC    MG.lnk     MG.s    MG.RMSE    MG.BIC    MG.AIC Rachlin.lnk Rachlin.s
 1 0.9999994 0.9993449 0.1124525 -6.252941 -5.62822 -5.657531 0.378083 0.04995242 -15.99046 -15.36574          -5      0.68
-  Rachlin.RMSE Rachlin.BIC Rachlin.AIC noise.BF   exp.BF Mazur.BF    BD.BF    MG.BF Rachlin.BF   noise.prob   exp.prob
-1   0.03775746   -19.34912   -18.72439        1 570.6905 3540.268 40.07374 5215.976   27967.79 2.678395e-05 0.01528535
-  Mazur.prob     BD.prob   MG.prob Rachlin.prob probable.model probable.ED50 probable.AUC probable.Log10AUC
-1 0.09482236 0.001073333 0.1397044    0.7490878        Rachlin      7.352941    0.5972851         0.8461974
+  Rachlin.RMSE Rachlin.BIC Rachlin.AIC    CS.lnk      CS.s    CS.RMSE   CS.BIC    CS.AIC noise.BF   exp.BF Mazur.BF    BD.BF
+1   0.03775746   -19.34912   -18.72439 -7.976814 0.5702152 0.02970408 -22.2279 -21.60318        1 570.6905 3540.268 40.07374
+     MG.BF Rachlin.BF    CS.BF   noise.prob    exp.prob Mazur.prob      BD.prob    MG.prob Rachlin.prob   CS.prob probable.model
+1 5215.976   27967.79 117971.8 6.438837e-06 0.003674583 0.02279521 0.0002580283 0.03358482      0.18008 0.7596009             CS
+  probable.ED50 probable.AUC probable.Log10AUC
+1      7.334051    0.5976186         0.8438519
 
 ```
 
