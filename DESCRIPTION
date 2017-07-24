@@ -2,10 +2,11 @@ Package: discountingtools
 Title: Delay Discounting Tools
 Version: 0.0.0.2
 Authors@R: person("Shawn", "Gilroy", email = "shawn.gilroy@temple.edu", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.3.3)
+Description: R package for performing delay discounting analyses. Features include approximate Bayesian model selection, derivation of the Effective Delay 50 (ED50) and both normal and log10 transformation model area using Numerical Integration.
+Depends: R (>= 3.0.0), minpack.lm
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Imports: minpack.lm
+URL: http://www.smallnstats.com
 RoxygenNote: 6.0.1
