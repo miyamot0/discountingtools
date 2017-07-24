@@ -28,7 +28,7 @@ library(discountingtools)
 dat <- data.frame(X=c(1,30,180,540,1080, 2160), Y=c(1,0.9,0.8,0.7,0.6, 0.4))
 
 results <- discountingModelSelection(dat, 
-                                     models = c("exponential", "hyperbolic", "bd", "mg", "rachlin"), 
+                                     models = c("exponential", "hyperbolic", "bd", "mg", "rachlin", "cs"), 
                                      figures = "ed50",
                                      summarize = TRUE,
                                      lineSize = 1.5)
@@ -84,7 +84,7 @@ print(results)
 dat <- data.frame(X=c(1,30,180,540,1080, 2160), Y=c(1,0.9,0.8,0.7,0.6, 0.4))
 
 results <- discountingModelSelection(dat, 
-                                     models = c("exponential", "hyperbolic", "bd", "mg", "rachlin"), 
+                                     models = c("exponential", "hyperbolic", "bd", "mg", "rachlin", "cs"), 
                                      figures = "auc",
                                      summarize = TRUE,
                                      lineSize = 1.5)
@@ -140,7 +140,7 @@ print(results)
 dat <- data.frame(X=c(1,30,180,540,1080, 2160), Y=c(1,0.9,0.8,0.7,0.6, 0.4))
 
 results <- discountingModelSelection(dat, 
-                                     models = c("exponential", "hyperbolic", "bd", "mg", "rachlin"), 
+                                     models = c("exponential", "hyperbolic", "bd", "mg", "rachlin", "cs"), 
                                      figures = "logauc",
                                      summarize = TRUE,
                                      lineSize = 1.5)

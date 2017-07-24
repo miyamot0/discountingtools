@@ -1,0 +1,13 @@
+discountingtools v0.0.0.2 (Release date: 2017-07-24)
+==============
+
+Changes:
+
+* Additional model added: Ebert &  Prelec's Constant Sensitivity Model, with ED50 and AUC complements
+
+discountingtools v0.0.0.1 (Release date: 2017-07-22)
+==============
+
+Changes:
+
+* Initial push to github. Support for ED50, numerical integration AUC, and log10 scaled numerical integration AUC
