@@ -681,59 +681,35 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   rachSeries = rep(NA,endDelay+1)
   csSeries = rep(NA,endDelay+1)
 
-  legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
-  colors = c("red")
+  legend = c("Empirical Approximation")
+  colors = c("black", "black")
 
   if ("exp.lnk" %in% names(results)) {
     samuelsonK <- results[["exp.lnk"]]
-    legend = c(legend, paste("Exponential: ",
-                             round(results[["exp.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "blue")
   }
 
   if ("Mazur.lnk" %in% names(results)) {
     ainslieK <- results[["Mazur.lnk"]]
-    legend = c(legend, paste("Hyperbolic: ",
-                             round(results[["Mazur.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "green")
   }
 
   if ("BD.beta" %in% names(results)) {
     betaConstant <- results[["BD.beta"]]
     deltaConstant <- results[["BD.delta"]]
-    legend = c(legend, paste("BetaDelta: ",
-                             round(results[["BD.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "brown")
   }
 
   if ("MG.lnk" %in% names(results)) {
     myerK <- results[["MG.lnk"]]
     myerS <- results[["MG.s"]]
-    legend = c(legend, paste("GreenMyerson: ",
-                             round(results[["MG.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "purple")
   }
 
   if ("Rachlin.lnk" %in% names(results)) {
     rachK <- results[["Rachlin.lnk"]]
     rachS <- results[["Rachlin.s"]]
-    legend = c(legend, paste("Rachlin: ",
-                             round(results[["Rachlin.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "orange")
   }
 
   if ("CS.lnk" %in% names(results)) {
     csK <- results[["CS.lnk"]]
     csS <- results[["CS.s"]]
-    legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["CS.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "black")
   }
 
   for (delay in delaySeries)
@@ -773,32 +749,50 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
   mData <- data.frame(X = dat$X, Y = dat$Y)
 
-  lineColor <- "red"
+  lineColor <- "black"
 
   if (results[["probable.model"]] == "hyperbolic") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = hypSeries)
-    lineColor <- "green"
+    legend = c(legend, paste("Hyperbolic: ",
+                             round(results[["Mazur.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "exponential") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = expSeries)
-    lineColor <- "blue"
+    legend = c(legend, paste("Exponential: ",
+                             round(results[["exp.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "bd") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = quaSeries)
-    lineColor <- "brown"
+    legend = c(legend, paste("BetaDelta: ",
+                             round(results[["BD.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "mg") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = myerSeries)
-    lineColor <- "purple"
+    legend = c(legend, paste("GreenMyerson: ",
+                             round(results[["MG.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "Rachlin") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = rachSeries)
-    lineColor <- "orange"
+    legend = c(legend, paste("Rachlin: ",
+                             round(results[["Rachlin.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "CS") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = csSeries)
-    lineColor <- "black"
+    legend = c(legend, paste("EbertPrelec: ",
+                             round(results[["CS.prob"]], 5),
+                             sep = ""))
+
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
@@ -822,8 +816,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
         lwd = 0.5)
 
   legend("bottomleft",
-         legend = c("Empirical Approximation", "Model Area"),
-         col = c("black", lineColor),
+         legend = legend,
+         col = colors,
          lty = c(2, 1),
          lwd = 3,
          title = "Model (Probability)")
@@ -861,56 +855,35 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
 
+  legend = c("Empirical Approximation")
+  colors = c("black", "black")
+
   if ("exp.lnk" %in% names(results)) {
     samuelsonK <- results[["exp.lnk"]]
-    legend = c(legend, paste("Exponential: ",
-                             round(results[["exp.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "blue")
   }
 
   if ("Mazur.lnk" %in% names(results)) {
     ainslieK <- results[["Mazur.lnk"]]
-    legend = c(legend, paste("Hyperbolic: ",
-                             round(results[["Mazur.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "green")
   }
 
   if ("BD.beta" %in% names(results)) {
     betaConstant <- results[["BD.beta"]]
     deltaConstant <- results[["BD.delta"]]
-    legend = c(legend, paste("BetaDelta: ",
-                             round(results[["BD.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "brown")
   }
 
   if ("MG.lnk" %in% names(results)) {
     myerK <- results[["MG.lnk"]]
     myerS <- results[["MG.s"]]
-    legend = c(legend, paste("GreenMyerson: ",
-                             round(results[["MG.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "purple")
   }
 
   if ("Rachlin.lnk" %in% names(results)) {
     rachK <- results[["Rachlin.lnk"]]
     rachS <- results[["Rachlin.s"]]
-    legend = c(legend, paste("Rachlin: ",
-                             round(results[["Rachlin.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "orange")
   }
 
   if ("CS.lnk" %in% names(results)) {
     csK <- results[["CS.lnk"]]
     csS <- results[["CS.s"]]
-    legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["CS.prob"]], 5),
-                             sep = ""))
-    colors = c(colors, "black")
   }
 
   for (delay in delaySeries)
@@ -950,32 +923,50 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
 
   mData <- data.frame(X = dat$X, Y = dat$Y)
 
-  lineColor <- "red"
+  lineColor <- "black"
 
   if (results[["probable.model"]] == "hyperbolic") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = hypSeries)
-    lineColor <- "green"
+    legend = c(legend, paste("Hyperbolic: ",
+                             round(results[["Mazur.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "exponential") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = expSeries)
-    lineColor <- "blue"
+    legend = c(legend, paste("Exponential: ",
+                             round(results[["exp.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "bd") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = quaSeries)
-    lineColor <- "brown"
+    legend = c(legend, paste("BetaDelta: ",
+                             round(results[["BD.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "mg") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = myerSeries)
-    lineColor <- "purple"
+    legend = c(legend, paste("GreenMyerson: ",
+                             round(results[["MG.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "Rachlin") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = rachSeries)
-    lineColor <- "orange"
+    legend = c(legend, paste("Rachlin: ",
+                             round(results[["Rachlin.prob"]], 5),
+                             sep = ""))
+
   } else if (results[["probable.model"]] == "CS") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = csSeries)
-    lineColor <- "black"
+    legend = c(legend, paste("EbertPrelec: ",
+                             round(results[["CS.prob"]], 5),
+                             sep = ""))
+
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
@@ -988,21 +979,21 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
        log = "x")
 
   graphics::points(dat$X,
-         dat$Y,
-         type = "p",
-         cex = 2,
-         pch = 18)
+                   dat$Y,
+                   type = "p",
+                   cex = 2,
+                   pch = 18)
 
   graphics::lines(dat$X,
-        dat$Y,
-        col = "black",
-        lty = 2,
-        lwd = 0.5)
+                  dat$Y,
+                  col = "black",
+                  lty = 2,
+                  lwd = 0.5)
 
-  graphics::legend("bottomleft",
-         legend = c("Empirical Approximation", "Model Area (log10)"),
-         col = c("black", lineColor),
+  legend("bottomleft",
+         legend = legend,
+         col = colors,
          lty = c(2, 1),
          lwd = 3,
-         title = "Model")
+         title = "Model (Probability)")
 }

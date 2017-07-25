@@ -457,3 +457,63 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
   returnFrame <- as.data.frame(returnList)
   returnFrame
 }
+
+#' Perform Johnson & Bickel Screen
+#'
+#' This function applies the Johnson & Bickel screening criteria to included data series
+#'
+#' @param dat data frame with X column and Y column (0 <= Y <= 1)
+#' @param idCol id column
+#' @return A data frame of model screenings
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @export
+johnsonBickelScreen <- function(dat, idCol = "id") {
+
+  if (!idCol %in% colnames(dat)) {
+    stop("Id column not found, please check naming")
+  } else {
+    colnames(dat)[colnames(dat) == idCol] <- 'id'
+  }
+
+  lengthReturn <- length(unique(dat$id))
+
+  returnFrame <- data.frame(id = rep(NA, lengthReturn),
+                            C1 = rep(NA, lengthReturn),
+                            C2 = rep(NA, lengthReturn))
+
+  mIndex <- 1
+
+  for (i in unique(dat$id)) {
+    subsetData <- dat[dat$id == i,]
+
+    criteriaOne <- TRUE
+    criteriaTwo <- TRUE
+
+    subsetData <- subsetData[order(subsetData$X), ]
+
+    for (index in 2:length(subsetData$X)) {
+      prev = subsetData[index-1, ]$Y
+      curr = subsetData[index, ]$Y
+
+      if ((curr - prev) > 0.2) {
+        criteriaOne = FALSE
+      }
+    }
+
+    prev <- subsetData[1, ]$Y
+    curr <- subsetData[length(subsetData$X), ]$Y
+
+    if ((prev - curr) < 0.1) {
+      criteriaTwo = FALSE
+    }
+
+    returnFrame[mIndex, ]$id <- i
+    returnFrame[mIndex, ]$C1 <- criteriaOne
+    returnFrame[mIndex, ]$C2 <- criteriaTwo
+
+    mIndex <- mIndex + 1
+  }
+
+  returnFrame
+}
