@@ -4,11 +4,13 @@
 \alias{discountingModelSelection}
 \title{Perform Discounting Model Selection}
 \usage{
-discountingModelSelection(dat, models = c("noise"), figures = FALSE,
-  summarize = FALSE, lineSize = 1)
+discountingModelSelection(dat, A = NULL, models = c("noise"),
+  figures = FALSE, summarize = FALSE, lineSize = 1)
 }
 \arguments{
 \item{dat}{data frame with X column and Y column (0 <= Y <= 1)}
+
+\item{A}{OPTIONAL: Modify line sizes for figures}
 
 \item{models}{vector of models to include in selection}
 

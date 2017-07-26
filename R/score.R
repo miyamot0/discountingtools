@@ -9,6 +9,7 @@
 #' Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
 #'
 #' @param dat data frame with X column and Y column (0 <= Y <= 1)
+#' @param A OPTIONAL: Modify line sizes for figures
 #' @param models vector of models to include in selection
 #' @param figures OPTIONAL: show figure of results
 #' @param summarize OPTIONAL: Descriptive observations
@@ -24,7 +25,7 @@
 #' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "ep",
 #' Figures = FALSE))
 #' @export
-discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
+discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
 
   if (!"noise" %in% models) {
     models <- c("noise", models)
@@ -34,6 +35,14 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
 
   if (length(intersect(models, mModels)) < 2) {
     stop("At least one model must be specified to perform a comparison")
+  }
+
+  if (!is.null(A) && is.numeric(A)) {
+    dat$Y <- dat$Y / A
+  }
+
+  if (any(dat$Y > 1)) {
+    stop("Y values exceed the range of 0<=Y<=1, Did you forget to assign an A (max value) argument?")
   }
 
   lengthX <- length(dat$X)
@@ -439,6 +448,13 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
       message(paste("Rank #: ", i, " = ", gsub(".prob", "", names(probList)[i])));
       message(paste(" Probability", " = ", round(as.numeric(probList[i]), 6)));
       message(paste(" BIC", " = ", round(as.numeric(bicList[i]), 6)));
+
+      if (i == 1) {
+        message(paste(" Most Probable ln(ED50)", " = ", round(probableED50, 6)));
+        message(paste(" Most Probable Model AUC", " = ", round(probableAUC, 6)));
+        message(paste(" Most Probable Model AUC (log)", " = ", round(probableAUCLog, 6)));
+      }
+
       message("")
     }
   }
