@@ -544,14 +544,30 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 
     localDat <- dat[dat$id == id, ]
 
-    message(paste("Calculating series id: ", id, sep = ""))
+    if (nrow(localDat) < 3) {
+      message(paste("Dropping Series: ", id, ", Fewer than 3 data points", sep = ""));
+      next
+
+    } else {
+      message(paste("Calculating series id: ", id, sep = ""))
+
+    }
+
 
     result <- discountingModelSelectionCall(localDat, A, models, figures, summarize, lineSize)
 
+    screenRes <- johnsonBickelScreen(localDat)
+
     if (is.na(finalResult)) {
-      finalResult <- cbind(id = id, result)
+      finalResult <- cbind(id = id,
+                           JB.C1 = screenRes$C1,
+                           JB.C2 = screenRes$C2,
+                           result)
     } else {
-      finalResult <- rbind(finalResult, cbind(id = id, result))
+      finalResult <- rbind(finalResult, cbind(id = id,
+                                              JB.C1 = screenRes$C1,
+                                              JB.C2 = screenRes$C2,
+                                              result))
     }
   }
 
