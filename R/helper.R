@@ -51,7 +51,7 @@ exponentialDiscountFunc <- function(x, lnk)
 exponentialDiscountGradient <- function(x, lnk)
 {
   func <- expression(exp(-exp(lnk)*x))
-  c(eval(stats::deriv(func, "lnk")))
+  c(eval(stats::D(func, "lnk")))
 }
 
 #' Hyperbolic Value Function
@@ -75,7 +75,7 @@ hyperbolicDiscountFunc <- function(x, lnk)
 hyperbolicDiscountGradient <- function(x, lnk)
 {
   func <- expression((1+exp(lnk)*x)^(-1))
-  c(eval(stats::deriv(func, "lnk")))
+  c(eval(stats::D(func, "lnk")))
 }
 
 #' Beta Delta Value Function
