@@ -19,12 +19,6 @@
 #' @importFrom stats lm nls
 #' @importFrom minpack.lm nls.lm nls.lm.control
 #' @return data frame of fitted model parameters
-#' @examples
-#' discountingModelSelection(data.frame(X=c(1,30,180,540,1080,2160),
-#' Y=c(1.0,0.9,0.8,0.7,0.6,0.4)),
-#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "ep",
-#' Figures = FALSE))
-#' @export
 discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
 
   lengthX <- length(dat$X)
@@ -489,19 +483,30 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 #' @param dat data frame with X column and Y column (0 <= Y <= 1)
 #' @param A OPTIONAL: Modify line sizes for figures
 #' @param models vector of models to include in selection
+#' @param idCol string content identifying participants
 #' @param figures OPTIONAL: show figure of results
 #' @param summarize OPTIONAL: Descriptive observations
 #' @param lineSize OPTIONAL: Modify line sizes for figures
 #' @return A data frame of model parameters
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
-#' @importFrom stats lm nls
-#' @importFrom minpack.lm nls.lm nls.lm.control
 #' @return data frame of fitted model parameters
 #' @examples
-#' discountingModelSelection(data.frame(X=c(1,30,180,540,1080,2160),
-#' Y=c(1.0,0.9,0.8,0.7,0.6,0.4)),
-#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "ep",
-#' Figures = FALSE))
+#' dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
+#' Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
+#' ids= c(1, 1,   1,   1,   1,   1))
+#'
+#' dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
+#'                   Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
+#'                   ids=c(2, 2,   2,   2,   2,   2))
+#'
+#' dat <- rbind(dat, dat2)
+#'
+#' dat$Y <- dat$Y * 100
+#' results <- discountingModelSelection(dat,
+#'                                      summarize = TRUE,
+#'                                      figures = "logauc",
+#'                                      idCol = "ids",
+#'                                      A = 100)
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", figures = FALSE, summarize = FALSE, lineSize = 1) {
 
@@ -588,6 +593,20 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 #' @return A data frame of model screenings
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
 #' @return data frame of Screening Criteria
+#' @examples
+#' dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
+#' Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
+#' ids= c(1, 1,   1,   1,   1,   1))
+#'
+#' dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
+#'                   Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
+#'                   ids=c(2, 2,   2,   2,   2,   2))
+#'
+#' dat <- rbind(dat, dat2)
+#'
+#' dat$Y <- dat$Y * 100
+#' johnsonBickelScreen(dat, idCol = "ids")
+#'
 #' @export
 johnsonBickelScreen <- function(dat, idCol = "id") {
 
