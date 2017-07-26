@@ -4,7 +4,7 @@ R package for performing delay discounting analyses.  Features include approxima
 
 ### Version
 -------------------
-0.0.0.3 (alpha)
+0.0.0.4 (alpha)
 
 ### Installation
 ----------------
@@ -170,9 +170,9 @@ print(results)
 2         0.7925787
 ```
 
-![Alt text](Figure_Model_AUC_1.png?raw=true "Model AUC Visuals")
+![Alt text](Figure_AUC_1.png?raw=true "Model AUC Visuals")
 
-![Alt text](Figure_Model_AUC_2.png?raw=true "Model AUC Visuals")
+![Alt text](Figure_AUC_2.png?raw=true "Model AUC Visuals")
 
 #### Model-based Area (logarithmic scaling)
 
