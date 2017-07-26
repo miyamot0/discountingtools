@@ -466,13 +466,13 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
   ### Plotting here
   if (figures == "ed50") {
-    displayED50Figure(dat, returnList, lineSize)
+    suppressWarnings(displayED50Figure(dat, returnList, lineSize))
 
   } else if (figures == "auc") {
-    displayAUCFigure(dat, returnList, lineSize)
+    suppressWarnings(displayAUCFigure(dat, returnList, lineSize))
 
   } else if (figures == "logauc") {
-    displayLogAUCFigure(dat, returnList, lineSize)
+    suppressWarnings(displayLogAUCFigure(dat, returnList, lineSize))
 
   }
 
