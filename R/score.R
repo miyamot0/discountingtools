@@ -38,8 +38,10 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   sorted <- NULL
   ini.par <- NULL
 
-  if(!is.character(try(lm(Y ~ 1, dat), silent=TRUE))) {
-    modelFitNoise <- stats::lm(Y ~ 1, dat)
+  modelFitNoise <- stats::lm(Y ~ 1, dat)
+
+  if(!is.character(modelFitNoise)) {
+
 
     tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
                      noise.RMSE = summary(modelFitNoise)[["sigma"]],
