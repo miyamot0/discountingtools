@@ -553,21 +553,26 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 
     }
 
-
+    result <- NA
     result <- discountingModelSelectionCall(localDat, A, models, figures, summarize, lineSize)
 
     screenRes <- johnsonBickelScreen(localDat)
 
-    if (is.na(finalResult)) {
+    if (id == unique(dat$id)[1]) {
+
       finalResult <- cbind(id = id,
                            JB.C1 = screenRes$C1,
                            JB.C2 = screenRes$C2,
                            result)
+
     } else {
-      finalResult <- rbind(finalResult, cbind(id = id,
-                                              JB.C1 = screenRes$C1,
-                                              JB.C2 = screenRes$C2,
-                                              result))
+
+      finalResult <- rbind(finalResult,
+                           cbind(id = id,
+                                 JB.C1 = screenRes$C1,
+                                 JB.C2 = screenRes$C2,
+                                 result))
+
     }
   }
 

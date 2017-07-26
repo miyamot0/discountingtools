@@ -95,7 +95,9 @@ print(results)
 2         0.7925787
 ```
 
-![Alt text](Figure_ED50.png?raw=true "ED50 Visuals")
+![Alt text](Figure_ED50_1.png?raw=true "ED50 Visuals")
+
+![Alt text](Figure_ED50_2.png?raw=true "ED50 Visuals")
 
 #### Model-based Area
 
@@ -168,7 +170,9 @@ print(results)
 2         0.7925787
 ```
 
-![Alt text](Figure_Model_AUC.png?raw=true "Model AUC Visuals")
+![Alt text](Figure_Model_AUC_1.png?raw=true "Model AUC Visuals")
+
+![Alt text](Figure_Model_AUC_2.png?raw=true "Model AUC Visuals")
 
 #### Model-based Area (logarithmic scaling)
 
@@ -242,7 +246,9 @@ print(results)
 
 ```
 
-![Alt text](Figure_Model_AUC_Log10.png?raw=true "Log10 Model AUC Visuals")
+![Alt text](Figure_Model_AUC_Log10_1.png?raw=true "Log10 Model AUC Visuals")
+
+![Alt text](Figure_Model_AUC_Log10_2.png?raw=true "Log10 Model AUC Visuals")
 
 ### Model Candidates (Possible models within the model selection approach)
 -------------------
