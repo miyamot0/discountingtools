@@ -38,10 +38,12 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   sorted <- NULL
   ini.par <- NULL
 
-  modelFitNoise <- stats::lm(Y ~ 1, dat)
+  modelFitNoise <- NULL
+
+  try(modelFitNoise <- stats::lm(Y ~ 1, dat),
+      silent=TRUE)
 
   if(!is.character(modelFitNoise)) {
-
 
     tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
                      noise.RMSE = summary(modelFitNoise)[["sigma"]],
@@ -55,15 +57,22 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   }
 
   if ('exponential' %in% models) {
+    # Starts
     startlnK  <- seq(-12,  12, 1)
     lengthLnK <- length(startlnK)
 
+    # Params expand
+    MlnK <- sort(rep(startlnK, lengthX))
+
+    # Init SS vector
     sumSquares<- rep(NA,lengthLnK)
 
+    # Observed Data
     MX <- rep(dat$X, lengthLnK)
     MY <- rep(dat$Y, lengthLnK)
 
-    projection<- exp(-exp(lengthLnK)*MX)
+    # Projections
+    projection<- exp(-exp(MlnK)*MX)
     sqResidual<- (MY-projection)^2
 
     for(j in 1:lengthLnK){
@@ -71,27 +80,24 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     }
 
-    presort   <-data.frame(startlnK, sumSquares)
+    # Sort starting estimates
+    presort   <-data.frame(startlnK,
+                           sumSquares)
     sorted    <-presort[order(presort[ ,"sumSquares"]), ]
     ini.par   <-c(lnk=sorted$startlnK[1])
 
-    if (!is.character(try(nls.lm(par = ini.par,
-                                 fn = residualFunction,
-                                 jac = jacobianMatrix,
-                                 valueFunction = exponentialDiscountFunc,
-                                 jacobianFunction = exponentialDiscountGradient,
-                                 x = dat$X,
-                                 value = dat$Y,
-                                 control = nls.lm.control(maxiter = 1000)), silent=TRUE))) {
+    modelFitExponential <- NULL
 
-      modelFitExponential<-nls.lm(par = ini.par,
-                                  fn = residualFunction,
-                                  jac = jacobianMatrix,
-                                  valueFunction = exponentialDiscountFunc,
-                                  jacobianFunction = exponentialDiscountGradient,
-                                  x = dat$X,
-                                  value = dat$Y,
-                                  control = nls.lm.control(maxiter = 1000))
+    try(modelFitExponential<-nls.lm(par = ini.par,
+                                    fn = residualFunction,
+                                    jac = jacobianMatrix,
+                                    valueFunction = exponentialDiscountFunc,
+                                    jacobianFunction = exponentialDiscountGradient,
+                                    x = dat$X,
+                                    value = dat$Y,
+                                    control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitExponential)) {
 
       tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]],
                        exp.RMSE = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec)),
@@ -106,16 +112,21 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   }
 
   if ('hyperbolic' %in% models) {
+    # Starts
     startlnK <- seq(-12,  12, 1)
     lengthLnK <- length(startlnK)
 
-    sumSquares <- rep(NA,lengthLnK)
-
+    # Params expand
     MlnK <- sort(rep(startlnK, lengthX))
 
+    # Init SS vector
+    sumSquares <- rep(NA,lengthLnK)
+
+    # Observed Data
     MX <- rep(dat$X, lengthLnK)
     MY <- rep(dat$Y, lengthLnK)
 
+    # Projections
     projection <- (1+exp(MlnK)*MX)^(-1)
     sqResidual <- (MY-projection)^2
 
@@ -124,27 +135,24 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     }
 
-    presort <-data.frame(startlnK, sumSquares)
+    # Sort starting estimates
+    presort <-data.frame(startlnK,
+                         sumSquares)
     sorted  <-presort[order(presort[ ,"sumSquares"]), ]
     ini.par <-c(lnk=sorted$startlnK[1])
 
-    if (!is.character(try(nls.lm(par = ini.par,
-                                 fn = residualFunction,
-                                 jac = jacobianMatrix,
-                                 valueFunction = hyperbolicDiscountFunc,
-                                 jacobianFunction = hyperbolicDiscountGradient,
-                                 x = dat$X,
-                                 value = dat$Y,
-                                 control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+    modelFitHyperbolic <- NULL
 
-      modelFitHyperbolic <- nls.lm(par = ini.par,
-                                   fn = residualFunction,
-                                   jac = jacobianMatrix,
-                                   valueFunction = hyperbolicDiscountFunc,
-                                   jacobianFunction = hyperbolicDiscountGradient,
-                                   x = dat$X,
-                                   value = dat$Y,
-                                   control = nls.lm.control(maxiter = 1000))
+    try(modelFitHyperbolic <- nls.lm(par = ini.par,
+                                     fn = residualFunction,
+                                     jac = jacobianMatrix,
+                                     valueFunction = hyperbolicDiscountFunc,
+                                     jacobianFunction = hyperbolicDiscountGradient,
+                                     x = dat$X,
+                                     value = dat$Y,
+                                     control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitHyperbolic)) {
 
       tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]],
                        Mazur.RMSE = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec)),
@@ -159,28 +167,35 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   }
 
   if ('bd' %in% models) {
+    # Starts
     startbeta   <- seq(0, 1, 0.1)
     startdelta  <- seq(0, 1, 0.01)
 
     lengthBeta  <- length(startbeta)
     lengthDelta <- length(startdelta)
 
+    # Params expand
     startBeta   <- rep(sort(rep(startbeta, lengthX)),lengthDelta)
     startdelta  <- sort(rep(startdelta,lengthX*lengthBeta))
 
+    # Init SS vector
+    sumSquares  <- rep(NA,lengthBeta*lengthDelta)
+
+    # Observed Data
     SY          <- rep(dat$Y,lengthBeta*lengthDelta)
 
+    # Projections
     projection  <- startBeta*startdelta^dat$X
     sqResidual  <- (SY-projection)^2
 
     SSbeta      <- rep(startbeta,lengthDelta)
     SSdelta     <- sort(rep(startdelta,lengthBeta))
-    sumSquares  <- rep(NA,lengthBeta*lengthDelta)
 
     for(j in 1:(lengthBeta*lengthDelta)){
       sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
     }
 
+    # Sort starting estimates
     presort<-data.frame(SSbeta,
                         SSdelta,
                         sumSquares)
@@ -189,26 +204,20 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
     ini.par <- c(beta  = sorted$SSbeta[1],
                  delta = sorted$SSdelta[1])
 
-    if (!is.character(try(nls.lm(par = ini.par,
-                                 fn = residualFunction,
-                                 jac = jacobianMatrix,
-                                 valueFunction = betaDeltaDiscountFunc,
-                                 jacobianFunction = betaDeltaDiscountGradient,
-                                 x = dat$X,
-                                 value = dat$Y,
-                                 upper = c(beta = 1, delta = 1),
-                                 lower = c(beta = 0, delta = 0),
-                                 control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
-      modelFitBetaDelta<-nls.lm(par = ini.par,
-                                fn = residualFunction,
-                                jac = jacobianMatrix,
-                                valueFunction = betaDeltaDiscountFunc,
-                                jacobianFunction = betaDeltaDiscountGradient,
-                                x = dat$X,
-                                value = dat$Y,
-                                upper = c(beta = 1, delta = 1),
-                                lower = c(beta = 0, delta = 0),
-                                control = nls.lm.control(maxiter = 1000))
+    modelFitBetaDelta <- NULL
+
+    try(modelFitBetaDelta <- nls.lm(par = ini.par,
+                                    fn = residualFunction,
+                                    jac = jacobianMatrix,
+                                    valueFunction = betaDeltaDiscountFunc,
+                                    jacobianFunction = betaDeltaDiscountGradient,
+                                    x = dat$X,
+                                    value = dat$Y,
+                                    upper = c(beta = 1, delta = 1),
+                                    lower = c(beta = 0, delta = 0),
+                                    control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitBetaDelta)) {
 
       tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
                        BD.delta  = modelFitBetaDelta$par[["delta"]],
@@ -224,21 +233,26 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   }
 
   if ('gm' %in% models) {
+    # Starts
     startlnK <- seq(-12, 12, 1)
     starts <- seq(.01, 10, 0.01)
 
     lengthLnK <- length(startlnK)
     lengthS <- length(starts)
 
+    # Params expand
     SSlnK <- rep(startlnK,lengthS)
     SSs <- sort(rep(starts,lengthLnK))
 
+    # Init SS vector
     sumSquares <- rep(NA,lengthS*lengthLnK)
 
+    # Observed Data
+    SY <- rep(dat$Y,lengthS*lengthLnK)
+
+    # Projections
     SlnK <- rep(sort(rep(startlnK,lengthX)),lengthS)
     Ss <- sort(rep(starts,lengthX*lengthLnK))
-
-    SY <- rep(dat$Y,lengthS*lengthLnK)
 
     projection <- (1+exp(SlnK)*dat$X)^(-Ss)
     sqResidual <- (SY-projection)^2
@@ -248,28 +262,24 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     }
 
+    # Sort starting estimates
     presort <- data.frame(SSlnK,SSs,sumSquares)
     sorted <- presort[order(presort[,"sumSquares"]),]
     ini.par <- c(lnk=sorted$SSlnK[1],
                  s=sorted$SSs[1])
 
-    if (!is.character(try(nls.lm(par = ini.par,
-                                 fn = residualFunction,
-                                 jac = jacobianMatrix,
-                                 valueFunction = myersonHyperboloidDiscountFunc,
-                                 jacobianFunction = myersonHyperboloidDiscountGradient,
-                                 x = dat$X,
-                                 value = dat$Y,
-                                 control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+    modelFitMyerson <- NULL
 
-      modelFitMyerson<-nls.lm(par = ini.par,
-                              fn = residualFunction,
-                              jac = jacobianMatrix,
-                              valueFunction = myersonHyperboloidDiscountFunc,
-                              jacobianFunction = myersonHyperboloidDiscountGradient,
-                              x = dat$X,
-                              value = dat$Y,
-                              control = nls.lm.control(maxiter = 1000))
+    try(modelFitMyerson <- nls.lm(par = ini.par,
+                                  fn = residualFunction,
+                                  jac = jacobianMatrix,
+                                  valueFunction = myersonHyperboloidDiscountFunc,
+                                  jacobianFunction = myersonHyperboloidDiscountGradient,
+                                  x = dat$X,
+                                  value = dat$Y,
+                                  control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitMyerson)) {
 
       tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
                        MG.s  = modelFitMyerson$par[["s"]],
@@ -285,21 +295,26 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   }
 
   if ('rachlin' %in% models) {
+    # Starts
     startlnK<-seq(-12,12,1)
     starts<-seq(.01,10,.01)
 
     lengthLnK<-length(startlnK)
     lengthS<-length(starts)
 
+    # Params expand
     SSlnK<-rep(startlnK,lengthS)
     SSs<-sort(rep(starts,lengthLnK))
 
+    # Init SS vector
     sumSquares<-rep(NA,lengthS*lengthLnK)
 
+    # Observed Data
+    SY<-rep(dat$Y,lengthS*lengthLnK)
+
+    # Projections
     SlnK<-rep(sort(rep(startlnK,lengthX)),lengthS)
     Ss<-sort(rep(starts,lengthX*lengthLnK))
-
-    SY<-rep(dat$Y,lengthS*lengthLnK)
 
     projection<-(1+exp(SlnK)*(dat$X^Ss))^(-1)
     sqResidual<-(SY-projection)^2
@@ -309,28 +324,26 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     }
 
-    presort <- data.frame(SSlnK,SSs,sumSquares)
+    # Sort starting estimates
+    presort <- data.frame(SSlnK,
+                          SSs,
+                          sumSquares)
     sorted <- presort[order(presort[,"sumSquares"]),]
     ini.par <- c(lnk=sorted$SSlnK[1],
                  s=sorted$SSs[1])
 
-    if (!is.character(try(nls.lm(par = ini.par,
-                                 fn = residualFunction,
-                                 jac = jacobianMatrix,
-                                 valueFunction = rachlinHyperboloidDiscountFunc,
-                                 jacobianFunction = rachlinHyperboloidDiscountGradient,
-                                 x = dat$X,
-                                 value = dat$Y,
-                                 control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+    modelFitRachlin <- NULL
 
-      modelFitRachlin<-nls.lm(par = ini.par,
-                              fn = residualFunction,
-                              jac = jacobianMatrix,
-                              valueFunction = rachlinHyperboloidDiscountFunc,
-                              jacobianFunction = rachlinHyperboloidDiscountGradient,
-                              x = dat$X,
-                              value = dat$Y,
-                              control = nls.lm.control(maxiter = 1000))
+    try(modelFitRachlin <- nls.lm(par = ini.par,
+                                  fn = residualFunction,
+                                  jac = jacobianMatrix,
+                                  valueFunction = rachlinHyperboloidDiscountFunc,
+                                  jacobianFunction = rachlinHyperboloidDiscountGradient,
+                                  x = dat$X,
+                                  value = dat$Y,
+                                  control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitRachlin)) {
 
       tempList <- list(Rachlin.lnk  = modelFitRachlin$par[["lnk"]],
                        Rachlin.s  = modelFitRachlin$par[["s"]],
@@ -346,21 +359,26 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
   }
 
   if ('ep' %in% models) {
+    # Starts
     startlnK <- seq(-12, 12, 0.1)
     starts <- seq(.01, 1, 0.01)
 
     lengthLnK <- length(startlnK)
     lengthS <- length(starts)
 
+    # Params expand
     SSlnK <- rep(startlnK,lengthS)
     SSs <- sort(rep(starts,lengthLnK))
 
+    # Init SS vector
     sumSquares <- rep(NA,lengthS*lengthLnK)
 
+    # Observed Data
+    SY <- rep(dat$Y,lengthS*lengthLnK)
+
+    # Projections
     SlnK <- rep(sort(rep(startlnK,lengthX)),lengthS)
     Ss <- sort(rep(starts,lengthX*lengthLnK))
-
-    SY <- rep(dat$Y,lengthS*lengthLnK)
 
     projection <- exp(-(exp(SlnK)*dat$X)^Ss)
     sqResidual <- (SY-projection)^2
@@ -370,28 +388,26 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     }
 
-    presort <- data.frame(SSlnK,SSs,sumSquares)
+    # Sort starting estimates
+    presort <- data.frame(SSlnK,
+                          SSs,
+                          sumSquares)
     sorted <- presort[order(presort[,"sumSquares"]),]
     ini.par <- c(lnk=sorted$SSlnK[1],
                  s=sorted$SSs[1])
 
-    if (!is.character(try(nls.lm(par = ini.par,
-                                 fn = residualFunction,
-                                 jac = jacobianMatrix,
-                                 valueFunction = ebertPrelecDiscountFunc,
-                                 jacobianFunction = ebertPrelecDiscountGradient,
-                                 x = dat$X,
-                                 value = dat$Y,
-                                 control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+    modelFitep <- NULL
 
-      modelFitep<-nls.lm(par = ini.par,
-                          fn = residualFunction,
-                          jac = jacobianMatrix,
-                          valueFunction = ebertPrelecDiscountFunc,
-                          jacobianFunction = ebertPrelecDiscountGradient,
-                          x = dat$X,
-                          value = dat$Y,
-                          control = nls.lm.control(maxiter = 1000))
+    try(modelFitep <- nls.lm(par = ini.par,
+                             fn = residualFunction,
+                             jac = jacobianMatrix,
+                             valueFunction = ebertPrelecDiscountFunc,
+                             jacobianFunction = ebertPrelecDiscountGradient,
+                             x = dat$X,
+                             value = dat$Y,
+                             control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitep)) {
 
       tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
                        ep.s  = modelFitep$par[["s"]],

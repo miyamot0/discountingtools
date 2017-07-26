@@ -677,8 +677,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   totalFrame$Noise <- results[["noise.mean"]]
 
   graphics::plot(totalFrame$Delays, totalFrame$Noise, type = "l", ylim = c(0,1),
-       main = paste("Probable Model: ", results[["probable.model"]],
-                    "\nParticipant: ", dat$id[1],
+       main = paste("Participant: ", dat$id[1],
+                    "\nProbable Model: ", results[["probable.model"]],
                     "\nln(ED50) = ", round(results[["probable.ED50"]], 5), "", sep = ""),
        xlab = "Delays",
        ylab = "Value",
@@ -885,8 +885,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
-       main = paste("Probable Model: ", results[["probable.model"]],
-                    "\nParticipant: ", dat$id[1],
+       main = paste("Participant: ", dat$id[1],
+                    "\nProbable Model: ", results[["probable.model"]],
                     "\n Model AUC = ", round(results[["probable.AUC"]], 5), "", sep = ""),
        xlab = "Delays",
        ylab = "Value",
@@ -1065,8 +1065,8 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
-       main = paste("Probable Model: ", results[["probable.model"]],
-                    "\nParticipant: ", dat$id[1],
+       main = paste("Participant: ", dat$id[1],
+                    "\nProbable Model: ", results[["probable.model"]],
                     "\n Model AUC (log10 scaled) = ", round(results[["probable.Log10AUC"]], 5), "", sep = ""),
        xlab = "Delays",
        ylab = "Value",
