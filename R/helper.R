@@ -159,6 +159,33 @@ rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
     eval(stats::D(func, "s")))
 }
 
+#' Ebert & Prelec Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return projected, subjective value
+ebertPrelecDiscountFunc <- function(x, lnk, s)
+{
+  func <- exp(-(exp(lnk)*x)^s)
+  eval(func)
+}
+
+#' Ebert & Prelec Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return projected, subjective value
+ebertPrelecDiscountGradient <- function(x, lnk, s)
+{
+  func <- expression(exp(-(exp(lnk)*x)^s))
+  c(eval(stats::D(func, "lnk")),
+    eval(stats::D(func, "s")))
+}
+
 #' minpack.lm logLik hack
 #'
 #' @param fit nls.lm object

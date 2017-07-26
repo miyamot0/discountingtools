@@ -373,18 +373,29 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
     ini.par <- c(lnk=sorted$SSlnK[1],
                  s=sorted$SSs[1])
 
-    if (!is.character(try(nls(Y ~ exp(-(exp(lnk)*X)^s),
-                              start = ini.par,
-                              data = dat), silent=FALSE))) {
-      modelFitep<-nls(Y ~ exp(-(exp(lnk)*X)^s),
-                      start = ini.par,
-                      data = dat)
+    if (!is.character(try(nls.lm(par = ini.par,
+                                 fn = residualFunction,
+                                 jac = jacobianMatrix,
+                                 valueFunction = ebertPrelecDiscountFunc,
+                                 jacobianFunction = ebertPrelecDiscountGradient,
+                                 x = dat$X,
+                                 value = dat$Y,
+                                 control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
 
-      tempList <- list(ep.lnk  = stats::coef(modelFitep)[["lnk"]],
-                       ep.s  = stats::coef(modelFitep)[["s"]],
+      modelFitep<-nls.lm(par = ini.par,
+                          fn = residualFunction,
+                          jac = jacobianMatrix,
+                          valueFunction = ebertPrelecDiscountFunc,
+                          jacobianFunction = ebertPrelecDiscountGradient,
+                          x = dat$X,
+                          value = dat$Y,
+                          control = nls.lm.control(maxiter = 1000))
+
+      tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
+                       ep.s  = modelFitep$par[["s"]],
                        ep.RMSE = summary(modelFitep)[["sigma"]],
-                       ep.BIC  = stats::BIC(modelFitep),
-                       ep.AIC  = stats::AIC(modelFitep))
+                       ep.BIC  = stats::BIC(logLik.nls.lm(modelFitep)),
+                       ep.AIC  = stats::AIC(logLik.nls.lm(modelFitep)))
 
       returnList <- c(returnList, tempList)
 
