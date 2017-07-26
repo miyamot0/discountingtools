@@ -51,7 +51,7 @@ exponentialDiscountFunc <- function(x, lnk)
 exponentialDiscountGradient <- function(x, lnk)
 {
   func <- expression(exp(-exp(lnk)*x))
-  c(eval(stats::D(func, "lnk")))
+  c(eval(stats::deriv(func, "lnk")))
 }
 
 #' Hyperbolic Value Function
@@ -75,7 +75,7 @@ hyperbolicDiscountFunc <- function(x, lnk)
 hyperbolicDiscountGradient <- function(x, lnk)
 {
   func <- expression((1+exp(lnk)*x)^(-1))
-  c(eval(stats::D(func, "lnk")))
+  c(eval(stats::deriv(func, "lnk")))
 }
 
 #' Beta Delta Value Function
@@ -101,8 +101,8 @@ betaDeltaDiscountFunc <- function(x, beta, delta)
 betaDeltaDiscountGradient <- function(x, beta, delta)
 {
   func <- expression(beta*delta^x)
-  c(eval(stats::D(func, "delta")),
-    eval(stats::D(func, "beta")))
+  c(eval(stats::deriv(func, "delta")),
+    eval(stats::deriv(func, "beta")))
 }
 
 #' Green & Myerson Value Function
@@ -128,8 +128,8 @@ myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 {
   func <- expression((1+exp(lnk)*x)^(-s))
-  c(eval(stats::D(func, "lnk")),
-    eval(stats::D(func, "s")))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")))
 }
 
 #' Rachlin Value Function
@@ -155,8 +155,8 @@ rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
 rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
 {
   func <- expression((1+exp(lnk)*x)^(-s))
-  c(eval(stats::D(func, "lnk")),
-    eval(stats::D(func, "s")))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")))
 }
 
 #' Ebert & Prelec Value Function
@@ -182,8 +182,8 @@ ebertPrelecDiscountFunc <- function(x, lnk, s)
 ebertPrelecDiscountGradient <- function(x, lnk, s)
 {
   func <- expression(exp(-(exp(lnk)*x)^s))
-  c(eval(stats::D(func, "lnk")),
-    eval(stats::D(func, "s")))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")))
 }
 
 #' minpack.lm logLik hack
