@@ -101,8 +101,8 @@ betaDeltaDiscountFunc <- function(x, beta, delta)
 betaDeltaDiscountGradient <- function(x, beta, delta)
 {
   func <- expression(beta*delta^x)
-  c(eval(stats::deriv(func, "delta")),
-    eval(stats::deriv(func, "beta")))
+  c(eval(stats::D(func, "delta")),
+    eval(stats::D(func, "beta")))
 }
 
 #' Green & Myerson Value Function
