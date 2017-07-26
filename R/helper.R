@@ -402,26 +402,26 @@ getModelAUC <- function(dat, results) {
 
   returnValue <- NaN
 
-  if (results[["probable.model"]] == "hyperbolic") {
+  if (results[["probable.model"]] == "Mazur") {
     returnValue <- stats::integrate(integrandHyp,
                              lower = min(dat$X),
                              upper = max(dat$X),
                              lnK = results[["Mazur.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "exponential") {
+  } else if (results[["probable.model"]] == "exp") {
     returnValue <- stats::integrate(integrandExp,
                              lower = min(dat$X),
                              upper = max(dat$X),
                              lnK = results[["exp.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "bd") {
+  } else if (results[["probable.model"]] == "BD") {
     returnValue <- stats::integrate(integrandBetaDelta,
                              lower = min(dat$X),
                              upper = max(dat$X),
                              beta = results[["BD.beta"]],
                              delta = results[["BD.delta"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "mg") {
+  } else if (results[["probable.model"]] == "MG") {
     returnValue <- stats::integrate(integrandMyerson,
                              lower = min(dat$X),
                              upper = max(dat$X),
@@ -465,26 +465,26 @@ getModelAUCLog10Scaled <- function(dat, results) {
 
   returnValue <- NaN
 
-  if (results[["probable.model"]] == "hyperbolic") {
+  if (results[["probable.model"]] == "Mazur") {
     returnValue <- stats::integrate(integrandHypLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
                              lnK = results[["Mazur.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "exponential") {
+  } else if (results[["probable.model"]] == "exp") {
     returnValue <- stats::integrate(integrandExpLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
                              lnK = results[["exp.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "bd") {
+  } else if (results[["probable.model"]] == "BD") {
     returnValue <- stats::integrate(integrandBetaDeltaLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
                              beta = results[["BD.beta"]],
                              delta = results[["BD.delta"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "mg") {
+  } else if (results[["probable.model"]] == "MG") {
     returnValue <- stats::integrate(integrandMyersonLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),

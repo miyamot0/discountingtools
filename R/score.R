@@ -25,25 +25,7 @@
 #' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "ep",
 #' Figures = FALSE))
 #' @export
-discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
-
-  if (!"noise" %in% models) {
-    models <- c("noise", models)
-  }
-
-  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "ep")
-
-  if (length(intersect(models, mModels)) < 2) {
-    stop("At least one model must be specified to perform a comparison")
-  }
-
-  if (!is.null(A) && is.numeric(A)) {
-    dat$Y <- dat$Y / A
-  }
-
-  if (any(dat$Y > 1)) {
-    stop("Y values exceed the range of 0<=Y<=1, Did you forget to assign an A (max value) argument?")
-  }
+discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
 
   lengthX <- length(dat$X)
 
@@ -73,6 +55,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
     returnList <- c(returnList, tempList)
 
     bicList <- c(bicList, list(noise.BIC = tempList$noise.BIC))
+
   }
 
   if ('exponential' %in% models) {
@@ -89,6 +72,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
 
     for(j in 1:lengthLnK){
       sumSquares[j]  <-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
     }
 
     presort   <-data.frame(startlnK, sumSquares)
@@ -103,6 +87,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
                                  x = dat$X,
                                  value = dat$Y,
                                  control = nls.lm.control(maxiter = 1000)), silent=TRUE))) {
+
       modelFitExponential<-nls.lm(par = ini.par,
                                   fn = residualFunction,
                                   jac = jacobianMatrix,
@@ -120,6 +105,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
       returnList <- c(returnList, tempList)
 
       bicList <- c(bicList, list(exp.BIC = tempList$exp.BIC))
+
     }
   }
 
@@ -139,6 +125,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
 
     for(j in 1:lengthLnK){
       sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
     }
 
     presort <-data.frame(startlnK, sumSquares)
@@ -153,6 +140,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
                                  x = dat$X,
                                  value = dat$Y,
                                  control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+
       modelFitHyperbolic <- nls.lm(par = ini.par,
                                    fn = residualFunction,
                                    jac = jacobianMatrix,
@@ -170,6 +158,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
       returnList <- c(returnList, tempList)
 
       bicList <- c(bicList, list(Mazur.BIC = tempList$Mazur.BIC))
+
     }
   }
 
@@ -234,6 +223,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
       returnList <- c(returnList, tempList)
 
       bicList <- c(bicList, list(BD.BIC = tempList$BD.BIC))
+
     }
   }
 
@@ -259,6 +249,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
 
     for(j in 1:(lengthS*lengthLnK)){
       sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
     }
 
     presort <- data.frame(SSlnK,SSs,sumSquares)
@@ -274,6 +265,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
                                  x = dat$X,
                                  value = dat$Y,
                                  control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+
       modelFitMyerson<-nls.lm(par = ini.par,
                               fn = residualFunction,
                               jac = jacobianMatrix,
@@ -292,6 +284,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
       returnList <- c(returnList, tempList)
 
       bicList <- c(bicList, list(MG.BIC = tempList$MG.BIC))
+
     }
   }
 
@@ -317,6 +310,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
 
     for(j in 1:(lengthS*lengthLnK)){
       sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
     }
 
     presort <- data.frame(SSlnK,SSs,sumSquares)
@@ -332,6 +326,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
                                  x = dat$X,
                                  value = dat$Y,
                                  control = nls.lm.control(maxiter = 1000)), silent=FALSE))) {
+
       modelFitRachlin<-nls.lm(par = ini.par,
                               fn = residualFunction,
                               jac = jacobianMatrix,
@@ -376,6 +371,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
 
     for(j in 1:(lengthS*lengthLnK)){
       sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
     }
 
     presort <- data.frame(SSlnK,SSs,sumSquares)
@@ -411,6 +407,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
     bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["noise.BIC"]]))
 
     bfSum <- bfSum + bfList[[bfName]]
+
   }
 
   returnList <- c(returnList, bfList)
@@ -421,6 +418,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
   for (i in 1:length(bfList)) {
     probName = gsub("BF", "prob", names(bfList)[i])
     probList[[probName]] = bfList[[names(bfList)[i]]]/bfSum
+
   }
 
   returnList <- c(returnList, probList)
@@ -449,10 +447,12 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
       message(paste(" Probability", " = ", round(as.numeric(probList[i]), 6)));
       message(paste(" BIC", " = ", round(as.numeric(bicList[i]), 6)));
 
+
       if (i == 1) {
         message(paste(" Most Probable ln(ED50)", " = ", round(probableED50, 6)));
         message(paste(" Most Probable Model AUC", " = ", round(probableAUC, 6)));
         message(paste(" Most Probable Model AUC (log)", " = ", round(probableAUCLog, 6)));
+
       }
 
       message("")
@@ -463,15 +463,99 @@ discountingModelSelection <- function(dat, A = NULL, models = c("noise"), figure
   if (figures == "ed50") {
     message("Plotting ED50 Data...")
     displayED50Figure(dat, returnList, lineSize)
+
   } else if (figures == "auc") {
     message("Plotting Model Area Data...")
     displayAUCFigure(dat, returnList, lineSize)
+
   } else if (figures == "logauc") {
     displayLogAUCFigure(dat, returnList, lineSize)
+
   }
 
   returnFrame <- as.data.frame(returnList)
   returnFrame
+}
+
+#' Perform Discounting Model Selection
+#'
+#' This function takes a data frame of temporal discounting values (X, Y)
+#' and performs approximate Bayesian model selection using the Bayesian
+#' Information Criterion and returns the log of the Effective Delay
+#' 50 and numerical integration area.
+#'
+#' Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
+#'
+#' @param dat data frame with X column and Y column (0 <= Y <= 1)
+#' @param A OPTIONAL: Modify line sizes for figures
+#' @param models vector of models to include in selection
+#' @param figures OPTIONAL: show figure of results
+#' @param summarize OPTIONAL: Descriptive observations
+#' @param lineSize OPTIONAL: Modify line sizes for figures
+#' @return A data frame of model parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @importFrom stats lm nls
+#' @importFrom minpack.lm nls.lm nls.lm.control
+#' @return data frame of fitted model parameters
+#' @examples
+#' discountingModelSelection(data.frame(X=c(1,30,180,540,1080,2160),
+#' Y=c(1.0,0.9,0.8,0.7,0.6,0.4)),
+#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "ep",
+#' Figures = FALSE))
+#' @export
+discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", figures = FALSE, summarize = FALSE, lineSize = 1) {
+
+  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "ep")
+
+  if (!"all" %in% models) {
+
+    if (!"noise" %in% models) {
+      models <- c("noise", models)
+    }
+
+    if (length(intersect(models, mModels)) < 2) {
+      stop("At least one model must be specified to perform a comparison")
+    }
+  } else {
+    models <- mModels
+  }
+
+  if (!is.null(A) && is.numeric(A)) {
+    dat$Y <- dat$Y / A
+  }
+
+  if (any(dat$Y > 1)) {
+    stop("Y values exceed the range of 0<=Y<=1, Did you forget to assign an A (max value) argument?")
+  }
+
+  if (!idCol %in% colnames(dat)) {
+    stop("Id column not found, please check naming")
+
+  } else {
+    colnames(dat)[colnames(dat) == idCol] <- 'id'
+
+  }
+
+  lengthReturn <- length(unique(dat$id))
+
+  finalResult <- NA
+
+  for (id in unique(dat$id)) {
+
+    localDat <- dat[dat$id == id, ]
+
+    message(paste("Calculating series id: ", id, sep = ""))
+
+    result <- discountingModelSelectionCall(localDat, A, models, figures, summarize, lineSize)
+
+    if (is.na(finalResult)) {
+      finalResult <- cbind(id = id, result)
+    } else {
+      finalResult <- rbind(finalResult, cbind(id = id, result))
+    }
+  }
+
+  finalResult
 }
 
 #' Perform Johnson & Bickel Screen
@@ -529,6 +613,7 @@ johnsonBickelScreen <- function(dat, idCol = "id") {
     returnFrame[mIndex, ]$C2 <- criteriaTwo
 
     mIndex <- mIndex + 1
+
   }
 
   returnFrame
