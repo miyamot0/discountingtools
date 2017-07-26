@@ -729,7 +729,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
 
   sortShowFrame <- mShowFrame[order(-mShowFrame$prob),]
 
-  legend("bottomleft",
+  legend("topright",
          legend = sortShowFrame$legend,
          col = as.vector.factor(sortShowFrame$col),
          lwd = 3,
@@ -905,7 +905,7 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
         lty = 2,
         lwd = 0.5)
 
-  legend("bottomleft",
+  legend("topright",
          legend = legend,
          col = colors,
          lty = c(2, 1),
@@ -1086,7 +1086,7 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                   lty = 2,
                   lwd = 0.5)
 
-  legend("bottomleft",
+  legend("topright",
          legend = legend,
          col = colors,
          lty = c(2, 1),
