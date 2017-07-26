@@ -17,7 +17,10 @@ displayLogAUCFigure(dat, results, lineWidth = 1)
 display figure
 }
 \description{
-Display most probable fitted series with AUC metric (log10)
+This method constructs a figure that displays the most probable model
+as well as the probability that it is the "true" model.  The
+Model-based AUC metric in log base 10 scale is also provided
+for the most probable model.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper.R
 \name{integrandEbertPrelecLog}
 \alias{integrandEbertPrelecLog}
-\title{Ebert & Prelec's CS Integrand helper (log10)}
+\title{Ebert & Prelec's ep Integrand helper (log10)}
 \usage{
 integrandEbertPrelecLog(x, lnK, s)
 }
@@ -17,7 +17,8 @@ integrandEbertPrelecLog(x, lnK, s)
 Numerical Integration Projection
 }
 \description{
-Ebert & Prelec's CS Integrand helper (log10)
+This integrand helper is a projection of the integrand
+with delays represented in the log base 10 scale
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

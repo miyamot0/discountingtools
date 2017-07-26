@@ -15,7 +15,11 @@ getED50(dat, results)
 natural logarithm of the Effective Delay 50%
 }
 \description{
-Scoring for the log ED50
+Optionally, models without a straightforward exact solution
+will be scored numerically using a bisection search
+}
+\details{
+Only Ebert & Prelec, 2007 requires this bisection search
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

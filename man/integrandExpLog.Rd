@@ -15,7 +15,8 @@ integrandExpLog(x, lnK)
 Numerical Integration Projection
 }
 \description{
-Exponential Integrand helper (log10)
+This integrand helper is a projection of the integrand
+with delays represented in the log base 10 scale
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

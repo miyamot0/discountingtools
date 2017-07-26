@@ -9,9 +9,9 @@
 \arguments{
 \item{fit}{nls.lm object}
 
-\item{REML}{REML}
+\item{REML}{determine whether or not to use ML (FALSE by default)}
 
-\item{...}{inherit}
+\item{...}{inherit other args as necessary}
 }
 \value{
 provide a logLik class for AIC/BIC

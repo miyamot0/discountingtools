@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper.R
 \name{integrandEbertPrelec}
 \alias{integrandEbertPrelec}
-\title{Ebert & Prelec's CS Integrand helper}
+\title{Ebert & Prelec's ep Integrand helper}
 \usage{
 integrandEbertPrelec(x, lnK, s)
 }
@@ -17,7 +17,8 @@ integrandEbertPrelec(x, lnK, s)
 Numerical Integration Projection
 }
 \description{
-Ebert & Prelec's CS Integrand helper
+This integrand helper is a projection of the integrand
+with delays represented as normal
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

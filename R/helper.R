@@ -162,8 +162,8 @@ rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
 #' minpack.lm logLik hack
 #'
 #' @param fit nls.lm object
-#' @param REML REML
-#' @param ... inherit
+#' @param REML determine whether or not to use ML (FALSE by default)
+#' @param ... inherit other args as necessary
 #' @author Katharine Mullen <kate@@few.vu.nl>
 #' @return provide a logLik class for AIC/BIC
 logLik.nls.lm <- function(fit, REML = FALSE, ...)
@@ -179,6 +179,11 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 }
 
 #' Scoring for the log ED50
+#'
+#' Optionally, models without a straightforward exact solution
+#' will be scored numerically using a bisection search
+#'
+#' Only Ebert & Prelec, 2007 requires this bisection search
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -197,14 +202,17 @@ getED50 <- function(dat, results) {
     returnValue <- log( (2^(1/results[["MG.s"]])-1)/exp(results[["MG.lnk"]]))
   } else if (results[["probable.model"]] == "Rachlin") {
     returnValue <- log( (1/(exp(results[["Rachlin.lnk"]])))^(1/results[["Rachlin.s"]]))
-  } else if (results[["probable.model"]] == "CS") {
-    returnValue <- getED50CS(dat, results)
+  } else if (results[["probable.model"]] == "ep") {
+    returnValue <- getED50ep(dat, results)
   }
 
   returnValue
 }
 
 #' Exponential Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
@@ -214,6 +222,9 @@ integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
 
 #' Exponential Integrand helper (log10)
 #'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
+#'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
@@ -221,6 +232,9 @@ integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
 integrandExpLog <- function(x, lnK) { exp(-exp(lnK)*(10^x)) }
 
 #' Hyperbolic Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
@@ -230,6 +244,9 @@ integrandHyp <- function(x, lnK) { (1+exp(lnK)*x)^(-1) }
 
 #' Hyperbolic Integrand helper (log10)
 #'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
+#'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
@@ -237,6 +254,9 @@ integrandHyp <- function(x, lnK) { (1+exp(lnK)*x)^(-1) }
 integrandHypLog <- function(x, lnK) { (1+exp(lnK)*(10^x))^(-1) }
 
 #' Beta Delta Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
 #'
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
@@ -247,6 +267,9 @@ integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 
 #' Beta Delta Integrand helper (log10)
 #'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
+#'
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
@@ -255,6 +278,9 @@ integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 integrandBetaDeltaLog <- function(x, beta, delta) { beta*delta^(10^x) }
 
 #' Green & Myerson Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
@@ -265,6 +291,9 @@ integrandMyerson <- function(x, lnK, s) { (1+exp(lnK)*x)^(-s) }
 
 #' Green & Myerson Integrand helper (log10)
 #'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
+#'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
@@ -273,6 +302,9 @@ integrandMyerson <- function(x, lnK, s) { (1+exp(lnK)*x)^(-s) }
 integrandMyersonLog <- function(x, lnK, s) { (1+exp(lnK)*(10^x))^(-s) }
 
 #' Rachlin Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
@@ -283,6 +315,9 @@ integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 
 #' Rachlin Integrand helper (log10)
 #'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
+#'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
@@ -290,7 +325,10 @@ integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 #' @return Numerical Integration Projection
 integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
 
-#' Ebert & Prelec's CS Integrand helper
+#' Ebert & Prelec's ep Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
@@ -299,7 +337,10 @@ integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
 #' @return Numerical Integration Projection
 integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 
-#' Ebert & Prelec's CS Integrand helper (log10)
+#' Ebert & Prelec's ep Integrand helper (log10)
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
@@ -310,18 +351,22 @@ integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
 
 #' Numerically solve for ED50 value for Ebert & Prelec
 #'
+#' This method solves for ED50 for Ebert & Prelec using a point bisection procedure.
+#' This procedure will continue for n (20 currently) by default until a value of 50%
+#' is observed in the midpoint of two more moving delays.
+#'
 #' @param dat observed data
 #' @param results Results of analyses for data series
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
-#' @return effective delay (value) for Ebert & Prelec CS
-getED50CS <- function(dat, results) {
+#' @return effective delay (value) for Ebert & Prelec ep
+getED50ep <- function(dat, results) {
   lowDelay <- 0
   highDelay <- max(dat$X)*2
 
   for (i in seq(1, 20)) {
-    lowEst <- integrandEbertPrelec(lowDelay, results[["CS.lnk"]], results[["CS.s"]])
-    midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["CS.lnk"]], results[["CS.s"]])
-    highEst <- integrandEbertPrelec(highDelay, results[["CS.lnk"]], results[["CS.s"]])
+    lowEst <- integrandEbertPrelec(lowDelay, results[["ep.lnk"]], results[["ep.s"]])
+    midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["ep.lnk"]], results[["ep.s"]])
+    highEst <- integrandEbertPrelec(highDelay, results[["ep.lnk"]], results[["ep.s"]])
 
     if (lowEst > 0.5 && midEst > 0.5) {
       # Above 50% mark range
@@ -342,6 +387,10 @@ getED50CS <- function(dat, results) {
 }
 
 #' Scoring for the most probable model area
+#'
+#' In this set of methods, the area beneath the fitted model is
+#' calculated and divided by the maximum area using numerical integration
+#' methods.  All delays are calculated in the normal scale.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -386,12 +435,12 @@ getModelAUC <- function(dat, results) {
                              lnK = results[["Rachlin.lnk"]],
                              s = results[["Rachlin.s"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "CS") {
+  } else if (results[["probable.model"]] == "ep") {
     returnValue <- stats::integrate(integrandEbertPrelec,
                                     lower = min(dat$X),
                                     upper = max(dat$X),
-                                    lnK = results[["CS.lnk"]],
-                                    s = results[["CS.s"]])$value/maximumArea
+                                    lnK = results[["ep.lnk"]],
+                                    s = results[["ep.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "noise") {
     returnValue <- results[["noise.mean"]]
@@ -401,6 +450,10 @@ getModelAUC <- function(dat, results) {
 }
 
 #' Scoring for the most probable model area, in log10 space
+#'
+#' In this set of methods, the area beneath the fitted model is
+#' calculated and divided by the maximum area using numerical integration
+#' methods.  All delays are calculated in the log base 10 scale.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -445,12 +498,12 @@ getModelAUCLog10Scaled <- function(dat, results) {
                              lnK = results[["Rachlin.lnk"]],
                              s = results[["Rachlin.s"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "CS") {
+  } else if (results[["probable.model"]] == "ep") {
     returnValue <- stats::integrate(integrandEbertPrelecLog,
                                     lower = log10(min(dat$X)),
                                     upper = log10(max(dat$X)),
-                                    lnK = results[["CS.lnk"]],
-                                    s = results[["CS.s"]])$value/maximumArea
+                                    lnK = results[["ep.lnk"]],
+                                    s = results[["ep.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "noise") {
     returnValue <- results[["noise.mean"]]
@@ -460,6 +513,10 @@ getModelAUCLog10Scaled <- function(dat, results) {
 }
 
 #' Display of all fitted series with ED50 metric
+#'
+#' This method constructs a figure that displays all fitted models
+#' as well as the probability that they are the "true" model.  The
+#' ED50 metric is also provided for the most probable model.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -476,8 +533,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   myerS <- NA
   rachK <- NA
   rachS <- NA
-  csK <- NA
-  csS <- NA
+  epK <- NA
+  epS <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -486,7 +543,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   quaSeries  = rep(NA,endDelay+1)
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
-  csSeries = rep(NA,endDelay+1)
+  epSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -534,11 +591,11 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "orange")
   }
 
-  if ("CS.lnk" %in% names(results)) {
-    csK <- results[["CS.lnk"]]
-    csS <- results[["CS.s"]]
+  if ("ep.lnk" %in% names(results)) {
+    epK <- results[["ep.lnk"]]
+    epS <- results[["ep.s"]]
     legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["CS.prob"]], 5),
+                             round(results[["ep.prob"]], 5),
                              sep = ""))
     colors = c(colors, "black")
   }
@@ -572,9 +629,9 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
       rachSeries[delay] = 1.0 * (1 + exp(rachK)*(delay^rachS))^(-1)
     }
 
-    if(!is.na(csK))
+    if(!is.na(epK))
     {
-      csSeries[delay] = 1.0 * exp(-(exp(csK)*delay)^csS)
+      epSeries[delay] = 1.0 * exp(-(exp(epK)*delay)^epS)
     }
   }
 
@@ -588,7 +645,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           QuasiHyperbolic = quaSeries,
                           HyperboloidM = myerSeries,
                           HyperboloidR = rachSeries,
-                          EbertPrelec = csSeries)
+                          EbertPrelec = epSeries)
 
   totalFrame$Noise <- results[["noise.mean"]]
 
@@ -640,7 +697,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                                    results[["BD.prob"]],
                                    results[["MG.prob"]],
                                    results[["Rachlin.prob"]],
-                                   results[["CS.prob"]]))
+                                   results[["ep.prob"]]))
 
   sortShowFrame <- mShowFrame[order(-mShowFrame$prob),]
 
@@ -653,6 +710,10 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
 }
 
 #' Display most probable fitted series with AUC metric
+#'
+#' This method constructs a figure that displays the most probable model
+#' as well as the probability that it is the "true" model.  The
+#' Model-based AUC metric is also provided for the most probable model.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -669,8 +730,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   myerS <- NA
   rachK <- NA
   rachS <- NA
-  csK <- NA
-  csS <- NA
+  epK <- NA
+  epS <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -679,9 +740,9 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   quaSeries  = rep(NA,endDelay+1)
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
-  csSeries = rep(NA,endDelay+1)
+  epSeries = rep(NA,endDelay+1)
 
-  legend = c("Empirical Approximation")
+  legend = c("Empirical: ")
   colors = c("black", "black")
 
   if ("exp.lnk" %in% names(results)) {
@@ -707,9 +768,9 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     rachS <- results[["Rachlin.s"]]
   }
 
-  if ("CS.lnk" %in% names(results)) {
-    csK <- results[["CS.lnk"]]
-    csS <- results[["CS.s"]]
+  if ("ep.lnk" %in% names(results)) {
+    epK <- results[["ep.lnk"]]
+    epS <- results[["ep.s"]]
   }
 
   for (delay in delaySeries)
@@ -741,9 +802,9 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
       rachSeries[delay] = 1.0 * (1 + exp(rachK)*(delay^rachS))^(-1)
     }
 
-    if(!is.na(csK))
+    if(!is.na(epK))
     {
-      csSeries[delay] = 1.0 * exp(-(exp(csK)*delay)^csS)
+      epSeries[delay] = 1.0 * exp(-(exp(epK)*delay)^epS)
     }
   }
 
@@ -786,11 +847,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Rachlin.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "CS") {
+  } else if (results[["probable.model"]] == "ep") {
     totalFrame = data.frame(Delays = delaySeries,
-                            ModelArea = csSeries)
+                            ModelArea = epSeries)
     legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["CS.prob"]], 5),
+                             round(results[["ep.prob"]], 5),
                              sep = ""))
 
   }
@@ -825,6 +886,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
 #' Display most probable fitted series with AUC metric (log10)
 #'
+#' This method constructs a figure that displays the most probable model
+#' as well as the probability that it is the "true" model.  The
+#' Model-based AUC metric in log base 10 scale is also provided
+#' for the most probable model.
+#'
 #' @param dat observed data
 #' @param results Results of analyses for data series
 #' @param lineWidth Line width
@@ -840,8 +906,8 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   myerS <- NA
   rachK <- NA
   rachS <- NA
-  csK <- NA
-  csS <- NA
+  epK <- NA
+  epS <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -850,12 +916,12 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   quaSeries  = rep(NA,endDelay+1)
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
-  csSeries = rep(NA,endDelay+1)
+  epSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
 
-  legend = c("Empirical Approximation")
+  legend = c("Empirical:")
   colors = c("black", "black")
 
   if ("exp.lnk" %in% names(results)) {
@@ -881,9 +947,9 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     rachS <- results[["Rachlin.s"]]
   }
 
-  if ("CS.lnk" %in% names(results)) {
-    csK <- results[["CS.lnk"]]
-    csS <- results[["CS.s"]]
+  if ("ep.lnk" %in% names(results)) {
+    epK <- results[["ep.lnk"]]
+    epS <- results[["ep.s"]]
   }
 
   for (delay in delaySeries)
@@ -915,9 +981,9 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
       rachSeries[delay] = 1.0 * (1 + exp(rachK)*(delay^rachS))^(-1)
     }
 
-    if(!is.na(csK))
+    if(!is.na(epK))
     {
-      csSeries[delay] = 1.0 * exp(-(exp(csK)*delay)^csS)
+      epSeries[delay] = 1.0 * exp(-(exp(epK)*delay)^epS)
     }
   }
 
@@ -960,11 +1026,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Rachlin.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "CS") {
+  } else if (results[["probable.model"]] == "ep") {
     totalFrame = data.frame(Delays = delaySeries,
-                            ModelArea = csSeries)
+                            ModelArea = epSeries)
     legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["CS.prob"]], 5),
+                             round(results[["ep.prob"]], 5),
                              sep = ""))
 
   }
