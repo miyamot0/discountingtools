@@ -21,7 +21,7 @@
 #' @examples
 #' discountingModelSelection(data.frame(X=c(1,30,180,540,1080,2160),
 #' Y=c(1.0,0.9,0.8,0.7,0.6,0.4)),
-#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "cs",
+#' models=c("noise", "exponential", "hyperbolic", "bd", "mg", "rachlin", "ep",
 #' Figures = FALSE))
 #' @export
 discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
@@ -30,7 +30,7 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
     models <- c("noise", models)
   }
 
-  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "cs")
+  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "ep")
 
   if (length(intersect(models, mModels)) < 2) {
     stop("At least one model must be specified to perform a comparison")
@@ -228,7 +228,7 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
     }
   }
 
-  if ('mg' %in% models) {
+  if ('gm' %in% models) {
     startlnK <- seq(-12, 12, 1)
     starts <- seq(.01, 10, 0.01)
 
@@ -345,7 +345,7 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
     }
   }
 
-  if ('cs' %in% models) {
+  if ('ep' %in% models) {
     startlnK <- seq(-12, 12, 0.1)
     starts <- seq(.01, 1, 0.01)
 
@@ -377,19 +377,19 @@ discountingModelSelection <- function(dat, models = c("noise"), figures = FALSE,
     if (!is.character(try(nls(Y ~ exp(-(exp(lnk)*X)^s),
                               start = ini.par,
                               data = dat), silent=FALSE))) {
-      modelFitCS<-nls(Y ~ exp(-(exp(lnk)*X)^s),
+      modelFitep<-nls(Y ~ exp(-(exp(lnk)*X)^s),
                       start = ini.par,
                       data = dat)
 
-      tempList <- list(CS.lnk  = stats::coef(modelFitCS)[["lnk"]],
-                       CS.s  = stats::coef(modelFitCS)[["s"]],
-                       CS.RMSE = summary(modelFitCS)[["sigma"]],
-                       CS.BIC  = stats::BIC(modelFitCS),
-                       CS.AIC  = stats::AIC(modelFitCS))
+      tempList <- list(ep.lnk  = stats::coef(modelFitep)[["lnk"]],
+                       ep.s  = stats::coef(modelFitep)[["s"]],
+                       ep.RMSE = summary(modelFitep)[["sigma"]],
+                       ep.BIC  = stats::BIC(modelFitep),
+                       ep.AIC  = stats::AIC(modelFitep))
 
       returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(CS.BIC = tempList$CS.BIC))
+      bicList <- c(bicList, list(ep.BIC = tempList$ep.BIC))
     }
   }
 
