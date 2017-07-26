@@ -92,7 +92,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
                                   control = nls.lm.control(maxiter = 1000))
 
       tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]],
-                       exp.RMSE = summary(modelFitExponential)[["sigma"]],
+                       exp.RMSE = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec)),
                        exp.BIC  = stats::BIC(logLik.nls.lm(modelFitExponential)),
                        exp.AIC  = stats::AIC(logLik.nls.lm(modelFitExponential)))
 
@@ -145,7 +145,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
                                    control = nls.lm.control(maxiter = 1000))
 
       tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]],
-                       Mazur.RMSE = summary(modelFitHyperbolic)[["sigma"]],
+                       Mazur.RMSE = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec)),
                        Mazur.BIC  = stats::BIC(logLik.nls.lm(modelFitHyperbolic)),
                        Mazur.AIC  = stats::AIC(logLik.nls.lm(modelFitHyperbolic)))
 
@@ -210,7 +210,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
       tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
                        BD.delta  = modelFitBetaDelta$par[["delta"]],
-                       BD.RMSE = summary(modelFitBetaDelta)[["sigma"]],
+                       BD.RMSE = sqrt(modelFitBetaDelta$deviance/length(modelFitBetaDelta$fvec)),
                        BD.BIC  = stats::BIC(logLik.nls.lm(modelFitBetaDelta)),
                        BD.AIC  = stats::AIC(logLik.nls.lm(modelFitBetaDelta)))
 
@@ -271,7 +271,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
       tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
                        MG.s  = modelFitMyerson$par[["s"]],
-                       MG.RMSE = summary(modelFitMyerson)[["sigma"]],
+                       MG.RMSE = sqrt(modelFitMyerson$deviance/length(modelFitMyerson$fvec)),
                        MG.BIC  = stats::BIC(logLik.nls.lm(modelFitMyerson)),
                        MG.AIC  = stats::AIC(logLik.nls.lm(modelFitMyerson)))
 
@@ -332,7 +332,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
       tempList <- list(Rachlin.lnk  = modelFitRachlin$par[["lnk"]],
                        Rachlin.s  = modelFitRachlin$par[["s"]],
-                       Rachlin.RMSE = summary(modelFitRachlin)[["sigma"]],
+                       Rachlin.RMSE = sqrt(modelFitRachlin$deviance/length(modelFitRachlin$fvec)),
                        Rachlin.BIC  = stats::BIC(logLik.nls.lm(modelFitRachlin)),
                        Rachlin.AIC  = stats::AIC(logLik.nls.lm(modelFitRachlin)))
 
@@ -360,7 +360,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     SY <- rep(dat$Y,lengthS*lengthLnK)
 
-    projection <- exp(-(exp(SlnK)*dat$X)^Ss)#(1+exp(SlnK)*dat$X)^(-Ss)
+    projection <- exp(-(exp(SlnK)*dat$X)^Ss)
     sqResidual <- (SY-projection)^2
 
     for(j in 1:(lengthS*lengthLnK)){
@@ -393,7 +393,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
       tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
                        ep.s  = modelFitep$par[["s"]],
-                       ep.RMSE = summary(modelFitep)[["sigma"]],
+                       ep.RMSE = sqrt(modelFitep$deviance/length(modelFitep$fvec)),
                        ep.BIC  = stats::BIC(logLik.nls.lm(modelFitep)),
                        ep.AIC  = stats::AIC(logLik.nls.lm(modelFitep)))
 
@@ -466,11 +466,9 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
   ### Plotting here
   if (figures == "ed50") {
-    message("Plotting ED50 Data...")
     displayED50Figure(dat, returnList, lineSize)
 
   } else if (figures == "auc") {
-    message("Plotting Model Area Data...")
     displayAUCFigure(dat, returnList, lineSize)
 
   } else if (figures == "logauc") {
