@@ -840,28 +840,28 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
   lineColor <- "black"
 
-  if (results[["probable.model"]] == "hyperbolic") {
+  if (results[["probable.model"]] == "Mazur") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = hypSeries)
     legend = c(legend, paste("Hyperbolic: ",
                              round(results[["Mazur.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "exponential") {
+  } else if (results[["probable.model"]] == "exp") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = expSeries)
     legend = c(legend, paste("Exponential: ",
                              round(results[["exp.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "bd") {
+  } else if (results[["probable.model"]] == "BD") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = quaSeries)
     legend = c(legend, paste("BetaDelta: ",
                              round(results[["BD.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "mg") {
+  } else if (results[["probable.model"]] == "MG") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = myerSeries)
     legend = c(legend, paste("GreenMyerson: ",
@@ -1020,28 +1020,28 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
 
   lineColor <- "black"
 
-  if (results[["probable.model"]] == "hyperbolic") {
+  if (results[["probable.model"]] == "Mazur") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = hypSeries)
     legend = c(legend, paste("Hyperbolic: ",
                              round(results[["Mazur.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "exponential") {
+  } else if (results[["probable.model"]] == "exp") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = expSeries)
     legend = c(legend, paste("Exponential: ",
                              round(results[["exp.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "bd") {
+  } else if (results[["probable.model"]] == "BD") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = quaSeries)
     legend = c(legend, paste("BetaDelta: ",
                              round(results[["BD.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "mg") {
+  } else if (results[["probable.model"]] == "MG") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = myerSeries)
     legend = c(legend, paste("GreenMyerson: ",
