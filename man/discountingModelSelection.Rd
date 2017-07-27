@@ -5,7 +5,7 @@
 \title{Perform Discounting Model Selection}
 \usage{
 discountingModelSelection(dat, A = NULL, models = c("all"), idCol = "id",
-  figures = FALSE, summarize = FALSE, lineSize = 1)
+  detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1)
 }
 \arguments{
 \item{dat}{data frame with X column and Y column (0 <= Y <= 1)}
@@ -15,6 +15,8 @@ discountingModelSelection(dat, A = NULL, models = c("all"), idCol = "id",
 \item{models}{vector of models to include in selection}
 
 \item{idCol}{string content identifying participants}
+
+\item{detailed}{include additional output details in results}
 
 \item{figures}{OPTIONAL: show figure of results}
 

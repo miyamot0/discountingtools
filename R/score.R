@@ -11,6 +11,7 @@
 #' @param dat data frame with X column and Y column (0 <= Y <= 1)
 #' @param A OPTIONAL: Modify line sizes for figures
 #' @param models vector of models to include in selection
+#' @param detailed include additional output details in results
 #' @param figures OPTIONAL: show figure of results
 #' @param summarize OPTIONAL: Descriptive observations
 #' @param lineSize OPTIONAL: Modify line sizes for figures
@@ -19,7 +20,7 @@
 #' @importFrom stats lm nls
 #' @importFrom minpack.lm nls.lm nls.lm.control
 #' @return data frame of fitted model parameters
-discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), figures = FALSE, summarize = FALSE, lineSize = 1) {
+discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
   lengthX <- length(dat$X)
 
@@ -45,14 +46,24 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
   if(!is.character(modelFitNoise)) {
 
-    tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
-                     noise.RMSE = summary(modelFitNoise)[["sigma"]],
-                     noise.BIC  = stats::BIC(modelFitNoise),
-                     noise.AIC  = stats::AIC(modelFitNoise))
+    if (detailed == TRUE) {
+      tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
+                       noise.RMSE = summary(modelFitNoise)[["sigma"]],
+                       noise.BIC  = stats::BIC(modelFitNoise),
+                       noise.AIC  = stats::AIC(modelFitNoise))
 
-    returnList <- c(returnList, tempList)
+      returnList <- c(returnList, tempList)
 
-    bicList <- c(bicList, list(noise.BIC = tempList$noise.BIC))
+      bicList <- c(bicList, list(noise.BIC = tempList$noise.BIC))
+
+    } else {
+      tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]])
+
+      returnList <- c(returnList, tempList)
+
+      bicList <- c(bicList, list(noise.BIC = stats::BIC(modelFitNoise)))
+
+    }
 
   }
 
@@ -99,14 +110,29 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     if (!is.character(modelFitExponential)) {
 
-      tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]],
-                       exp.RMSE = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec)),
-                       exp.BIC  = stats::BIC(logLik.nls.lm(modelFitExponential)),
-                       exp.AIC  = stats::AIC(logLik.nls.lm(modelFitExponential)))
+      if (detailed == TRUE) {
+        tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]],
+                         exp.RMSE = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec)),
+                         exp.BIC  = stats::BIC(logLik.nls.lm(modelFitExponential)),
+                         exp.AIC  = stats::AIC(logLik.nls.lm(modelFitExponential)),
+                         exp.status = paste("Code:",
+                                            modelFitExponential$info,
+                                            "- Message:",
+                                            modelFitExponential$message,
+                                            sep = " "))
 
-      returnList <- c(returnList, tempList)
+        returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(exp.BIC = tempList$exp.BIC))
+        bicList <- c(bicList, list(exp.BIC = tempList$exp.BIC))
+
+      } else {
+        tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(exp.BIC = stats::BIC(logLik.nls.lm(modelFitExponential))))
+
+      }
 
     }
   }
@@ -154,15 +180,29 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     if (!is.character(modelFitHyperbolic)) {
 
-      tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]],
-                       Mazur.RMSE = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec)),
-                       Mazur.BIC  = stats::BIC(logLik.nls.lm(modelFitHyperbolic)),
-                       Mazur.AIC  = stats::AIC(logLik.nls.lm(modelFitHyperbolic)))
+      if (detailed == TRUE) {
+        tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]],
+                         Mazur.RMSE = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec)),
+                         Mazur.BIC  = stats::BIC(logLik.nls.lm(modelFitHyperbolic)),
+                         Mazur.AIC  = stats::AIC(logLik.nls.lm(modelFitHyperbolic)),
+                         Mazur.status = paste("Code:",
+                                              modelFitHyperbolic$info,
+                                              "- Message:",
+                                              modelFitHyperbolic$message,
+                                              sep = " "))
 
-      returnList <- c(returnList, tempList)
+        returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(Mazur.BIC = tempList$Mazur.BIC))
+        bicList <- c(bicList, list(Mazur.BIC = tempList$Mazur.BIC))
 
+      } else {
+        tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(Mazur.BIC = stats::BIC(logLik.nls.lm(modelFitHyperbolic))))
+
+      }
     }
   }
 
@@ -219,16 +259,31 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     if (!is.character(modelFitBetaDelta)) {
 
-      tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
-                       BD.delta  = modelFitBetaDelta$par[["delta"]],
-                       BD.RMSE = sqrt(modelFitBetaDelta$deviance/length(modelFitBetaDelta$fvec)),
-                       BD.BIC  = stats::BIC(logLik.nls.lm(modelFitBetaDelta)),
-                       BD.AIC  = stats::AIC(logLik.nls.lm(modelFitBetaDelta)))
+      if (detailed == TRUE) {
+        tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
+                         BD.delta  = modelFitBetaDelta$par[["delta"]],
+                         BD.RMSE = sqrt(modelFitBetaDelta$deviance/length(modelFitBetaDelta$fvec)),
+                         BD.BIC  = stats::BIC(logLik.nls.lm(modelFitBetaDelta)),
+                         BD.AIC  = stats::AIC(logLik.nls.lm(modelFitBetaDelta)),
+                         BD.status = paste("Code:",
+                                           modelFitBetaDelta$info,
+                                           "- Message:",
+                                           modelFitBetaDelta$message,
+                                           sep = " "))
 
-      returnList <- c(returnList, tempList)
+        returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(BD.BIC = tempList$BD.BIC))
+        bicList <- c(bicList, list(BD.BIC = tempList$BD.BIC))
 
+      } else {
+        tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
+                         BD.delta  = modelFitBetaDelta$par[["delta"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(BD.BIC = stats::BIC(logLik.nls.lm(modelFitBetaDelta))))
+
+      }
     }
   }
 
@@ -281,16 +336,31 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     if (!is.character(modelFitMyerson)) {
 
-      tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
-                       MG.s  = modelFitMyerson$par[["s"]],
-                       MG.RMSE = sqrt(modelFitMyerson$deviance/length(modelFitMyerson$fvec)),
-                       MG.BIC  = stats::BIC(logLik.nls.lm(modelFitMyerson)),
-                       MG.AIC  = stats::AIC(logLik.nls.lm(modelFitMyerson)))
+      if (detailed == TRUE) {
+        tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
+                         MG.s  = modelFitMyerson$par[["s"]],
+                         MG.RMSE = sqrt(modelFitMyerson$deviance/length(modelFitMyerson$fvec)),
+                         MG.BIC  = stats::BIC(logLik.nls.lm(modelFitMyerson)),
+                         MG.AIC  = stats::AIC(logLik.nls.lm(modelFitMyerson)),
+                         MG.status = paste("Code:",
+                                           modelFitMyerson$info,
+                                           "- Message:",
+                                           modelFitMyerson$message,
+                                           sep = " "))
 
-      returnList <- c(returnList, tempList)
+        returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(MG.BIC = tempList$MG.BIC))
+        bicList <- c(bicList, list(MG.BIC = tempList$MG.BIC))
 
+      } else {
+        tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
+                         MG.s  = modelFitMyerson$par[["s"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(MG.BIC = stats::BIC(logLik.nls.lm(modelFitMyerson))))
+
+      }
     }
   }
 
@@ -345,16 +415,31 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     if (!is.character(modelFitRachlin)) {
 
-      tempList <- list(Rachlin.lnk  = modelFitRachlin$par[["lnk"]],
-                       Rachlin.s  = modelFitRachlin$par[["s"]],
-                       Rachlin.RMSE = sqrt(modelFitRachlin$deviance/length(modelFitRachlin$fvec)),
-                       Rachlin.BIC  = stats::BIC(logLik.nls.lm(modelFitRachlin)),
-                       Rachlin.AIC  = stats::AIC(logLik.nls.lm(modelFitRachlin)))
+      if (detailed == TRUE) {
+        tempList <- list(Rachlin.lnk  = modelFitRachlin$par[["lnk"]],
+                         Rachlin.s  = modelFitRachlin$par[["s"]],
+                         Rachlin.RMSE = sqrt(modelFitRachlin$deviance/length(modelFitRachlin$fvec)),
+                         Rachlin.BIC  = stats::BIC(logLik.nls.lm(modelFitRachlin)),
+                         Rachlin.AIC  = stats::AIC(logLik.nls.lm(modelFitRachlin)),
+                         Rachlin.status = paste("Code:",
+                                                modelFitRachlin$info,
+                                                "- Message:",
+                                                modelFitRachlin$message,
+                                                sep = " "))
 
-      returnList <- c(returnList, tempList)
+        returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(Rachlin.BIC = tempList$Rachlin.BIC))
+        bicList <- c(bicList, list(Rachlin.BIC = tempList$Rachlin.BIC))
 
+      } else {
+        tempList <- list(Rachlin.lnk  = modelFitRachlin$par[["lnk"]],
+                         Rachlin.s  = modelFitRachlin$par[["s"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(Rachlin.BIC = stats::BIC(logLik.nls.lm(modelFitRachlin))))
+
+      }
     }
   }
 
@@ -409,15 +494,31 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
     if (!is.character(modelFitep)) {
 
-      tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
-                       ep.s  = modelFitep$par[["s"]],
-                       ep.RMSE = sqrt(modelFitep$deviance/length(modelFitep$fvec)),
-                       ep.BIC  = stats::BIC(logLik.nls.lm(modelFitep)),
-                       ep.AIC  = stats::AIC(logLik.nls.lm(modelFitep)))
+      if (detailed == TRUE) {
+        tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
+                         ep.s  = modelFitep$par[["s"]],
+                         ep.RMSE = sqrt(modelFitep$deviance/length(modelFitep$fvec)),
+                         ep.BIC  = stats::BIC(logLik.nls.lm(modelFitep)),
+                         ep.AIC  = stats::AIC(logLik.nls.lm(modelFitep)),
+                         ep.status = paste("Code:",
+                                           modelFitep$info,
+                                           "- Message:",
+                                           modelFitep$message,
+                                           sep = " "))
 
-      returnList <- c(returnList, tempList)
+        returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(ep.BIC = tempList$ep.BIC))
+        bicList <- c(bicList, list(ep.BIC = tempList$ep.BIC))
+
+      } else {
+        tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
+                         ep.s  = modelFitep$par[["s"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(ep.BIC = stats::BIC(logLik.nls.lm(modelFitep))))
+
+      }
     }
   }
 
@@ -433,7 +534,9 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
   }
 
-  returnList <- c(returnList, bfList)
+  if (detailed == TRUE) {
+    returnList <- c(returnList, bfList)
+  }
 
   ### probs
   probList <- list()
@@ -444,7 +547,9 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 
   }
 
-  returnList <- c(returnList, probList)
+  if (detailed == TRUE) {
+    returnList <- c(returnList, probList)
+  }
 
   mostProb <- names(probList[which.max(probList)])
   probableModel = gsub(".prob", "", mostProb)
@@ -469,7 +574,6 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
       message(paste("Rank #: ", i, " = ", gsub(".prob", "", names(probList)[i])));
       message(paste(" Probability", " = ", round(as.numeric(probList[i]), 6)));
       message(paste(" BIC", " = ", round(as.numeric(bicList[i]), 6)));
-
 
       if (i == 1) {
         message(paste(" Most Probable ln(ED50)", " = ", round(probableED50, 6)));
@@ -511,6 +615,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 #' @param A OPTIONAL: Modify line sizes for figures
 #' @param models vector of models to include in selection
 #' @param idCol string content identifying participants
+#' @param detailed include additional output details in results
 #' @param figures OPTIONAL: show figure of results
 #' @param summarize OPTIONAL: Descriptive observations
 #' @param lineSize OPTIONAL: Modify line sizes for figures
@@ -535,7 +640,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), fi
 #'                                      idCol = "ids",
 #'                                      A = 100)
 #' @export
-discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", figures = FALSE, summarize = FALSE, lineSize = 1) {
+discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
   mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "ep")
 
@@ -550,6 +655,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
     }
   } else {
     models <- mModels
+
   }
 
   if (!is.null(A) && is.numeric(A)) {
@@ -586,7 +692,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
     }
 
     result <- NA
-    result <- discountingModelSelectionCall(localDat, A, models, figures, summarize, lineSize)
+    result <- discountingModelSelectionCall(localDat, A, models, detailed, figures, summarize, lineSize)
 
     screenRes <- johnsonBickelScreen(localDat)
 
