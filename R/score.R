@@ -260,12 +260,12 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (!is.character(modelFitBetaDelta)) {
 
       if (detailed == TRUE) {
-        tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
-                         BD.delta  = modelFitBetaDelta$par[["delta"]],
-                         BD.RMSE = sqrt(modelFitBetaDelta$deviance/length(modelFitBetaDelta$fvec)),
-                         BD.BIC  = stats::BIC(logLik.nls.lm(modelFitBetaDelta)),
-                         BD.AIC  = stats::AIC(logLik.nls.lm(modelFitBetaDelta)),
-                         BD.status = paste("Code:",
+        tempList <- list(Laibson.beta  = modelFitBetaDelta$par[["beta"]],
+                         Laibson.delta  = modelFitBetaDelta$par[["delta"]],
+                         Laibson.RMSE = sqrt(modelFitBetaDelta$deviance/length(modelFitBetaDelta$fvec)),
+                         Laibson.BIC  = stats::BIC(logLik.nls.lm(modelFitBetaDelta)),
+                         Laibson.AIC  = stats::AIC(logLik.nls.lm(modelFitBetaDelta)),
+                         Laibson.status = paste("Code:",
                                            modelFitBetaDelta$info,
                                            "- Message:",
                                            modelFitBetaDelta$message,
@@ -273,15 +273,15 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(BD.BIC = tempList$BD.BIC))
+        bicList <- c(bicList, list(Laibson.BIC = tempList$Laibson.BIC))
 
       } else {
-        tempList <- list(BD.beta  = modelFitBetaDelta$par[["beta"]],
-                         BD.delta  = modelFitBetaDelta$par[["delta"]])
+        tempList <- list(Laibson.beta  = modelFitBetaDelta$par[["beta"]],
+                         Laibson.delta  = modelFitBetaDelta$par[["delta"]])
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(BD.BIC = stats::BIC(logLik.nls.lm(modelFitBetaDelta))))
+        bicList <- c(bicList, list(Laibson.BIC = stats::BIC(logLik.nls.lm(modelFitBetaDelta))))
 
       }
     }
@@ -337,12 +337,12 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (!is.character(modelFitMyerson)) {
 
       if (detailed == TRUE) {
-        tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
-                         MG.s  = modelFitMyerson$par[["s"]],
-                         MG.RMSE = sqrt(modelFitMyerson$deviance/length(modelFitMyerson$fvec)),
-                         MG.BIC  = stats::BIC(logLik.nls.lm(modelFitMyerson)),
-                         MG.AIC  = stats::AIC(logLik.nls.lm(modelFitMyerson)),
-                         MG.status = paste("Code:",
+        tempList <- list(GreenMyerson.lnk  = modelFitMyerson$par[["lnk"]],
+                         GreenMyerson.s  = modelFitMyerson$par[["s"]],
+                         GreenMyerson.RMSE = sqrt(modelFitMyerson$deviance/length(modelFitMyerson$fvec)),
+                         GreenMyerson.BIC  = stats::BIC(logLik.nls.lm(modelFitMyerson)),
+                         GreenMyerson.AIC  = stats::AIC(logLik.nls.lm(modelFitMyerson)),
+                         GreenMyerson.status = paste("Code:",
                                            modelFitMyerson$info,
                                            "- Message:",
                                            modelFitMyerson$message,
@@ -350,15 +350,15 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(MG.BIC = tempList$MG.BIC))
+        bicList <- c(bicList, list(GreenMyerson.BIC = tempList$GreenMyerson.BIC))
 
       } else {
-        tempList <- list(MG.lnk  = modelFitMyerson$par[["lnk"]],
-                         MG.s  = modelFitMyerson$par[["s"]])
+        tempList <- list(GreenMyerson.lnk  = modelFitMyerson$par[["lnk"]],
+                         GreenMyerson.s  = modelFitMyerson$par[["s"]])
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(MG.BIC = stats::BIC(logLik.nls.lm(modelFitMyerson))))
+        bicList <- c(bicList, list(GreenMyerson.BIC = stats::BIC(logLik.nls.lm(modelFitMyerson))))
 
       }
     }
@@ -495,12 +495,12 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (!is.character(modelFitep)) {
 
       if (detailed == TRUE) {
-        tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
-                         ep.s  = modelFitep$par[["s"]],
-                         ep.RMSE = sqrt(modelFitep$deviance/length(modelFitep$fvec)),
-                         ep.BIC  = stats::BIC(logLik.nls.lm(modelFitep)),
-                         ep.AIC  = stats::AIC(logLik.nls.lm(modelFitep)),
-                         ep.status = paste("Code:",
+        tempList <- list(EbertPrelec.lnk  = modelFitep$par[["lnk"]],
+                         EbertPrelec.s  = modelFitep$par[["s"]],
+                         EbertPrelec.RMSE = sqrt(modelFitep$deviance/length(modelFitep$fvec)),
+                         EbertPrelec.BIC  = stats::BIC(logLik.nls.lm(modelFitep)),
+                         EbertPrelec.AIC  = stats::AIC(logLik.nls.lm(modelFitep)),
+                         EbertPrelec.status = paste("Code:",
                                            modelFitep$info,
                                            "- Message:",
                                            modelFitep$message,
@@ -508,15 +508,15 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(ep.BIC = tempList$ep.BIC))
+        bicList <- c(bicList, list(EbertPrelec.BIC = tempList$EbertPrelec.BIC))
 
       } else {
-        tempList <- list(ep.lnk  = modelFitep$par[["lnk"]],
-                         ep.s  = modelFitep$par[["s"]])
+        tempList <- list(EbertPrelec.lnk  = modelFitep$par[["lnk"]],
+                         EbertPrelec.s  = modelFitep$par[["s"]])
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(ep.BIC = stats::BIC(logLik.nls.lm(modelFitep))))
+        bicList <- c(bicList, list(EbertPrelec.BIC = stats::BIC(logLik.nls.lm(modelFitep))))
 
       }
     }

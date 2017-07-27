@@ -223,13 +223,13 @@ getED50 <- function(dat, results) {
     returnValue <- log(1/(exp(results[["Hyperbolic.lnk"]])))
   } else if (results[["probable.model"]] == "Exponential") {
     returnValue <- log(log(2)/exp(results[["Exponential.lnk"]]))
-  } else if (results[["probable.model"]] == "BD") {
-    returnValue <- log(log( (1/(2*results[["BD.beta"]])),base=results[["BD.delta"]]))
-  } else if (results[["probable.model"]] == "MG") {
-    returnValue <- log( (2^(1/results[["MG.s"]])-1)/exp(results[["MG.lnk"]]))
+  } else if (results[["probable.model"]] == "Laibson") {
+    returnValue <- log(log( (1/(2*results[["Laibson.beta"]])),base=results[["Laibson.delta"]]))
+  } else if (results[["probable.model"]] == "GreenMyerson") {
+    returnValue <- log( (2^(1/results[["GreenMyerson.s"]])-1)/exp(results[["GreenMyerson.lnk"]]))
   } else if (results[["probable.model"]] == "Rachlin") {
     returnValue <- log( (1/(exp(results[["Rachlin.lnk"]])))^(1/results[["Rachlin.s"]]))
-  } else if (results[["probable.model"]] == "ep") {
+  } else if (results[["probable.model"]] == "EbertPrelec") {
     returnValue <- getED50ep(dat, results)
   }
 
@@ -391,9 +391,9 @@ getED50ep <- function(dat, results) {
   highDelay <- max(dat$X)*2
 
   for (i in seq(1, 20)) {
-    lowEst <- integrandEbertPrelec(lowDelay, results[["ep.lnk"]], results[["ep.s"]])
-    midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["ep.lnk"]], results[["ep.s"]])
-    highEst <- integrandEbertPrelec(highDelay, results[["ep.lnk"]], results[["ep.s"]])
+    lowEst <- integrandEbertPrelec(lowDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
+    midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
+    highEst <- integrandEbertPrelec(highDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
 
     if (lowEst > 0.5 && midEst > 0.5) {
       # Above 50% mark range
@@ -441,19 +441,19 @@ getModelAUC <- function(dat, results) {
                              upper = max(dat$X),
                              lnK = results[["Exponential.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "BD") {
+  } else if (results[["probable.model"]] == "Laibson") {
     returnValue <- stats::integrate(integrandBetaDelta,
                              lower = min(dat$X),
                              upper = max(dat$X),
-                             beta = results[["BD.beta"]],
-                             delta = results[["BD.delta"]])$value/maximumArea
+                             beta = results[["Laibson.beta"]],
+                             delta = results[["Laibson.delta"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "MG") {
+  } else if (results[["probable.model"]] == "GreenMyerson") {
     returnValue <- stats::integrate(integrandMyerson,
                              lower = min(dat$X),
                              upper = max(dat$X),
-                             lnK = results[["MG.lnk"]],
-                             s = results[["MG.s"]])$value/maximumArea
+                             lnK = results[["GreenMyerson.lnk"]],
+                             s = results[["GreenMyerson.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "Rachlin") {
     returnValue <- stats::integrate(integrandRachlin,
@@ -462,12 +462,12 @@ getModelAUC <- function(dat, results) {
                              lnK = results[["Rachlin.lnk"]],
                              s = results[["Rachlin.s"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "ep") {
+  } else if (results[["probable.model"]] == "EbertPrelec") {
     returnValue <- stats::integrate(integrandEbertPrelec,
                                     lower = min(dat$X),
                                     upper = max(dat$X),
-                                    lnK = results[["ep.lnk"]],
-                                    s = results[["ep.s"]])$value/maximumArea
+                                    lnK = results[["EbertPrelec.lnk"]],
+                                    s = results[["EbertPrelec.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "noise") {
     returnValue <- results[["noise.mean"]]
@@ -504,19 +504,19 @@ getModelAUCLog10Scaled <- function(dat, results) {
                              upper = log10(max(dat$X)),
                              lnK = results[["Exponential.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "BD") {
+  } else if (results[["probable.model"]] == "Laibson") {
     returnValue <- stats::integrate(integrandBetaDeltaLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
-                             beta = results[["BD.beta"]],
-                             delta = results[["BD.delta"]])$value/maximumArea
+                             beta = results[["Laibson.beta"]],
+                             delta = results[["Laibson.delta"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "MG") {
+  } else if (results[["probable.model"]] == "GreenMyerson") {
     returnValue <- stats::integrate(integrandMyersonLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
-                             lnK = results[["MG.lnk"]],
-                             s = results[["MG.s"]])$value/maximumArea
+                             lnK = results[["GreenMyerson.lnk"]],
+                             s = results[["GreenMyerson.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "Rachlin") {
     returnValue <- stats::integrate(integrandRachlinLog,
@@ -525,12 +525,12 @@ getModelAUCLog10Scaled <- function(dat, results) {
                              lnK = results[["Rachlin.lnk"]],
                              s = results[["Rachlin.s"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "ep") {
+  } else if (results[["probable.model"]] == "EbertPrelec") {
     returnValue <- stats::integrate(integrandEbertPrelecLog,
                                     lower = log10(min(dat$X)),
                                     upper = log10(max(dat$X)),
-                                    lnK = results[["ep.lnk"]],
-                                    s = results[["ep.s"]])$value/maximumArea
+                                    lnK = results[["EbertPrelec.lnk"]],
+                                    s = results[["EbertPrelec.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "noise") {
     returnValue <- results[["noise.mean"]]
@@ -591,20 +591,20 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "green")
   }
 
-  if ("BD.beta" %in% names(results)) {
-    betaConstant <- results[["BD.beta"]]
-    deltaConstant <- results[["BD.delta"]]
-    legend = c(legend, paste("BetaDelta: ",
-                             round(results[["BD.prob"]], 5),
+  if ("Laibson.beta" %in% names(results)) {
+    betaConstant <- results[["Laibson.beta"]]
+    deltaConstant <- results[["Laibson.delta"]]
+    legend = c(legend, paste("Laibson: ",
+                             round(results[["Laibson.prob"]], 5),
                              sep = ""))
     colors = c(colors, "brown")
   }
 
-  if ("MG.lnk" %in% names(results)) {
-    myerK <- results[["MG.lnk"]]
-    myerS <- results[["MG.s"]]
+  if ("GreenMyerson.lnk" %in% names(results)) {
+    myerK <- results[["GreenMyerson.lnk"]]
+    myerS <- results[["GreenMyerson.s"]]
     legend = c(legend, paste("GreenMyerson: ",
-                             round(results[["MG.prob"]], 5),
+                             round(results[["GreenMyerson.prob"]], 5),
                              sep = ""))
     colors = c(colors, "purple")
   }
@@ -618,11 +618,11 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "orange")
   }
 
-  if ("ep.lnk" %in% names(results)) {
-    epK <- results[["ep.lnk"]]
-    epS <- results[["ep.s"]]
+  if ("EbertPrelec.lnk" %in% names(results)) {
+    epK <- results[["EbertPrelec.lnk"]]
+    epS <- results[["EbertPrelec.s"]]
     legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["ep.prob"]], 5),
+                             round(results[["EbertPrelec.prob"]], 5),
                              sep = ""))
     colors = c(colors, "black")
   }
@@ -722,10 +722,10 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           prob = c(results[["noise.prob"]],
                                    results[["Exponential.prob"]],
                                    results[["Hyperbolic.prob"]],
-                                   results[["BD.prob"]],
-                                   results[["MG.prob"]],
+                                   results[["Laibson.prob"]],
+                                   results[["GreenMyerson.prob"]],
                                    results[["Rachlin.prob"]],
-                                   results[["ep.prob"]]))
+                                   results[["EbertPrelec.prob"]]))
 
   sortShowFrame <- mShowFrame[order(-mShowFrame$prob),]
 
@@ -781,14 +781,14 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     ainslieK <- results[["Hyperbolic.lnk"]]
   }
 
-  if ("BD.beta" %in% names(results)) {
-    betaConstant <- results[["BD.beta"]]
-    deltaConstant <- results[["BD.delta"]]
+  if ("Laibson.beta" %in% names(results)) {
+    betaConstant <- results[["Laibson.beta"]]
+    deltaConstant <- results[["Laibson.delta"]]
   }
 
-  if ("MG.lnk" %in% names(results)) {
-    myerK <- results[["MG.lnk"]]
-    myerS <- results[["MG.s"]]
+  if ("GreenMyerson.lnk" %in% names(results)) {
+    myerK <- results[["GreenMyerson.lnk"]]
+    myerS <- results[["GreenMyerson.s"]]
   }
 
   if ("Rachlin.lnk" %in% names(results)) {
@@ -796,9 +796,9 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     rachS <- results[["Rachlin.s"]]
   }
 
-  if ("ep.lnk" %in% names(results)) {
-    epK <- results[["ep.lnk"]]
-    epS <- results[["ep.s"]]
+  if ("EbertPrelec.lnk" %in% names(results)) {
+    epK <- results[["EbertPrelec.lnk"]]
+    epS <- results[["EbertPrelec.s"]]
   }
 
   for (delay in delaySeries)
@@ -854,18 +854,18 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Exponential.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "BD") {
+  } else if (results[["probable.model"]] == "Laibson") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = quaSeries)
-    legend = c(legend, paste("BetaDelta: ",
-                             round(results[["BD.prob"]], 5),
+    legend = c(legend, paste("Laibson: ",
+                             round(results[["Laibson.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "MG") {
+  } else if (results[["probable.model"]] == "GreenMyerson") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = myerSeries)
     legend = c(legend, paste("GreenMyerson: ",
-                             round(results[["MG.prob"]], 5),
+                             round(results[["GreenMyerson.prob"]], 5),
                              sep = ""))
 
   } else if (results[["probable.model"]] == "Rachlin") {
@@ -875,11 +875,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Rachlin.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "ep") {
+  } else if (results[["probable.model"]] == "EbertPrelec") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = epSeries)
     legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["ep.prob"]], 5),
+                             round(results[["EbertPrelec.prob"]], 5),
                              sep = ""))
 
   }
@@ -961,14 +961,14 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     ainslieK <- results[["Hyperbolic.lnk"]]
   }
 
-  if ("BD.beta" %in% names(results)) {
-    betaConstant <- results[["BD.beta"]]
-    deltaConstant <- results[["BD.delta"]]
+  if ("Laibson.beta" %in% names(results)) {
+    betaConstant <- results[["Laibson.beta"]]
+    deltaConstant <- results[["Laibson.delta"]]
   }
 
-  if ("MG.lnk" %in% names(results)) {
-    myerK <- results[["MG.lnk"]]
-    myerS <- results[["MG.s"]]
+  if ("GreenMyerson.lnk" %in% names(results)) {
+    myerK <- results[["GreenMyerson.lnk"]]
+    myerS <- results[["GreenMyerson.s"]]
   }
 
   if ("Rachlin.lnk" %in% names(results)) {
@@ -976,9 +976,9 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     rachS <- results[["Rachlin.s"]]
   }
 
-  if ("ep.lnk" %in% names(results)) {
-    epK <- results[["ep.lnk"]]
-    epS <- results[["ep.s"]]
+  if ("EbertPrelec.lnk" %in% names(results)) {
+    epK <- results[["EbertPrelec.lnk"]]
+    epS <- results[["EbertPrelec.s"]]
   }
 
   for (delay in delaySeries)
@@ -1034,18 +1034,18 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Exponential.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "BD") {
+  } else if (results[["probable.model"]] == "Laibson") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = quaSeries)
-    legend = c(legend, paste("BetaDelta: ",
-                             round(results[["BD.prob"]], 5),
+    legend = c(legend, paste("Laibson: ",
+                             round(results[["Laibson.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "MG") {
+  } else if (results[["probable.model"]] == "GreenMyerson") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = myerSeries)
     legend = c(legend, paste("GreenMyerson: ",
-                             round(results[["MG.prob"]], 5),
+                             round(results[["GreenMyerson.prob"]], 5),
                              sep = ""))
 
   } else if (results[["probable.model"]] == "Rachlin") {
@@ -1055,11 +1055,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Rachlin.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "ep") {
+  } else if (results[["probable.model"]] == "EbertPrelec") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = epSeries)
     legend = c(legend, paste("EbertPrelec: ",
-                             round(results[["ep.prob"]], 5),
+                             round(results[["EbertPrelec.prob"]], 5),
                              sep = ""))
 
   }
