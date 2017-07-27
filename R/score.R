@@ -111,11 +111,11 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (!is.character(modelFitExponential)) {
 
       if (detailed == TRUE) {
-        tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]],
-                         exp.RMSE = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec)),
-                         exp.BIC  = stats::BIC(logLik.nls.lm(modelFitExponential)),
-                         exp.AIC  = stats::AIC(logLik.nls.lm(modelFitExponential)),
-                         exp.status = paste("Code:",
+        tempList <- list(Exponential.lnk = modelFitExponential$par[["lnk"]],
+                         Exponential.RMSE = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec)),
+                         Exponential.BIC  = stats::BIC(logLik.nls.lm(modelFitExponential)),
+                         Exponential.AIC  = stats::AIC(logLik.nls.lm(modelFitExponential)),
+                         Exponential.status = paste("Code:",
                                             modelFitExponential$info,
                                             "- Message:",
                                             modelFitExponential$message,
@@ -123,14 +123,14 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(exp.BIC = tempList$exp.BIC))
+        bicList <- c(bicList, list(Exponential.BIC = tempList$Exponential.BIC))
 
       } else {
-        tempList <- list(exp.lnk = modelFitExponential$par[["lnk"]])
+        tempList <- list(Exponential.lnk = modelFitExponential$par[["lnk"]])
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(exp.BIC = stats::BIC(logLik.nls.lm(modelFitExponential))))
+        bicList <- c(bicList, list(Exponential.BIC = stats::BIC(logLik.nls.lm(modelFitExponential))))
 
       }
 

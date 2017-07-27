@@ -221,8 +221,8 @@ getED50 <- function(dat, results) {
 
   if (results[["probable.model"]] == "Hyperbolic") {
     returnValue <- log(1/(exp(results[["Hyperbolic.lnk"]])))
-  } else if (results[["probable.model"]] == "exp") {
-    returnValue <- log(log(2)/exp(results[["exp.lnk"]]))
+  } else if (results[["probable.model"]] == "Exponential") {
+    returnValue <- log(log(2)/exp(results[["Exponential.lnk"]]))
   } else if (results[["probable.model"]] == "BD") {
     returnValue <- log(log( (1/(2*results[["BD.beta"]])),base=results[["BD.delta"]]))
   } else if (results[["probable.model"]] == "MG") {
@@ -435,11 +435,11 @@ getModelAUC <- function(dat, results) {
                              upper = max(dat$X),
                              lnK = results[["Hyperbolic.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "exp") {
+  } else if (results[["probable.model"]] == "Exponential") {
     returnValue <- stats::integrate(integrandExp,
                              lower = min(dat$X),
                              upper = max(dat$X),
-                             lnK = results[["exp.lnk"]])$value/maximumArea
+                             lnK = results[["Exponential.lnk"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "BD") {
     returnValue <- stats::integrate(integrandBetaDelta,
@@ -498,11 +498,11 @@ getModelAUCLog10Scaled <- function(dat, results) {
                              upper = log10(max(dat$X)),
                              lnK = results[["Hyperbolic.lnk"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "exp") {
+  } else if (results[["probable.model"]] == "Exponential") {
     returnValue <- stats::integrate(integrandExpLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
-                             lnK = results[["exp.lnk"]])$value/maximumArea
+                             lnK = results[["Exponential.lnk"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "BD") {
     returnValue <- stats::integrate(integrandBetaDeltaLog,
@@ -575,10 +575,10 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
   colors = c("red")
 
-  if ("exp.lnk" %in% names(results)) {
-    samuelsonK <- results[["exp.lnk"]]
+  if ("Exponential.lnk" %in% names(results)) {
+    samuelsonK <- results[["Exponential.lnk"]]
     legend = c(legend, paste("Exponential: ",
-                             round(results[["exp.prob"]], 5),
+                             round(results[["Exponential.prob"]], 5),
                              sep = ""))
     colors = c(colors, "blue")
   }
@@ -720,7 +720,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   mShowFrame = data.frame(legend = legend,
                           col = colors,
                           prob = c(results[["noise.prob"]],
-                                   results[["exp.prob"]],
+                                   results[["Exponential.prob"]],
                                    results[["Hyperbolic.prob"]],
                                    results[["BD.prob"]],
                                    results[["MG.prob"]],
@@ -773,8 +773,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   legend = c("Empirical: ")
   colors = c("black", "black")
 
-  if ("exp.lnk" %in% names(results)) {
-    samuelsonK <- results[["exp.lnk"]]
+  if ("Exponential.lnk" %in% names(results)) {
+    samuelsonK <- results[["Exponential.lnk"]]
   }
 
   if ("Hyperbolic.lnk" %in% names(results)) {
@@ -847,11 +847,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Hyperbolic.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "exp") {
+  } else if (results[["probable.model"]] == "Exponential") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = expSeries)
     legend = c(legend, paste("Exponential: ",
-                             round(results[["exp.prob"]], 5),
+                             round(results[["Exponential.prob"]], 5),
                              sep = ""))
 
   } else if (results[["probable.model"]] == "BD") {
@@ -953,8 +953,8 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   legend = c("Empirical:")
   colors = c("black", "black")
 
-  if ("exp.lnk" %in% names(results)) {
-    samuelsonK <- results[["exp.lnk"]]
+  if ("Exponential.lnk" %in% names(results)) {
+    samuelsonK <- results[["Exponential.lnk"]]
   }
 
   if ("Hyperbolic.lnk" %in% names(results)) {
@@ -1027,11 +1027,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["Hyperbolic.prob"]], 5),
                              sep = ""))
 
-  } else if (results[["probable.model"]] == "exp") {
+  } else if (results[["probable.model"]] == "Exponential") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = expSeries)
     legend = c(legend, paste("Exponential: ",
-                             round(results[["exp.prob"]], 5),
+                             round(results[["Exponential.prob"]], 5),
                              sep = ""))
 
   } else if (results[["probable.model"]] == "BD") {
