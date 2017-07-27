@@ -219,8 +219,8 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 getED50 <- function(dat, results) {
   returnValue <- NaN
 
-  if (results[["probable.model"]] == "Mazur") {
-    returnValue <- log(1/(exp(results[["Mazur.lnk"]])))
+  if (results[["probable.model"]] == "Hyperbolic") {
+    returnValue <- log(1/(exp(results[["Hyperbolic.lnk"]])))
   } else if (results[["probable.model"]] == "exp") {
     returnValue <- log(log(2)/exp(results[["exp.lnk"]]))
   } else if (results[["probable.model"]] == "BD") {
@@ -429,11 +429,11 @@ getModelAUC <- function(dat, results) {
 
   returnValue <- NaN
 
-  if (results[["probable.model"]] == "Mazur") {
+  if (results[["probable.model"]] == "Hyperbolic") {
     returnValue <- stats::integrate(integrandHyp,
                              lower = min(dat$X),
                              upper = max(dat$X),
-                             lnK = results[["Mazur.lnk"]])$value/maximumArea
+                             lnK = results[["Hyperbolic.lnk"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "exp") {
     returnValue <- stats::integrate(integrandExp,
@@ -492,11 +492,11 @@ getModelAUCLog10Scaled <- function(dat, results) {
 
   returnValue <- NaN
 
-  if (results[["probable.model"]] == "Mazur") {
+  if (results[["probable.model"]] == "Hyperbolic") {
     returnValue <- stats::integrate(integrandHypLog,
                              lower = log10(min(dat$X)),
                              upper = log10(max(dat$X)),
-                             lnK = results[["Mazur.lnk"]])$value/maximumArea
+                             lnK = results[["Hyperbolic.lnk"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "exp") {
     returnValue <- stats::integrate(integrandExpLog,
@@ -583,10 +583,10 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "blue")
   }
 
-  if ("Mazur.lnk" %in% names(results)) {
-    ainslieK <- results[["Mazur.lnk"]]
+  if ("Hyperbolic.lnk" %in% names(results)) {
+    ainslieK <- results[["Hyperbolic.lnk"]]
     legend = c(legend, paste("Hyperbolic: ",
-                             round(results[["Mazur.prob"]], 5),
+                             round(results[["Hyperbolic.prob"]], 5),
                              sep = ""))
     colors = c(colors, "green")
   }
@@ -721,7 +721,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           col = colors,
                           prob = c(results[["noise.prob"]],
                                    results[["exp.prob"]],
-                                   results[["Mazur.prob"]],
+                                   results[["Hyperbolic.prob"]],
                                    results[["BD.prob"]],
                                    results[["MG.prob"]],
                                    results[["Rachlin.prob"]],
@@ -777,8 +777,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     samuelsonK <- results[["exp.lnk"]]
   }
 
-  if ("Mazur.lnk" %in% names(results)) {
-    ainslieK <- results[["Mazur.lnk"]]
+  if ("Hyperbolic.lnk" %in% names(results)) {
+    ainslieK <- results[["Hyperbolic.lnk"]]
   }
 
   if ("BD.beta" %in% names(results)) {
@@ -840,11 +840,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
   lineColor <- "black"
 
-  if (results[["probable.model"]] == "Mazur") {
+  if (results[["probable.model"]] == "Hyperbolic") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = hypSeries)
     legend = c(legend, paste("Hyperbolic: ",
-                             round(results[["Mazur.prob"]], 5),
+                             round(results[["Hyperbolic.prob"]], 5),
                              sep = ""))
 
   } else if (results[["probable.model"]] == "exp") {
@@ -957,8 +957,8 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     samuelsonK <- results[["exp.lnk"]]
   }
 
-  if ("Mazur.lnk" %in% names(results)) {
-    ainslieK <- results[["Mazur.lnk"]]
+  if ("Hyperbolic.lnk" %in% names(results)) {
+    ainslieK <- results[["Hyperbolic.lnk"]]
   }
 
   if ("BD.beta" %in% names(results)) {
@@ -1020,11 +1020,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
 
   lineColor <- "black"
 
-  if (results[["probable.model"]] == "Mazur") {
+  if (results[["probable.model"]] == "Hyperbolic") {
     totalFrame = data.frame(Delays = delaySeries,
                             ModelArea = hypSeries)
     legend = c(legend, paste("Hyperbolic: ",
-                             round(results[["Mazur.prob"]], 5),
+                             round(results[["Hyperbolic.prob"]], 5),
                              sep = ""))
 
   } else if (results[["probable.model"]] == "exp") {

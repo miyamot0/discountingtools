@@ -181,11 +181,11 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (!is.character(modelFitHyperbolic)) {
 
       if (detailed == TRUE) {
-        tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]],
-                         Mazur.RMSE = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec)),
-                         Mazur.BIC  = stats::BIC(logLik.nls.lm(modelFitHyperbolic)),
-                         Mazur.AIC  = stats::AIC(logLik.nls.lm(modelFitHyperbolic)),
-                         Mazur.status = paste("Code:",
+        tempList <- list(Hyperbolic.lnk  = modelFitHyperbolic$par[["lnk"]],
+                         Hyperbolic.RMSE = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec)),
+                         Hyperbolic.BIC  = stats::BIC(logLik.nls.lm(modelFitHyperbolic)),
+                         Hyperbolic.AIC  = stats::AIC(logLik.nls.lm(modelFitHyperbolic)),
+                         Hyperbolic.status = paste("Code:",
                                               modelFitHyperbolic$info,
                                               "- Message:",
                                               modelFitHyperbolic$message,
@@ -193,14 +193,14 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(Mazur.BIC = tempList$Mazur.BIC))
+        bicList <- c(bicList, list(Hyperbolic.BIC = tempList$Hyperbolic.BIC))
 
       } else {
-        tempList <- list(Mazur.lnk  = modelFitHyperbolic$par[["lnk"]])
+        tempList <- list(Hyperbolic.lnk  = modelFitHyperbolic$par[["lnk"]])
 
         returnList <- c(returnList, tempList)
 
-        bicList <- c(bicList, list(Mazur.BIC = stats::BIC(logLik.nls.lm(modelFitHyperbolic))))
+        bicList <- c(bicList, list(Hyperbolic.BIC = stats::BIC(logLik.nls.lm(modelFitHyperbolic))))
 
       }
     }
@@ -547,9 +547,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
   }
 
-  if (detailed == TRUE) {
-    returnList <- c(returnList, probList)
-  }
+  returnList <- c(returnList, probList)
 
   mostProb <- names(probList[which.max(probList)])
   probableModel = gsub(".prob", "", mostProb)
