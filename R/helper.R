@@ -469,7 +469,7 @@ getModelAUC <- function(dat, results) {
                                     lnK = results[["EbertPrelec.lnk"]],
                                     s = results[["EbertPrelec.s"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "noise") {
+  } else if (results[["probable.model"]] == "Noise") {
     returnValue <- results[["Noise.mean"]]
   }
 
