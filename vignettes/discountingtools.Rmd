@@ -1,0 +1,50 @@
+---
+title: "discountingtools"
+author: "Shawn Gilroy <shawn.gilroy@temple.edu>"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The discountingtools package is a collection of methods used to perform analyses in delay discounting research.  Among the methods included, this package performs screening of data for systematicity (CITE), applies nonlinear model fitting for a range of conceptual models, and performs a model averaging operation to determine the most probable, true model (CITE).
+
+Discounting Model Candidates
+
+* Noise Model
+
+* Exponential (Samuelson, 1937)
+
+* Hyperbolic (Mazur, 1987)
+
+* Quasi-Hyperbolic - Beta-Delta Exponential (Laibson, 1997)
+
+* Green & Myerson - Two-parameter Hyperboloid (Green & Myerson, 2004)
+
+* Rachlin - Two-parameter Hyperboloid (Rachlin, 2006)
+
+* Ebert & Prelec - Constant-Sensitivity Model (Ebert & Prelec, 2007)
+
+The model averaging operation is performed on all (specified) models candidates to determine a probable, true model and further analyses proceed using the probable model.  A general index of discounting is derived from the most probable, true model for each series.
+
+ctrl shift k
+
+## Vignette Info
+
+Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+## Effective Delay 50
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+# TODO
+
+Figures
+
+Sample Output
+
+Examples
+
+Model Formulas

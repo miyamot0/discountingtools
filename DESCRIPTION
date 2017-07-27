@@ -10,3 +10,6 @@ LazyData: true
 Imports: stats
 URL: http://www.smallnstats.com
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
