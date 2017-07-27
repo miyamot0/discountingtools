@@ -47,21 +47,21 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
   if(!is.character(modelFitNoise)) {
 
     if (detailed == TRUE) {
-      tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
-                       noise.RMSE = summary(modelFitNoise)[["sigma"]],
-                       noise.BIC  = stats::BIC(modelFitNoise),
-                       noise.AIC  = stats::AIC(modelFitNoise))
+      tempList <- list(Noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
+                       Noise.RMSE = summary(modelFitNoise)[["sigma"]],
+                       Noise.BIC  = stats::BIC(modelFitNoise),
+                       Noise.AIC  = stats::AIC(modelFitNoise))
 
       returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(noise.BIC = tempList$noise.BIC))
+      bicList <- c(bicList, list(Noise.BIC = tempList$Noise.BIC))
 
     } else {
-      tempList <- list(noise.mean = modelFitNoise$coefficients[["(Intercept)"]])
+      tempList <- list(Noise.mean = modelFitNoise$coefficients[["(Intercept)"]])
 
       returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(noise.BIC = stats::BIC(modelFitNoise)))
+      bicList <- c(bicList, list(Noise.BIC = stats::BIC(modelFitNoise)))
 
     }
 
@@ -528,7 +528,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
   for (i in 1:length(bicList)) {
     bfName = gsub("BIC", "BF", names(bicList)[i])
-    bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["noise.BIC"]]))
+    bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["Noise.BIC"]]))
 
     bfSum <- bfSum + bfList[[bfName]]
 

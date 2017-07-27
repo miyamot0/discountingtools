@@ -470,7 +470,7 @@ getModelAUC <- function(dat, results) {
                                     s = results[["EbertPrelec.s"]])$value/maximumArea
 
   } else if (results[["probable.model"]] == "noise") {
-    returnValue <- results[["noise.mean"]]
+    returnValue <- results[["Noise.mean"]]
   }
 
   returnValue
@@ -532,8 +532,8 @@ getModelAUCLog10Scaled <- function(dat, results) {
                                     lnK = results[["EbertPrelec.lnk"]],
                                     s = results[["EbertPrelec.s"]])$value/maximumArea
 
-  } else if (results[["probable.model"]] == "noise") {
-    returnValue <- results[["noise.mean"]]
+  } else if (results[["probable.model"]] == "Noise") {
+    returnValue <- results[["Noise.mean"]]
   }
 
   returnValue
@@ -572,7 +572,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
 
-  legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
+  legend = c(paste("Noise: ", round(results[["Noise.prob"]], 5), sep = ""))
   colors = c("red")
 
   if ("Exponential.lnk" %in% names(results)) {
@@ -674,7 +674,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           HyperboloidR = rachSeries,
                           EbertPrelec = epSeries)
 
-  totalFrame$Noise <- results[["noise.mean"]]
+  totalFrame$Noise <- results[["Noise.mean"]]
 
   graphics::plot(totalFrame$Delays, totalFrame$Noise, type = "l", ylim = c(0,1),
        main = paste("Participant ", dat$id[1],
@@ -719,7 +719,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
 
   mShowFrame = data.frame(legend = legend,
                           col = colors,
-                          prob = c(results[["noise.prob"]],
+                          prob = c(results[["Noise.prob"]],
                                    results[["Exponential.prob"]],
                                    results[["Hyperbolic.prob"]],
                                    results[["Laibson.prob"]],
@@ -884,10 +884,10 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
   } else {
     totalFrame = data.frame(Delays = delaySeries)
-    totalFrame$ModelArea <- results[["noise.mean"]]
+    totalFrame$ModelArea <- results[["Noise.mean"]]
 
     legend = c(legend, paste("Noise: ",
-                             round(results[["noise.prob"]], 5),
+                             round(results[["Noise.prob"]], 5),
                              sep = ""))
 
   }
@@ -955,7 +955,7 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
 
-  legend = c(paste("Noise: ", round(results[["noise.prob"]], 5), sep = ""))
+  legend = c(paste("Noise: ", round(results[["Noise.prob"]], 5), sep = ""))
   colors = c("red")
 
   legend = c("Empirical:")
@@ -1072,10 +1072,10 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
 
   } else {
     totalFrame = data.frame(Delays = delaySeries)
-    totalFrame$ModelArea <- results[["noise.mean"]]
+    totalFrame$ModelArea <- results[["Noise.mean"]]
 
     legend = c(legend, paste("Noise: ",
-                             round(results[["noise.prob"]], 5),
+                             round(results[["Noise.prob"]], 5),
                              sep = ""))
 
   }
