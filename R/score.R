@@ -206,7 +206,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     }
   }
 
-  if ('bd' %in% models) {
+  if ('laibson' %in% models) {
     # Starts
     startbeta   <- seq(0, 1, 0.1)
     startdelta  <- seq(0, 1, 0.01)
@@ -287,7 +287,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     }
   }
 
-  if ('gm' %in% models) {
+  if ('greenmyerson' %in% models) {
     # Starts
     startlnK <- seq(-12, 12, 1)
     starts <- seq(.01, 10, 0.01)
@@ -443,7 +443,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     }
   }
 
-  if ('ep' %in% models) {
+  if ('ebertprelec' %in% models) {
     # Starts
     startlnK <- seq(-12, 12, 0.1)
     starts <- seq(.01, 1, 0.01)
@@ -642,7 +642,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
-  mModels <- c("noise", "hyperbolic", "exponential", "bd", "gm", "rachlin", "ep")
+  mModels <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec")
 
   if (!"all" %in% models) {
 
