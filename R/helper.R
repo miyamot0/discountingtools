@@ -882,6 +882,14 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["EbertPrelec.prob"]], 5),
                              sep = ""))
 
+  } else {
+    totalFrame = data.frame(Delays = delaySeries)
+    totalFrame$ModelArea <- results[["noise.mean"]]
+
+    legend = c(legend, paste("Noise: ",
+                             round(results[["noise.prob"]], 5),
+                             sep = ""))
+
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
@@ -1062,12 +1070,17 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                              round(results[["EbertPrelec.prob"]], 5),
                              sep = ""))
 
+  } else {
+    totalFrame = data.frame(Delays = delaySeries)
+    totalFrame$ModelArea <- results[["noise.mean"]]
+
+    legend = c(legend, paste("Noise: ",
+                             round(results[["noise.prob"]], 5),
+                             sep = ""))
+
   }
 
   graphics::plot(totalFrame$Delays, totalFrame$ModelArea, type = "l", ylim = c(0,1),
-       #main = paste("Participant: ", dat$id[1],
-       #              "\nProbable Model: ", results[["probable.model"]],
-       #              "\n Model AUC (log10 scaled) = ", round(results[["probable.Log10AUC"]], 5), "", sep = ""),
        main = paste("Participant ", dat$id[1],
                     "\n", results[["probable.model"]], " Scaled Model Area = ", round(results[["probable.Log10AUC"]], 5),
                     sep = ""),
