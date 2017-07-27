@@ -642,7 +642,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
-  mModels <- c("noise", "hyperbolic", "exponential", "bd", "mg", "rachlin", "ep")
+  mModels <- c("noise", "hyperbolic", "exponential", "bd", "gm", "rachlin", "ep")
 
   if (!"all" %in% models) {
 
