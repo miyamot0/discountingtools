@@ -522,6 +522,76 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     }
   }
 
+  if ('crdi' %in% models) {
+    # Starts
+    startlnK <- seq(-12, 12, 1)
+    starts <- seq(.01, 1, 0.1)
+    startBeta <- seq(0.1, 1, 0.1)
+
+    # new Pre sort
+    presort <- expand.grid(startlnK = startlnK, starts = starts, startBeta = startBeta)
+    presort$sumSquares <- NA
+
+    # clean, merge, or move
+    getSS <- function(presort, index, Y, X) {
+      projections <- presort[index,]$startBeta*exp(-(exp(presort[index,]$startlnK)*X^presort[index,]$starts))
+      sqResidual <- (Y - projections)^2
+      sum(sqResidual)
+    }
+
+    for (j in 1:nrow(presort)) {
+      presort[j, ]$sumSquares <-getSS(presort, j, dat$Y, dat$X)
+    }
+
+    presort <- presort[order(presort$sumSquares),]
+
+    ini.par <- c(beta = presort[1,]$startBeta, lnk = presort[1,]$startlnK, s = presort[1,]$starts)
+
+    modelFitCRDI <- NULL
+
+    try(modelFitCRDI<-nls.lm(par = ini.par,
+                             fn = residualFunction,
+                             jac = jacobianMatrix,
+                             valueFunction = BleichrodtCRDIDiscountFunc,
+                             jacobianFunction = BleichrodtCRDIDiscountGradient,
+                             x = dat$X,
+                             value = dat$Y,
+                             upper = c(beta = 1, lnk = Inf, s = Inf),
+                             lower = c(beta = 0, lnk = -Inf, s = -Inf),
+                             control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitCRDI)) {
+
+      if (detailed == TRUE) {
+        tempList <- list(BleichrodtCRDI.lnk  = modelFitCRDI$par[["lnk"]],
+                         BleichrodtCRDI.s    = modelFitCRDI$par[["s"]],
+                         BleichrodtCRDI.beta = modelFitCRDI$par[["beta"]],
+                         BleichrodtCRDI.RMSE = sqrt(modelFitCRDI$deviance/length(modelFitCRDI$fvec)),
+                         BleichrodtCRDI.BIC  = stats::BIC(logLik.nls.lm(modelFitCRDI)),
+                         BleichrodtCRDI.AIC  = stats::AIC(logLik.nls.lm(modelFitCRDI)),
+                         BleichrodtCRDI.status = paste("Code:",
+                                                       modelFitCRDI$info,
+                                                       "- Message:",
+                                                       modelFitCRDI$message,
+                                                       sep = " "))
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(BleichrodtCRDI.BIC = tempList$BleichrodtCRDI.BIC))
+
+      } else {
+        tempList <- list(BleichrodtCRDI.lnk  = modelFitCRDI$par[["lnk"]],
+                         BleichrodtCRDI.s    = modelFitCRDI$par[["s"]],
+                         BleichrodtCRDI.beta = modelFitCRDI$par[["beta"]])
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(BleichrodtCRDI.BIC = stats::BIC(logLik.nls.lm(modelFitCRDI))))
+
+      }
+    }
+  }
+
   ### bfs
   bfList <- list()
   bfSum <- 0.0
@@ -640,7 +710,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
-  mModels <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec")
+  mModels <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "crdi")
 
   if (!"all" %in% models) {
 

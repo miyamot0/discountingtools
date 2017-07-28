@@ -186,6 +186,36 @@ ebertPrelecDiscountGradient <- function(x, lnk, s)
     eval(stats::deriv(func, "s")))
 }
 
+#' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return projected, subjective value
+BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
+{
+  func <- beta * exp(-exp(lnk)*x^s)
+  eval(func)
+}
+
+#' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return projected, subjective value
+BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
+{
+  func <- beta * exp(-exp(lnk)*x^s)
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")),
+    eval(stats::deriv(func, "beta")))
+}
+
 #' minpack.lm logLik hack
 #'
 #' @param fit nls.lm object
@@ -231,6 +261,8 @@ getED50 <- function(dat, results) {
     returnValue <- log( (1/(exp(results[["Rachlin.lnk"]])))^(1/results[["Rachlin.s"]]))
   } else if (results[["probable.model"]] == "EbertPrelec") {
     returnValue <- getED50ep(dat, results)
+  } else if (results[["probable.model"]] == "BleichrodtCRDI") {
+    returnValue <- getED50crdi(dat, results)
   }
 
   returnValue
@@ -352,7 +384,7 @@ integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 #' @return Numerical Integration Projection
 integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
 
-#' Ebert & Prelec's ep Integrand helper
+#' Ebert & Prelec's Integrand helper
 #'
 #' This integrand helper is a projection of the integrand
 #' with delays represented as normal
@@ -376,6 +408,32 @@ integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 #' @return Numerical Integration Projection
 integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
 
+#' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param s fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return Numerical Integration Projection
+integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s) }
+
+#' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Integrand helper (log10)
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented in the log base 10 scale
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param s fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return Numerical Integration Projection
+integrandBleichrodtCRDILog <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*(10^x)^s) }
+
 #' Numerically solve for ED50 value for Ebert & Prelec
 #'
 #' This method solves for ED50 for Ebert & Prelec using a point bisection procedure.
@@ -394,6 +452,45 @@ getED50ep <- function(dat, results) {
     lowEst <- integrandEbertPrelec(lowDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
     midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
     highEst <- integrandEbertPrelec(highDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
+
+    if (lowEst > 0.5 && midEst > 0.5) {
+      # Above 50% mark range
+      lowDelay <- (lowDelay+highDelay)/2
+      highDelay <- highDelay
+
+    } else if (highEst < 0.5 && midEst < 0.5) {
+      # Below 50% mark range
+      lowDelay <- lowDelay
+      highDelay <- (lowDelay+highDelay)/2
+
+    }
+  }
+
+  returnValue <- log((lowDelay+highDelay)/2)
+
+  returnValue
+}
+
+#' Numerically solve for ED50 value for Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI)
+#'
+#' This method solves for ED50 for Bleichrodt CRDI using a point bisection procedure.
+#' This procedure will continue for n (20 currently) by default until a value of 50%
+#' is observed in the midpoint of two more moving delays.
+#'
+#' @param dat observed data
+#' @param results Results of analyses for data series
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return effective delay (value) for Ebert & Prelec ep
+getED50crdi <- function(dat, results) {
+  lowDelay <- 0
+  highDelay <- max(dat$X)*2
+
+  for (i in seq(1, 20)) {
+
+    #todo
+    lowEst <- integrandBleichrodtCRDI(lowDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
+    midEst <- integrandBleichrodtCRDI((lowDelay+highDelay)/2, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
+    highEst <- integrandBleichrodtCRDI(highDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
 
     if (lowEst > 0.5 && midEst > 0.5) {
       # Above 50% mark range
@@ -469,6 +566,14 @@ getModelAUC <- function(dat, results) {
                                     lnK = results[["EbertPrelec.lnk"]],
                                     s = results[["EbertPrelec.s"]])$value/maximumArea
 
+  } else if (results[["probable.model"]] == "BleichrodtCRDI") {
+    returnValue <- stats::integrate(integrandBleichrodtCRDI,
+                                    lower = min(dat$X),
+                                    upper = max(dat$X),
+                                    lnK = results[["BleichrodtCRDI.lnk"]],
+                                    s = results[["BleichrodtCRDI.s"]],
+                                    beta = results[["BleichrodtCRDI.beta"]])$value/maximumArea
+
   } else if (results[["probable.model"]] == "Noise") {
     returnValue <- results[["Noise.mean"]]
   }
@@ -532,6 +637,14 @@ getModelAUCLog10Scaled <- function(dat, results) {
                                     lnK = results[["EbertPrelec.lnk"]],
                                     s = results[["EbertPrelec.s"]])$value/maximumArea
 
+  } else if (results[["probable.model"]] == "BleichrodtCRDI") {
+    returnValue <- stats::integrate(integrandBleichrodtCRDILog,
+                                    lower = log10(min(dat$X)),
+                                    upper = log10(max(dat$X)),
+                                    lnK = results[["BleichrodtCRDI.lnk"]],
+                                    s = results[["BleichrodtCRDI.s"]],
+                                    beta = results[["BleichrodtCRDI.beta"]])$value/maximumArea
+
   } else if (results[["probable.model"]] == "Noise") {
     returnValue <- results[["Noise.mean"]]
   }
@@ -562,6 +675,9 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   rachS <- NA
   epK <- NA
   epS <- NA
+  crdiK <- NA
+  crdiS <- NA
+  crdiBeta <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -571,6 +687,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
+  crdiSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["Noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -624,7 +741,17 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     legend = c(legend, paste("EbertPrelec: ",
                              round(results[["EbertPrelec.prob"]], 5),
                              sep = ""))
-    colors = c(colors, "black")
+    colors = c(colors, "dodgerblue")
+  }
+
+  if ("BleichrodtCRDI.lnk" %in% names(results)) {
+    crdiK <- results[["BleichrodtCRDI.lnk"]]
+    crdiS <- results[["BleichrodtCRDI.s"]]
+    crdiBeta <- results[["BleichrodtCRDI.beta"]]
+    legend = c(legend, paste("Bleichrodt CRDI: ",
+                             round(results[["BleichrodtCRDI.prob"]], 5),
+                             sep = ""))
+    colors = c(colors, "gold")
   }
 
   for (delay in delaySeries)
@@ -660,6 +787,11 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     {
       epSeries[delay] = 1.0 * exp(-(exp(epK)*delay)^epS)
     }
+
+    if(!is.na(crdiK))
+    {
+      crdiSeries[delay] = 1.0 * crdiBeta * exp(-exp(crdiK)*delay^crdiS)
+    }
   }
 
   totalFrame = data.frame(Delays = delaySeries)
@@ -672,7 +804,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           QuasiHyperbolic = quaSeries,
                           HyperboloidM = myerSeries,
                           HyperboloidR = rachSeries,
-                          EbertPrelec = epSeries)
+                          EbertPrelec = epSeries,
+                          BleichrodtCRDI = crdiSeries)
 
   totalFrame$Noise <- results[["Noise.mean"]]
 
@@ -708,7 +841,11 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
         lwd = lineWidth)
   graphics::lines(totalFrame$Delays,
                   totalFrame$EbertPrelec,
-                  col = "black",
+                  col = "dodgerblue",
+                  lwd = lineWidth)
+  graphics::lines(totalFrame$Delays,
+                  totalFrame$BleichrodtCRDI,
+                  col = "gold",
                   lwd = lineWidth)
 
   graphics::points(dat$X,
@@ -725,7 +862,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                                    results[["Laibson.prob"]],
                                    results[["GreenMyerson.prob"]],
                                    results[["Rachlin.prob"]],
-                                   results[["EbertPrelec.prob"]]))
+                                   results[["EbertPrelec.prob"]],
+                                   results[["BleichrodtCRDI.prob"]]))
 
   sortShowFrame <- mShowFrame[order(-mShowFrame$prob),]
 
@@ -760,6 +898,9 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   rachS <- NA
   epK <- NA
   epS <- NA
+  crdiK <- NA
+  crdiS <- NA
+  crdiBeta <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -769,6 +910,7 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
+  crdiSeries = rep(NA,endDelay+1)
 
   legend = c("Empirical: ")
   colors = c("black", "black")
@@ -799,6 +941,12 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   if ("EbertPrelec.lnk" %in% names(results)) {
     epK <- results[["EbertPrelec.lnk"]]
     epS <- results[["EbertPrelec.s"]]
+  }
+
+  if ("BleichrodtCRDI.lnk" %in% names(results)) {
+    crdiK <- results[["BleichrodtCRDI.lnk"]]
+    crdiS <- results[["BleichrodtCRDI.s"]]
+    crdiBeta <- results[["BleichrodtCRDI.beta"]]
   }
 
   for (delay in delaySeries)
@@ -833,6 +981,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     if(!is.na(epK))
     {
       epSeries[delay] = 1.0 * exp(-(exp(epK)*delay)^epS)
+    }
+
+    if(!is.na(crdiK))
+    {
+      crdiSeries[delay] = 1.0 * crdiBeta * exp(-exp(crdiK)*delay^crdiS)
     }
   }
 
@@ -880,6 +1033,13 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                             ModelArea = epSeries)
     legend = c(legend, paste("EbertPrelec: ",
                              round(results[["EbertPrelec.prob"]], 5),
+                             sep = ""))
+
+  } else if (results[["probable.model"]] == "BleichrodtCRDI") {
+    totalFrame = data.frame(Delays = delaySeries,
+                            ModelArea = crdiSeries)
+    legend = c(legend, paste("BleichrodtCRDI: ",
+                             round(results[["BleichrodtCRDI.prob"]], 5),
                              sep = ""))
 
   } else {
@@ -945,6 +1105,9 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   rachS <- NA
   epK <- NA
   epS <- NA
+  crdiK <- NA
+  crdiS <- NA
+  crdiBeta <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -954,6 +1117,7 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   myerSeries = rep(NA,endDelay+1)
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
+  crdiSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["Noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -989,6 +1153,12 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     epS <- results[["EbertPrelec.s"]]
   }
 
+  if ("BleichrodtCRDI.lnk" %in% names(results)) {
+    crdiK <- results[["BleichrodtCRDI.lnk"]]
+    crdiS <- results[["BleichrodtCRDI.s"]]
+    crdiBeta <- results[["BleichrodtCRDI.beta"]]
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -1021,6 +1191,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     if(!is.na(epK))
     {
       epSeries[delay] = 1.0 * exp(-(exp(epK)*delay)^epS)
+    }
+
+    if(!is.na(crdiK))
+    {
+      crdiSeries[delay] = 1.0 * crdiBeta * exp(-exp(crdiK)*delay^crdiS)
     }
   }
 
@@ -1068,6 +1243,13 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                             ModelArea = epSeries)
     legend = c(legend, paste("EbertPrelec: ",
                              round(results[["EbertPrelec.prob"]], 5),
+                             sep = ""))
+
+  } else if (results[["probable.model"]] == "BleichrodtCRDI") {
+    totalFrame = data.frame(Delays = delaySeries,
+                            ModelArea = crdiSeries)
+    legend = c(legend, paste("BleichrodtCRDI: ",
+                             round(results[["BleichrodtCRDI.prob"]], 5),
                              sep = ""))
 
   } else {
