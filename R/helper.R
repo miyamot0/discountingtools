@@ -216,6 +216,33 @@ BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
     eval(stats::deriv(func, "beta")))
 }
 
+#' Rodriguez & Logue Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return projected, subjective value
+RodriguezLogueDiscountFunc <- function(x, lnk, beta)
+{
+  func <- (1 + x * exp(lnk))^(-exp(beta) / exp(lnk))
+  eval(func)
+}
+
+#' Rodriguez & Logue Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return projected, subjective value
+RodriguezLogueDiscountGradient <- function(x, lnk, beta)
+{
+  func <- expression((1 + x * exp(lnk))^(-exp(beta) / exp(lnk)))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "beta")))
+}
+
 #' minpack.lm logLik hack
 #'
 #' @param fit nls.lm object
@@ -263,6 +290,8 @@ getED50 <- function(dat, results) {
     returnValue <- getED50ep(dat, results)
   } else if (results[["probable.model"]] == "BleichrodtCRDI") {
     returnValue <- getED50crdi(dat, results)
+  } else if (results[["probable.model"]] == "RodriguezLogue") {
+    returnValue <- getED50genhyp(dat, results)
   }
 
   returnValue
@@ -434,6 +463,30 @@ integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s
 #' @return Numerical Integration Projection
 integrandBleichrodtCRDILog <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*(10^x)^s) }
 
+#' Rodriguez & Logue Integrand helper
+#'
+#' This integrand helper is a projection of the integrand
+#' with delays represented as normal
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return Numerical Integration Projection
+integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-beta / exp(lnK)) }
+
+#' Rodriguez & Logue Integrand helper
+#'
+#' This integrand helper is a projection of the integrand (log10)
+#' with delays represented in the log base 10 scale
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return Numerical Integration Projection
+integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-beta / exp(lnK)) }
+
 #' Numerically solve for ED50 value for Ebert & Prelec
 #'
 #' This method solves for ED50 for Ebert & Prelec using a point bisection procedure.
@@ -486,11 +539,46 @@ getED50crdi <- function(dat, results) {
   highDelay <- max(dat$X)*2
 
   for (i in seq(1, 20)) {
-
-    #todo
     lowEst <- integrandBleichrodtCRDI(lowDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
     midEst <- integrandBleichrodtCRDI((lowDelay+highDelay)/2, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
     highEst <- integrandBleichrodtCRDI(highDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
+
+    if (lowEst > 0.5 && midEst > 0.5) {
+      # Above 50% mark range
+      lowDelay <- (lowDelay+highDelay)/2
+      highDelay <- highDelay
+
+    } else if (highEst < 0.5 && midEst < 0.5) {
+      # Below 50% mark range
+      lowDelay <- lowDelay
+      highDelay <- (lowDelay+highDelay)/2
+
+    }
+  }
+
+  returnValue <- log((lowDelay+highDelay)/2)
+
+  returnValue
+}
+
+#' Numerically solve for ED50 value for Rodriguez & Logue Generalized Hyperbolioid
+#'
+#' This method solves for ED50 for Rodriguez & Logue using a point bisection procedure.
+#' This procedure will continue for n (20 currently) by default until a value of 50%
+#' is observed in the midpoint of two more moving delays.
+#'
+#' @param dat observed data
+#' @param results Results of analyses for data series
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return effective delay (value) for Ebert & Prelec ep
+getED50genhyp <- function(dat, results) {
+  lowDelay <- 0
+  highDelay <- max(dat$X)*2
+
+  for (i in seq(1, 20)) {
+    lowEst <- integrandRodriguezLogue(lowDelay, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
+    midEst <- integrandRodriguezLogue((lowDelay+highDelay)/2, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
+    highEst<- integrandRodriguezLogue(highDelay, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
 
     if (lowEst > 0.5 && midEst > 0.5) {
       # Above 50% mark range
@@ -574,6 +662,13 @@ getModelAUC <- function(dat, results) {
                                     s = results[["BleichrodtCRDI.s"]],
                                     beta = results[["BleichrodtCRDI.beta"]])$value/maximumArea
 
+  } else if (results[["probable.model"]] == "RodriguezLogue") {
+    returnValue <- stats::integrate(integrandRodriguezLogue,
+                                    lower = min(dat$X),
+                                    upper = max(dat$X),
+                                    lnK = results[["RodriguezLogue.lnk"]],
+                                    beta = results[["RodriguezLogue.beta"]])$value/maximumArea
+
   } else if (results[["probable.model"]] == "Noise") {
     returnValue <- results[["Noise.mean"]]
   }
@@ -645,6 +740,13 @@ getModelAUCLog10Scaled <- function(dat, results) {
                                     s = results[["BleichrodtCRDI.s"]],
                                     beta = results[["BleichrodtCRDI.beta"]])$value/maximumArea
 
+  } else if (results[["probable.model"]] == "RodriguezLogue") {
+    returnValue <- stats::integrate(integrandRodriguezLogueLog,
+                                    lower = log10(min(dat$X)),
+                                    upper = log10(max(dat$X)),
+                                    lnK = results[["RodriguezLogue.lnk"]],
+                                    beta = results[["RodriguezLogue.beta"]])$value/maximumArea
+
   } else if (results[["probable.model"]] == "Noise") {
     returnValue <- results[["Noise.mean"]]
   }
@@ -678,6 +780,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   crdiK <- NA
   crdiS <- NA
   crdiBeta <- NA
+  ghK <- NA
+  ghBeta <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -688,6 +792,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
   crdiSeries = rep(NA,endDelay+1)
+  ghSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["Noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -754,6 +859,15 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     colors = c(colors, "gold")
   }
 
+  if ("RodriguezLogue.lnk" %in% names(results)) {
+    ghK <- results[["RodriguezLogue.lnk"]]
+    ghBeta <- results[["RodriguezLogue.beta"]]
+    legend = c(legend, paste("RodriguezLogue: ",
+                             round(results[["RodriguezLogue.prob"]], 5),
+                             sep = ""))
+    colors = c(colors, "burlywood")
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -792,6 +906,11 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     {
       crdiSeries[delay] = 1.0 * crdiBeta * exp(-exp(crdiK)*delay^crdiS)
     }
+
+    if(!is.na(ghK))
+    {
+      ghSeries[delay] = 1.0 * (1 + delay * exp(ghK))^(-ghBeta / exp(ghK))
+    }
   }
 
   totalFrame = data.frame(Delays = delaySeries)
@@ -805,7 +924,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                           HyperboloidM = myerSeries,
                           HyperboloidR = rachSeries,
                           EbertPrelec = epSeries,
-                          BleichrodtCRDI = crdiSeries)
+                          BleichrodtCRDI = crdiSeries,
+                          RodriguezLogue = ghSeries)
 
   totalFrame$Noise <- results[["Noise.mean"]]
 
@@ -820,25 +940,25 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
        log = "x")
 
   graphics::lines(totalFrame$Delays,
-        totalFrame$Exponential,
-        col = "blue",
-        lwd = lineWidth)
+                  totalFrame$Exponential,
+                  col = "blue",
+                  lwd = lineWidth)
   graphics::lines(totalFrame$Delays,
-        totalFrame$Hyperbolic,
-        col = "green",
-        lwd = lineWidth)
+                  totalFrame$Hyperbolic,
+                  col = "green",
+                  lwd = lineWidth)
   graphics::lines(totalFrame$Delays,
-        totalFrame$QuasiHyperbolic,
-        col = "brown",
-        lwd = lineWidth)
+                  totalFrame$QuasiHyperbolic,
+                  col = "brown",
+                  lwd = lineWidth)
   graphics::lines(totalFrame$Delays,
-        totalFrame$HyperboloidM,
-        col = "purple",
-        lwd = lineWidth)
+                  totalFrame$HyperboloidM,
+                  col = "purple",
+                  lwd = lineWidth)
   graphics::lines(totalFrame$Delays,
-        totalFrame$HyperboloidR,
-        col = "orange",
-        lwd = lineWidth)
+                  totalFrame$HyperboloidR,
+                  col = "orange",
+                  lwd = lineWidth)
   graphics::lines(totalFrame$Delays,
                   totalFrame$EbertPrelec,
                   col = "dodgerblue",
@@ -846,6 +966,10 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
   graphics::lines(totalFrame$Delays,
                   totalFrame$BleichrodtCRDI,
                   col = "gold",
+                  lwd = lineWidth)
+  graphics::lines(totalFrame$Delays,
+                  totalFrame$RodriguezLogue,
+                  col = "burlywood",
                   lwd = lineWidth)
 
   graphics::points(dat$X,
@@ -863,7 +987,8 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
                                    results[["GreenMyerson.prob"]],
                                    results[["Rachlin.prob"]],
                                    results[["EbertPrelec.prob"]],
-                                   results[["BleichrodtCRDI.prob"]]))
+                                   results[["BleichrodtCRDI.prob"]],
+                                   results[["RodriguezLogue.prob"]]))
 
   sortShowFrame <- mShowFrame[order(-mShowFrame$prob),]
 
@@ -901,6 +1026,8 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   crdiK <- NA
   crdiS <- NA
   crdiBeta <- NA
+  ghK <- NA
+  ghBeta <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -911,6 +1038,7 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
   crdiSeries = rep(NA,endDelay+1)
+  ghSeries = rep(NA,endDelay+1)
 
   legend = c("Empirical: ")
   colors = c("black", "black")
@@ -949,6 +1077,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     crdiBeta <- results[["BleichrodtCRDI.beta"]]
   }
 
+  if ("RodriguezLogue.lnk" %in% names(results)) {
+    ghK <- results[["RodriguezLogue.lnk"]]
+    ghBeta <- results[["RodriguezLogue.beta"]]
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -986,6 +1119,11 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
     if(!is.na(crdiK))
     {
       crdiSeries[delay] = 1.0 * crdiBeta * exp(-exp(crdiK)*delay^crdiS)
+    }
+
+    if(!is.na(ghK))
+    {
+      ghSeries[delay] = 1.0 * (1 + delay * exp(ghK))^(-ghBeta / exp(ghK))
     }
   }
 
@@ -1040,6 +1178,13 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
                             ModelArea = crdiSeries)
     legend = c(legend, paste("BleichrodtCRDI: ",
                              round(results[["BleichrodtCRDI.prob"]], 5),
+                             sep = ""))
+
+  } else if (results[["probable.model"]] == "RodriguezLogue") {
+    totalFrame = data.frame(Delays = delaySeries,
+                            ModelArea = ghSeries)
+    legend = c(legend, paste("RodriguezLogue: ",
+                             round(results[["RodriguezLogue.prob"]], 5),
                              sep = ""))
 
   } else {
@@ -1108,6 +1253,8 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   crdiK <- NA
   crdiS <- NA
   crdiBeta <- NA
+  ghK <- NA
+  ghBeta <- NA
 
   endDelay <- max(dat$X)
   delaySeries = 1:(endDelay+1)
@@ -1118,6 +1265,7 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
   rachSeries = rep(NA,endDelay+1)
   epSeries = rep(NA,endDelay+1)
   crdiSeries = rep(NA,endDelay+1)
+  ghSeries = rep(NA,endDelay+1)
 
   legend = c(paste("Noise: ", round(results[["Noise.prob"]], 5), sep = ""))
   colors = c("red")
@@ -1159,6 +1307,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     crdiBeta <- results[["BleichrodtCRDI.beta"]]
   }
 
+  if ("RodriguezLogue.lnk" %in% names(results)) {
+    ghK <- results[["RodriguezLogue.lnk"]]
+    ghBeta <- results[["RodriguezLogue.beta"]]
+  }
+
   for (delay in delaySeries)
   {
     delaySeries[delay] = delay-1
@@ -1196,6 +1349,11 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
     if(!is.na(crdiK))
     {
       crdiSeries[delay] = 1.0 * crdiBeta * exp(-exp(crdiK)*delay^crdiS)
+    }
+
+    if(!is.na(ghK))
+    {
+      ghSeries[delay] = 1.0 * (1 + delay * exp(ghK))^(-ghBeta / exp(ghK))
     }
   }
 
@@ -1250,6 +1408,13 @@ displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
                             ModelArea = crdiSeries)
     legend = c(legend, paste("BleichrodtCRDI: ",
                              round(results[["BleichrodtCRDI.prob"]], 5),
+                             sep = ""))
+
+  } else if (results[["probable.model"]] == "RodriguezLogue") {
+    totalFrame = data.frame(Delays = delaySeries,
+                            ModelArea = ghSeries)
+    legend = c(legend, paste("RodriguezLogue: ",
+                             round(results[["RodriguezLogue.prob"]], 5),
                              sep = ""))
 
   } else {

@@ -592,6 +592,71 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     }
   }
 
+  if ('genhyp' %in% models) {
+    # Starts
+    startlnK <- seq(-12, 12, 1)
+    startBeta <- seq(-12, 12, 1)
+
+    # new Pre sort
+    presort <- expand.grid(startlnK = startlnK, startBeta = startBeta)
+    presort$sumSquares <- NA
+
+    # clean, merge, or move
+    getSS <- function(presort, index, Y, X) {
+      projections <- (1 + X * exp(presort[index,]$startlnK))^(-exp(presort[index,]$startBeta) / exp(presort[index,]$startlnK))
+      sqResidual <- (Y - projections)^2
+      sum(sqResidual)
+    }
+
+    for (j in 1:nrow(presort)) {
+      presort[j, ]$sumSquares <-getSS(presort, j, dat$Y, dat$X)
+    }
+
+    presort <- presort[order(presort$sumSquares),]
+
+    ini.par <- c(lnk = presort[1,]$startlnK, beta = presort[1,]$startBeta)
+
+    modelFitGenHyp <- NULL
+
+    try(modelFitGenHyp<-nls.lm(par = ini.par,
+                               fn = residualFunction,
+                               jac = jacobianMatrix,
+                               valueFunction = RodriguezLogueDiscountFunc,
+                               jacobianFunction = RodriguezLogueDiscountGradient,
+                               x = dat$X,
+                               value = dat$Y,
+                               control = nls.lm.control(maxiter = 1000)), silent = TRUE)
+
+    if (!is.character(modelFitGenHyp)) {
+
+      if (detailed == TRUE) {
+        tempList <- list(RodriguezLogue.lnk  = modelFitGenHyp$par[["lnk"]],
+                         RodriguezLogue.beta = exp(modelFitGenHyp$par[["beta"]]),
+                         RodriguezLogue.RMSE = sqrt(modelFitGenHyp$deviance/length(modelFitGenHyp$fvec)),
+                         RodriguezLogue.BIC  = stats::BIC(logLik.nls.lm(modelFitGenHyp)),
+                         RodriguezLogue.AIC  = stats::AIC(logLik.nls.lm(modelFitGenHyp)),
+                         RodriguezLogue.status = paste("Code:",
+                                                       modelFitGenHyp$info,
+                                                       "- Message:",
+                                                       modelFitGenHyp$message,
+                                                       sep = " "))
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(RodriguezLogue.BIC = tempList$RodriguezLogue.BIC))
+
+      } else {
+        tempList <- list(RodriguezLogue.lnk  = modelFitGenHyp$par[["lnk"]],
+                         RodriguezLogue.beta = exp(modelFitGenHyp$par[["beta"]]))
+
+        returnList <- c(returnList, tempList)
+
+        bicList <- c(bicList, list(RodriguezLogue.BIC = stats::BIC(logLik.nls.lm(modelFitGenHyp))))
+
+      }
+    }
+  }
+
   ### bfs
   bfList <- list()
   bfSum <- 0.0
@@ -710,7 +775,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
-  mModels <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "crdi")
+  mModels <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "crdi", "genhyp")
 
   if (!"all" %in% models) {
 
