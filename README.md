@@ -27,15 +27,9 @@ library(discountingtools)
 #### Effective Delay Plotting
 
 ```r
-dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
-                  ids= c(1, 1,   1,   1,   1,   1))
-
-dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
-                  ids= c(2, 2,   2,   2,   2,   2))
-
-dat <- rbind(dat, dat2)
+dat <- data.frame(X=  c(1, 30,   180,  540,  1080, 2160,  4320, 8640),
+                  Y=  c(1, 0.88, 0.68, 0.45, 0.4,  0.35,  0.2,  0.1),
+                  ids=c(2, 2,    2,    2,    2,    2,     2,    2))
 
 dat$Y <- dat$Y * 100
 
@@ -47,34 +41,46 @@ results <- discountingModelSelection(dat,
                                      idCol = "ids",
                                      A = 100)
 
-Calculating series id: 1
+Calculating series id: 2
 Model Comparison Summary:
-Rank #:  1  =  ep
- Probability  =  0.785999
- BIC  =  -22.2279
- Most Probable ln(ED50)  =  7.334051
- Most Probable Model AUC  =  0.597619
- Most Probable Model AUC (log)  =  0.843852
+Rank #:  1  =  Rachlin
+ Probability  =  0.556058
+ BIC  =  -25.445513
+ Most Probable ln(ED50)  =  6.25
+ Most Probable Model AUC  =  0.251432
+ Most Probable Model AUC (log)  =  0.666313
 
-Rank #:  2  =  Rachlin
- Probability  =  0.186338
- BIC  =  -19.349116
+Rank #:  2  =  GreenMyerson
+ Probability  =  0.209078
+ BIC  =  -23.489184
 
-Rank #:  3  =  Mazur
- Probability  =  0.023587
- BIC  =  -15.215414
+Rank #:  3  =  EbertPrelec
+ Probability  =  0.190619
+ BIC  =  -23.304321
 
-Rank #:  4  =  exp
- Probability  =  0.003802
- BIC  =  -11.565193
+Rank #:  4  =  BleichrodtCRDI
+ Probability  =  0.036335
+ BIC  =  -19.989357
 
-Rank #:  5  =  BD
- Probability  =  0.000267
- BIC  =  -6.252941
+Rank #:  5  =  RodriguezLogue
+ Probability  =  0.005586
+ BIC  =  -16.244268
 
-Rank #:  6  =  noise
- Probability  =  7e-06
- BIC  =  1.128501
+Rank #:  6  =  Hyperbolic
+ Probability  =  0.002302
+ BIC  =  -14.471566
+
+Rank #:  7  =  Exponential
+ Probability  =  2e-05
+ BIC  =  -4.934802
+
+Rank #:  8  =  Laibson
+ Probability  =  1e-06
+ BIC  =  0.44605
+
+Rank #:  9  =  Noise
+ Probability  =  0
+ BIC  =  7.501642
  
 print(results)
                                      
@@ -94,23 +100,15 @@ print(results)
 1         0.8438519
 2         0.7925787
 ```
-
-![Alt text](Figure_ED50_1.png?raw=true "ED50 Visuals")
 
 ![Alt text](Figure_ED50_2.png?raw=true "ED50 Visuals")
 
 #### Model-based Area
 
 ```r
-dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
-                  ids= c(1, 1,   1,   1,   1,   1))
-
-dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
-                  ids= c(2, 2,   2,   2,   2,   2))
-
-dat <- rbind(dat, dat2)
+dat <- data.frame(X=  c(1, 30,   180,  540,  1080, 2160,  4320, 8640),
+                  Y=  c(1, 0.88, 0.68, 0.45, 0.4,  0.35,  0.2,  0.1),
+                  ids=c(2, 2,    2,    2,    2,    2,     2,    2))
 
 dat$Y <- dat$Y * 100
 
@@ -122,34 +120,46 @@ results <- discountingModelSelection(dat,
                                      idCol = "ids",
                                      A = 100)
 
-Calculating series id: 1
+Calculating series id: 2
 Model Comparison Summary:
-Rank #:  1  =  ep
- Probability  =  0.785999
- BIC  =  -22.2279
- Most Probable ln(ED50)  =  7.334051
- Most Probable Model AUC  =  0.597619
- Most Probable Model AUC (log)  =  0.843852
+Rank #:  1  =  Rachlin
+ Probability  =  0.556058
+ BIC  =  -25.445513
+ Most Probable ln(ED50)  =  6.25
+ Most Probable Model AUC  =  0.251432
+ Most Probable Model AUC (log)  =  0.666313
 
-Rank #:  2  =  Rachlin
- Probability  =  0.186338
- BIC  =  -19.349116
+Rank #:  2  =  GreenMyerson
+ Probability  =  0.209078
+ BIC  =  -23.489184
 
-Rank #:  3  =  Mazur
- Probability  =  0.023587
- BIC  =  -15.215414
+Rank #:  3  =  EbertPrelec
+ Probability  =  0.190619
+ BIC  =  -23.304321
 
-Rank #:  4  =  exp
- Probability  =  0.003802
- BIC  =  -11.565193
+Rank #:  4  =  BleichrodtCRDI
+ Probability  =  0.036335
+ BIC  =  -19.989357
 
-Rank #:  5  =  BD
- Probability  =  0.000267
- BIC  =  -6.252941
+Rank #:  5  =  RodriguezLogue
+ Probability  =  0.005586
+ BIC  =  -16.244268
 
-Rank #:  6  =  noise
- Probability  =  7e-06
- BIC  =  1.128501
+Rank #:  6  =  Hyperbolic
+ Probability  =  0.002302
+ BIC  =  -14.471566
+
+Rank #:  7  =  Exponential
+ Probability  =  2e-05
+ BIC  =  -4.934802
+
+Rank #:  8  =  Laibson
+ Probability  =  1e-06
+ BIC  =  0.44605
+
+Rank #:  9  =  Noise
+ Probability  =  0
+ BIC  =  7.501642
  
 print(results)
                                      
@@ -170,22 +180,14 @@ print(results)
 2         0.7925787
 ```
 
-![Alt text](Figure_AUC_1.png?raw=true "Model AUC Visuals")
-
 ![Alt text](Figure_AUC_2.png?raw=true "Model AUC Visuals")
 
 #### Model-based Area (logarithmic scaling)
 
 ```r
-dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
-                  ids= c(1, 1,   1,   1,   1,   1))
-
-dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
-                  ids= c(2, 2,   2,   2,   2,   2))
-
-dat <- rbind(dat, dat2)
+dat <- data.frame(X=  c(1, 30,   180,  540,  1080, 2160,  4320, 8640),
+                  Y=  c(1, 0.88, 0.68, 0.45, 0.4,  0.35,  0.2,  0.1),
+                  ids=c(2, 2,    2,    2,    2,    2,     2,    2))
 
 dat$Y <- dat$Y * 100
 
@@ -197,34 +199,46 @@ results <- discountingModelSelection(dat,
                                      idCol = "ids",
                                      A = 100)
 
-Calculating series id: 1
+Calculating series id: 2
 Model Comparison Summary:
-Rank #:  1  =  ep
- Probability  =  0.785999
- BIC  =  -22.2279
- Most Probable ln(ED50)  =  7.334051
- Most Probable Model AUC  =  0.597619
- Most Probable Model AUC (log)  =  0.843852
+Rank #:  1  =  Rachlin
+ Probability  =  0.556058
+ BIC  =  -25.445513
+ Most Probable ln(ED50)  =  6.25
+ Most Probable Model AUC  =  0.251432
+ Most Probable Model AUC (log)  =  0.666313
 
-Rank #:  2  =  Rachlin
- Probability  =  0.186338
- BIC  =  -19.349116
+Rank #:  2  =  GreenMyerson
+ Probability  =  0.209078
+ BIC  =  -23.489184
 
-Rank #:  3  =  Mazur
- Probability  =  0.023587
- BIC  =  -15.215414
+Rank #:  3  =  EbertPrelec
+ Probability  =  0.190619
+ BIC  =  -23.304321
 
-Rank #:  4  =  exp
- Probability  =  0.003802
- BIC  =  -11.565193
+Rank #:  4  =  BleichrodtCRDI
+ Probability  =  0.036335
+ BIC  =  -19.989357
 
-Rank #:  5  =  BD
- Probability  =  0.000267
- BIC  =  -6.252941
+Rank #:  5  =  RodriguezLogue
+ Probability  =  0.005586
+ BIC  =  -16.244268
 
-Rank #:  6  =  noise
- Probability  =  7e-06
- BIC  =  1.128501
+Rank #:  6  =  Hyperbolic
+ Probability  =  0.002302
+ BIC  =  -14.471566
+
+Rank #:  7  =  Exponential
+ Probability  =  2e-05
+ BIC  =  -4.934802
+
+Rank #:  8  =  Laibson
+ Probability  =  1e-06
+ BIC  =  0.44605
+
+Rank #:  9  =  Noise
+ Probability  =  0
+ BIC  =  7.501642
  
 print(results)
 
@@ -245,8 +259,6 @@ print(results)
 2         0.7925787
 
 ```
-
-![Alt text](Figure_Model_AUC_Log10_1.png?raw=true "Log10 Model AUC Visuals")
 
 ![Alt text](Figure_Model_AUC_Log10_2.png?raw=true "Log10 Model AUC Visuals")
 
@@ -255,8 +267,8 @@ print(results)
 * Noise Model: Intecept-only comparison model (included by default)
 * Exponential Model: Samuelson, P. A. (1937). A note on measurement of utility. The Review of Economic Studies, 4(2), 155–161. https://doi.org/10.2307/2967612
 * Hyperbolic Model: Mazur, J. E. (1987). An adjusting procedure for studying delayed reinforcement. In Quantitative analysis of behavior: Vol. 5. The effect of delay and intervening events on reinforcement value (pp. 55–73). Hillsdale, NJ: Erlbaum.
-* Beta Delta Model: Laibson, D. (1997). Golden eggs and hyperbolic discounting. The Quarterly Journal of Economics, 112(2), 443–478. https://doi.org/10.1162/003355397555253
 * Rodriguez & Logue Model: Rodriguez, M. L., & Logue, A. W. (1988). Adjusting delay to reinforcement: Comparing choice in pigeons and humans. Journal of Experimental Psychology: Animal Behavior Processes, 14(1), 105–117. https://doi.org/10.1037/0097-7403.14.1.105
+* Beta Delta Model: Laibson, D. (1997). Golden eggs and hyperbolic discounting. The Quarterly Journal of Economics, 112(2), 443–478. https://doi.org/10.1162/003355397555253
 * Green & Myerson Model: Green, L., & Myerson, J. (2004). A discounting framework for choice with delayed and probabilistic rewards. Psychological Bulletin, 130(5), 769–792. https://doi.org/10.1037/0033-2909.130.5.769
 * Rachlin Model: Rachlin, H. (2006). Notes on discounting. Journal of the Experimental Analysis of Behavior, 85(3), 425–435. https://doi.org/10.1901/jeab.2006.85-05
 * Ebert & Prelec Model: Ebert, J. E. J., & Prelec, D. (2007). The Fragility of Time: Time-Insensitivity and Valuation of the Near and Far Future. Management Science, 53(9), 1423–1438. https://doi.org/10.1287/mnsc.1060.0671
