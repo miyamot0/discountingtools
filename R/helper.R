@@ -499,9 +499,9 @@ integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(
 #' @return effective delay (value) for Ebert & Prelec ep
 getED50ep <- function(dat, results) {
   lowDelay <- 0
-  highDelay <- max(dat$X)*2
+  highDelay <- max(dat$X)*10
 
-  for (i in seq(1, 20)) {
+  while ((highDelay - lowDelay) > 0.001) {
     lowEst <- integrandEbertPrelec(lowDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
     midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
     highEst <- integrandEbertPrelec(highDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
@@ -518,6 +518,25 @@ getED50ep <- function(dat, results) {
 
     }
   }
+
+  # NECRO
+  #for (i in seq(1, 20)) {
+  #  lowEst <- integrandEbertPrelec(lowDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
+  #  midEst <- integrandEbertPrelec((lowDelay+highDelay)/2, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
+  #  highEst <- integrandEbertPrelec(highDelay, results[["EbertPrelec.lnk"]], results[["EbertPrelec.s"]])
+
+  #  if (lowEst > 0.5 && midEst > 0.5) {
+      # Above 50% mark range
+  #    lowDelay <- (lowDelay+highDelay)/2
+  #    highDelay <- highDelay
+
+  #  } else if (highEst < 0.5 && midEst < 0.5) {
+      # Below 50% mark range
+  #    lowDelay <- lowDelay
+  #    highDelay <- (lowDelay+highDelay)/2
+
+  #  }
+  #}
 
   returnValue <- log((lowDelay+highDelay)/2)
 
@@ -536,9 +555,9 @@ getED50ep <- function(dat, results) {
 #' @return effective delay (value) for Ebert & Prelec ep
 getED50crdi <- function(dat, results) {
   lowDelay <- 0
-  highDelay <- max(dat$X)*2
+  highDelay <- max(dat$X)*10
 
-  for (i in seq(1, 20)) {
+  while ((highDelay - lowDelay) > 0.001) {
     lowEst <- integrandBleichrodtCRDI(lowDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
     midEst <- integrandBleichrodtCRDI((lowDelay+highDelay)/2, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
     highEst <- integrandBleichrodtCRDI(highDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
@@ -555,6 +574,25 @@ getED50crdi <- function(dat, results) {
 
     }
   }
+
+  # NECRO
+  #for (i in seq(1, 20)) {
+  #  lowEst <- integrandBleichrodtCRDI(lowDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
+  #  midEst <- integrandBleichrodtCRDI((lowDelay+highDelay)/2, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
+  #  highEst <- integrandBleichrodtCRDI(highDelay, results[["BleichrodtCRDI.lnk"]], results[["BleichrodtCRDI.s"]], results[["BleichrodtCRDI.beta"]])
+
+  #  if (lowEst > 0.5 && midEst > 0.5) {
+      # Above 50% mark range
+  #    lowDelay <- (lowDelay+highDelay)/2
+  #    highDelay <- highDelay
+
+  #  } else if (highEst < 0.5 && midEst < 0.5) {
+      # Below 50% mark range
+  #    lowDelay <- lowDelay
+  #    highDelay <- (lowDelay+highDelay)/2
+
+  #  }
+  #}
 
   returnValue <- log((lowDelay+highDelay)/2)
 
@@ -573,9 +611,9 @@ getED50crdi <- function(dat, results) {
 #' @return effective delay (value) for Ebert & Prelec ep
 getED50genhyp <- function(dat, results) {
   lowDelay <- 0
-  highDelay <- max(dat$X)*2
+  highDelay <- max(dat$X)*10
 
-  for (i in seq(1, 20)) {
+  while ((highDelay - lowDelay) > 0.001) {
     lowEst <- integrandRodriguezLogue(lowDelay, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
     midEst <- integrandRodriguezLogue((lowDelay+highDelay)/2, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
     highEst<- integrandRodriguezLogue(highDelay, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
@@ -592,6 +630,25 @@ getED50genhyp <- function(dat, results) {
 
     }
   }
+
+  # NECRO
+  #for (i in seq(1, 20)) {
+  #  lowEst <- integrandRodriguezLogue(lowDelay, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
+  #  midEst <- integrandRodriguezLogue((lowDelay+highDelay)/2, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
+  #  highEst<- integrandRodriguezLogue(highDelay, results[["RodriguezLogue.lnk"]], results[["RodriguezLogue.beta"]])
+
+  #  if (lowEst > 0.5 && midEst > 0.5) {
+      # Above 50% mark range
+  #    lowDelay <- (lowDelay+highDelay)/2
+  #    highDelay <- highDelay
+
+  #  } else if (highEst < 0.5 && midEst < 0.5) {
+      # Below 50% mark range
+  #    lowDelay <- lowDelay
+  #    highDelay <- (lowDelay+highDelay)/2
+
+  #  }
+  #}
 
   returnValue <- log((lowDelay+highDelay)/2)
 
@@ -802,7 +859,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     legend = c(legend, paste("Exponential: ",
                              round(results[["Exponential.prob"]], 5),
                              sep = ""))
-    colors = c(colors, "blue")
+    colors = c(colors, "cadetblue1")
   }
 
   if ("Hyperbolic.lnk" %in% names(results)) {
@@ -810,7 +867,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     legend = c(legend, paste("Hyperbolic: ",
                              round(results[["Hyperbolic.prob"]], 5),
                              sep = ""))
-    colors = c(colors, "green")
+    colors = c(colors, "chartreuse")
   }
 
   if ("Laibson.beta" %in% names(results)) {
@@ -819,7 +876,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     legend = c(legend, paste("Laibson: ",
                              round(results[["Laibson.prob"]], 5),
                              sep = ""))
-    colors = c(colors, "brown")
+    colors = c(colors, "darkslategray")
   }
 
   if ("GreenMyerson.lnk" %in% names(results)) {
@@ -837,7 +894,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     legend = c(legend, paste("Rachlin: ",
                              round(results[["Rachlin.prob"]], 5),
                              sep = ""))
-    colors = c(colors, "orange")
+    colors = c(colors, "coral3")
   }
 
   if ("EbertPrelec.lnk" %in% names(results)) {
@@ -856,7 +913,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
     legend = c(legend, paste("Bleichrodt CRDI: ",
                              round(results[["BleichrodtCRDI.prob"]], 5),
                              sep = ""))
-    colors = c(colors, "gold")
+    colors = c(colors, "springgreen4")
   }
 
   if ("RodriguezLogue.lnk" %in% names(results)) {
