@@ -277,9 +277,11 @@ print(results)
 ### Referenced Works (academic works)
 -------------------
 The Small N Stats Discounting Model Selector is based on the following academic works:
+* Borges, A. M., Kuang, J., Milhorn, H., & Yi, R. (2016). An alternative approach to calculating Area-Under-the-Curve (AUC) in delay discounting research. Journal of the Experimental Analysis of Behavior, 106(2), 145–155. https://doi.org/10.1002/jeab.219
 * Franck, C. T., Koffarnus, M. N., House, L. L., & Bickel, W. K. (2015). Accurate characterization of delay discounting: a multiple model approach using approximate Bayesian model selection and a unified discounting measure. Journal of the Experimental Analysis of Behavior, 103(1), 218–233. https://doi.org/10.1002/jeab.128
 * Gilroy, S. P., Franck, C. T., & Hantula, D. A. (2017). The discounting model selector: Statistical software for delay discounting applications. Journal of the Experimental Analysis of Behavior, 107(3), 388–401. https://doi.org/10.1002/jeab.257
-* Borges, A. M., Kuang, J., Milhorn, H., & Yi, R. (2016). An alternative approach to calculating Area-Under-the-Curve (AUC) in delay discounting research. Journal of the Experimental Analysis of Behavior, 106(2), 145–155. https://doi.org/10.1002/jeab.219
+* Myerson, J., Green, L., & Warusawitharana, M. (2001). Area under the curve as a measure of discounting. Journal of the Experimental Analysis of Behavior, 76(2), 235–243. https://doi.org/10.1901/jeab.2001.76-235
+* Yoon, J. H., & Higgins, S. T. (2008). Turning k on its head: Comments on use of an ED50 in delay discounting research. Drug and Alcohol Dependence, 95(1–2), 169–172. https://doi.org/10.1016/j.drugalcdep.2007.12.011
 
 ### Acknowledgments
 -------------------
@@ -294,4 +296,4 @@ Questions? Suggestions for features? <shawn.gilroy@temple.edu>.
 ### License
 -----------
 
-GPL Version 2+
+GPL Version >= 2
