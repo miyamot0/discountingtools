@@ -176,15 +176,47 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
 
   mData <- data.frame(X = dat$X, Y = dat$Y)
 
-  totalFrame = data.frame(Delays = delaySeries,
-                          Exponential = expSeries,
-                          Hyperbolic = hypSeries,
-                          QuasiHyperbolic = quaSeries,
-                          HyperboloidM = myerSeries,
-                          HyperboloidR = rachSeries,
-                          EbertPrelec = epSeries,
-                          BleichrodtCRDI = crdiSeries,
-                          RodriguezLogue = ghSeries)
+  totalFrame = data.frame(Delays = delaySeries)
+
+  if(!is.na(samuelsonK))
+  {
+    totalFrame["Exponential"] <- expSeries
+  }
+
+  if(!is.na(ainslieK))
+  {
+    totalFrame["Hyperbolic"] <- hypSeries
+  }
+
+  if(!is.na(betaConstant))
+  {
+    totalFrame["QuasiHyperbolic"] <- quaSeries
+  }
+
+  if(!is.na(myerK))
+  {
+    totalFrame["HyperboloidM"] <- myerSeries
+  }
+
+  if(!is.na(rachK))
+  {
+    totalFrame["HyperboloidR"] <- rachSeries
+  }
+
+  if(!is.na(epK))
+  {
+    totalFrame["EbertPrelec"] <- epSeries
+  }
+
+  if(!is.na(crdiK))
+  {
+    totalFrame["BleichrodtCRDI"] <- crdiSeries
+  }
+
+  if(!is.na(ghK))
+  {
+    totalFrame["RodriguezLogue"] <- ghSeries
+  }
 
   totalFrame$Noise <- results[["Noise.mean"]]
 
