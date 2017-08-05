@@ -1,12 +1,6 @@
-
 #' Perform Discounting Model Selection
 #'
-#' This function takes a data frame of temporal discounting values (X, Y)
-#' and performs approximate Bayesian model selection using the Bayesian
-#' Information Criterion and returns the log of the Effective Delay
-#' 50 and numerical integration area.
-#'
-#' Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
+#' This function takes a data frame of temporal discounting values (X, Y) and performs approximate Bayesian model selection using the Bayesian Information Criterion and returns the log of the Effective Delay 50 and numerical integration area.
 #'
 #' @param dat data frame with X column and Y column (0 <= Y <= 1)
 #' @param A OPTIONAL: Modify line sizes for figures
