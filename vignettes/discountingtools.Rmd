@@ -9,15 +9,19 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The discountingtools package is a collection of methods used to perform analyses in delay discounting research.  Among the methods included, this package performs screening of data for systematicity (CITE), applies nonlinear model fitting for a range of conceptual models, and performs a model averaging operation to determine the most probable, true model (CITE).
+##Delay Discounting Tools (discountingtools) - v 0.0.1.0
 
-Discounting Model Candidates
+The discountingtools package is a collection of methods used to perform analyses in delay discounting research. Among the methods included, this package performs screening of data for systematicity (CITE), applies nonlinear model fitting for a range of conceptual models, and performs a model averaging operation to determine the most probable, true model.  A range of conceptual models used to examine intertemporal choice are included and are listed below.
 
-* Noise Model
+##Discounting Model Candidates
+
+* Noise Model (Intercept only)
 
 * Exponential (Samuelson, 1937)
 
 * Hyperbolic (Mazur, 1987)
+
+* Rodriguez & Logue - Generalized Hyperboloid (Rodriguez & Logue, 1988)
 
 * Quasi-Hyperbolic - Beta-Delta Exponential (Laibson, 1997)
 
@@ -27,24 +31,109 @@ Discounting Model Candidates
 
 * Ebert & Prelec - Constant-Sensitivity Model (Ebert & Prelec, 2007)
 
-The model averaging operation is performed on all (specified) models candidates to determine a probable, true model and further analyses proceed using the probable model.  A general index of discounting is derived from the most probable, true model for each series.
+* Bleichrodt Model - Constant Relative Decrease Impatience Model (Bleichrodt, Rohde & Wakker, 2009)
 
-ctrl shift k
+##Discounting Model Selection
 
-## Vignette Info
+Models included in analyses are compared using the Bayesian Information Criterion and subsequent Bayesian Model Averaging. Model averaging is performed with all (specified) models candidates to determine a probable, true model for a given data series. Once a true model has been determined, additional analyses are performed upon the specific, probable model. A general index of discounting is derived from the most probable, true model for each series.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+##General Indices of Discounting
 
-## Effective Delay 50
+Individual discounting phenomena have traditionally been interpreted using fitted parameters to specific, conceptual models (i.e., Exponential k, Hyperbolic k).  However, the use of a single model across widely differing types of data can present challenges. Specifically, individidual data series can and will be better characterized by different models. General (cross-model) indices of discounting have been used to address the need to directly compare individual discounting phenomena when discounting is characterized by a different model.
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+###Effective Delay 50
 
-# TODO
+The Effective Delay 50 (ED50) refers to the point at which the value of some commodity reaches 50% of its initial, starting value. Steep discounting would produce a shorter ED50 (i.e., took less time to lose value) while more gradual and shallow discounting would produce a larger ED50 (i.e., much more time until 50% of value is lost). The natural logarithm of ED50 is often taken to provide a cross-model discounting metric with a stable distribution of values (e.g., ln[ED50]).
 
-Figures
+```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
+library(discountingtools)
 
-Sample Output
+dat <- data.frame(X =  c(1,   30,  180, 540, 1080, 2160),
+                  Y =  c(1.0, 0.8, 0.7, 0.6, 0.5,  0.3),
+                  ids =c(1,   1,   1,   1,   1,    1))
 
-Examples
 
-Model Formulas
+results <- discountingModelSelection(dat,
+                                     models = c("all"),
+                                     figures = "ed50",
+                                     idCol = "ids",
+                                     A = 1)
+
+print(results)
+```
+
+###Numerical Integration Area (Normal Scaling)
+
+As an alternative to the ED50, probable discounting models can be systematically compared using the area under the fitted discounting function. This type of calculation entails the fitting of a discounting function and the application of numerical integration along the full domain of the data included (e.g., between first and last delay). This information reflects the changes in valuation as a function of time, as reflected by the differential changes in slope along the range of the domain.
+
+```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
+results <- discountingModelSelection(dat,
+                                     models = c("all"),
+                                     figures = "auc",
+                                     idCol = "ids",
+                                     A = 1)
+
+print(results)
+```
+
+###Numerical Integration Area (Log base 10 Delay Scaling)
+
+As a means to address the differential representation of delays (i.e., more shorter, fewer further), area-based approximations of discounting have scaled delays to account for increasing large distances between delay densities. As such, this takes the form of a log-transformed x-axis and numerical integration is performed upon this function in these augmented dimensions. All other operations (i.e., numerical integration) remain the same as with normal scaling.
+
+```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
+results <- discountingModelSelection(dat,
+                                     models = c("all"),
+                                     figures = "logauc",
+                                     idCol = "ids",
+                                     A = 1)
+
+print(results)
+```
+
+
+## Optional Methods
+
+###Detailed Fitting Summaries
+
+In addition to fitted model parameters, additional information can be collected related to the model fitting procedures and other relevant details. This can be achieved by setting the ```detailed``` parameter to ```TRUE``` in the main function call. This will include additional information in the results related to the fittings, Bayes Factors, and other factors related to model probability.
+
+```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
+results <- discountingModelSelection(dat,
+                                     models = c("all"),
+                                     detailed = TRUE,
+                                     idCol = "ids",
+                                     A = 1)
+
+print(results)
+```
+
+###Customized Model Comparisons
+
+Model selection procedures are performed with all models considered in the selection process by default. This setting is suggested as a default to ensure that models are compared to a range of other, competing models at ranging levels of complexity. Users have the option to make specific comparisons between models, though a more thorough comparison is made possible using all models by default. A customized model selection call is provided below.
+
+```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
+results <- discountingModelSelection(dat,
+                                     models <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin"),
+                                     detailed = TRUE,
+                                     figures = "ed50",
+                                     idCol = "ids",
+                                     A = 1)
+
+print(results)
+```
+
+###Summarized Model Comparisons
+
+Individual model probabilities can be summarized and presented with each fitting. This is often a more succinct method for comparing relative probabilities between different model types. The above example is repeated with the ```summarize``` parameter set to ```TRUE```.
+
+```{r fig.height = 5, fig.width = 7, fig.align = "center", message=TRUE}
+results <- discountingModelSelection(dat,
+                                     models <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin"),
+                                     detailed = TRUE,
+                                     summarize = TRUE,
+                                     figures = "ed50",
+                                     idCol = "ids",
+                                     A = 1)
+
+print(results)
+```
