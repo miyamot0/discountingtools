@@ -4,7 +4,7 @@ R package for performing delay discounting analyses.  Features include approxima
 
 ### Version
 -------------------
-0.0.0.8 (alpha)
+0.0.1.0 (beta)
 
 ### Installation
 ----------------
