@@ -17,9 +17,7 @@ displayED50Figure(dat, results, lineWidth = 1)
 display figure
 }
 \description{
-This method constructs a figure that displays all fitted models
-as well as the probability that they are the "true" model.  The
-ED50 metric is also provided for the most probable model.
+This method constructs a figure that displays all fitted models as well as the probability that they are the "true" model.  The ED50 metric is also provided for the most probable model.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

@@ -1,6 +1,6 @@
 #' Generalized residual call
 #'
-#' General, shared method for coordinating with fitting functions
+#' General, shared method for coordinating nls.lm fitting calls. Routes a supplied "valueFunction" with observed data and supplied parameters.
 #'
 #' @param params model parameters
 #' @param x observation at point n (X)
@@ -16,7 +16,7 @@ residualFunction <- function(params, x, value, valueFunction, jacobianFunction)
 
 #' Generalized Jacobian call
 #'
-#' General shared method for constructing Jacobian
+#' General, shared method for constructing the Jacobian matrix. Routes a supplied "jacobianFunction" with pre-computed derivatives to construct matrix with observed data and supplied parameters.
 #'
 #' @param params model parameters
 #' @param x observation at point n (X)

@@ -7,7 +7,7 @@
 \method{logLik}{nls.lm}(fit, REML = FALSE, ...)
 }
 \arguments{
-\item{fit}{nls.lm object}
+\item{fit}{nls.lm fitted model}
 
 \item{REML}{determine whether or not to use ML (FALSE by default)}
 
@@ -17,7 +17,7 @@
 provide a logLik class for AIC/BIC
 }
 \description{
-minpack.lm logLik hack
+This function constructs a class, derived from an nls.lm object, similar to that of the logLik function in nls. This allows for native calls of the AIC and BIC functions from stats, using nls.lm fit objects.
 }
 \author{
 Katharine Mullen <kate@few.vu.nl>

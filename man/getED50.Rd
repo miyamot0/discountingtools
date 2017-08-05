@@ -15,11 +15,7 @@ getED50(dat, results)
 natural logarithm of the Effective Delay 50%
 }
 \description{
-Optionally, models without a straightforward exact solution
-will be scored numerically using a bisection search
-}
-\details{
-Only Ebert & Prelec, 2007 requires this bisection search
+Methods for routing computations of the ln(ED50). When possible, exact solutions are provided and models without a straightforward exact solution have ed50 calculated numerically using a bisection search.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

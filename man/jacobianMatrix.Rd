@@ -21,7 +21,7 @@ jacobianMatrix(params, x, value, valueFunction, jacobianFunction)
 difference value for jacobian
 }
 \description{
-General shared method for constructing Jacobian
+General, shared method for constructing the Jacobian matrix. Routes a supplied "jacobianFunction" with pre-computed derivatives to construct matrix with observed data and supplied parameters.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

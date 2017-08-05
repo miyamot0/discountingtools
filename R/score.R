@@ -737,41 +737,34 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
 #' Perform Discounting Model Selection
 #'
-#' This function takes a data frame of temporal discounting values (X, Y)
-#' and performs approximate Bayesian model selection using the Bayesian
-#' Information Criterion and returns the log of the Effective Delay
-#' 50 and numerical integration area.
+#' This function takes a data frame of temporal discounting values (X, Y) and performs approximate Bayesian model selection using the Bayesian Information Criterion and returns the log of the Effective Delay 50 and numerical integration area.
 #'
-#' Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
-#'
-#' @param dat data frame with X column and Y column (0 <= Y <= 1)
-#' @param A OPTIONAL: Modify line sizes for figures
-#' @param models vector of models to include in selection
-#' @param idCol string content identifying participants
-#' @param detailed include additional output details in results
-#' @param figures OPTIONAL: show figure of results
-#' @param summarize OPTIONAL: Descriptive observations
-#' @param lineSize OPTIONAL: Modify line sizes for figures
+#' @param dat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param A OPTIONAL: The maximum value of the commodity (e.g., of 100 USD, out of 1, etc.)
+#' @param models vector of models to include in selection. Includes "noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "crdi", and "genhyp".  All models are included by specifying "all" or leaving the parameter at default ("all").
+#' @param idCol string content identifying participants (e.g., idCol = "ids")
+#' @param detailed include additional output details in results (TRUE/FALSE, FALSE by default)
+#' @param figures OPTIONAL: show figure of results. Includes "ed50" for ed50 plotting, "auc" for numerical integration with normal delays, and "logauc" for numerical integration with log base 10 scaled delays.
+#' @param summarize OPTIONAL: Descriptive observations (TRUE/FALSE, FALSE by default)
+#' @param lineSize OPTIONAL: Modify line sizes for figures (numeric, 1 by default)
 #' @return A data frame of model parameters
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
 #' @return data frame of fitted model parameters
 #' @examples
-#' dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-#' Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
-#' ids= c(1, 1,   1,   1,   1,   1))
+#' dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#' Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#' ids=c(1,1,1,1,1,1))
 #'
-#' dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-#'                   Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
-#'                   ids=c(2, 2,   2,   2,   2,   2))
+#' dat2<- data.frame(X=c(1,30,180,540,1080,2160),
+#'                   Y=c(1,0.9,0.7,0.6,0.5, 0.4),
+#'                   ids=c(2,2,2,2,2,2))
 #'
 #' dat <- rbind(dat, dat2)
 #'
 #' dat$Y <- dat$Y * 100
-#' results <- discountingModelSelection(dat,
-#'                                      summarize = TRUE,
-#'                                      figures = "logauc",
-#'                                      idCol = "ids",
-#'                                      A = 100)
+#'
+#' results <- discountingModelSelection(dat, idCol = "ids", A = 100)
+#'
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
@@ -852,21 +845,21 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 
 #' Perform Johnson & Bickel Screen
 #'
-#' This function applies the Johnson & Bickel screening criteria to included data series
+#' This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria. These are included by default in all model selection calls.
 #'
-#' @param dat data frame with X column and Y column (0 <= Y <= 1)
-#' @param idCol id column
+#' @param dat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param idCol string content identifying participants (e.g., idCol = "ids")
 #' @return A data frame of model screenings
 #' @author Shawn Gilroy <shawn.gilroy@temple.edu>
 #' @return data frame of Screening Criteria
 #' @examples
-#' dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-#' Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
-#' ids= c(1, 1,   1,   1,   1,   1))
+#' dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#' Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#' ids=c(1,1,1,1,1,1))
 #'
-#' dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-#'                   Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
-#'                   ids=c(2, 2,   2,   2,   2,   2))
+#' dat2<- data.frame(X=c(1,30,180,540,1080,2160),
+#'                   Y=c(1,0.9,0.7,0.6,0.5,0.4),
+#'                   ids=c(2,2,2,2,2,2))
 #'
 #' dat <- rbind(dat, dat2)
 #'

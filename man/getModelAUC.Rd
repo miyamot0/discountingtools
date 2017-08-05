@@ -15,9 +15,7 @@ getModelAUC(dat, results)
 area beneath the fitted model
 }
 \description{
-In this set of methods, the area beneath the fitted model is
-calculated and divided by the maximum area using numerical integration
-methods.  All delays are calculated in the normal scale.
+In this set of methods, the area beneath the fitted model is calculated and divided by the maximum area using numerical integration methods.  All delays are calculated in the normal scale.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

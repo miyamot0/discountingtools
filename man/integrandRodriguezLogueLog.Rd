@@ -17,8 +17,7 @@ integrandRodriguezLogueLog(x, lnK, beta)
 Numerical Integration Projection
 }
 \description{
-This integrand helper is a projection of the integrand (log10)
-with delays represented in the log base 10 scale
+This integrand helper is a projection of the integrand (log10) with delays represented in the log base 10 scale
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

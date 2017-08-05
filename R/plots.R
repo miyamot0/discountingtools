@@ -1,8 +1,6 @@
 #' Display of all fitted series with ED50 metric
 #'
-#' This method constructs a figure that displays all fitted models
-#' as well as the probability that they are the "true" model.  The
-#' ED50 metric is also provided for the most probable model.
+#' This method constructs a figure that displays all fitted models as well as the probability that they are the "true" model.  The ED50 metric is also provided for the most probable model.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -273,9 +271,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
 
 #' Display most probable fitted series with AUC metric
 #'
-#' This method constructs a figure that displays the most probable model
-#' as well as the probability that it is the "true" model.  The
-#' Model-based AUC metric is also provided for the most probable model.
+#' This method constructs a figure that displays the most probable model as well as the probability that it is the "true" model.  The model-based AUC metric is also provided for the most probable model.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -508,10 +504,7 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
 #' Display most probable fitted series with AUC metric (log10)
 #'
-#' This method constructs a figure that displays the most probable model
-#' as well as the probability that it is the "true" model.  The
-#' Model-based AUC metric in log base 10 scale is also provided
-#' for the most probable model.
+#' This method constructs a figure that displays the most probable model as well as the probability that it is the "true" model.  The model-based AUC metric in log base 10 scale is also provided for the most probable model.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series

@@ -19,8 +19,7 @@ integrandBleichrodtCRDILog(x, lnK, s, beta)
 Numerical Integration Projection
 }
 \description{
-This integrand helper is a projection of the integrand
-with delays represented in the log base 10 scale
+This integrand helper is a projection of the integrand with delays represented in the log base 10 scale
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

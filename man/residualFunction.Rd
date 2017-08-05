@@ -21,7 +21,7 @@ residualFunction(params, x, value, valueFunction, jacobianFunction)
 residual value of referenced function
 }
 \description{
-General, shared method for coordinating with fitting functions
+General, shared method for coordinating nls.lm fitting calls. Routes a supplied "valueFunction" with observed data and supplied parameters.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

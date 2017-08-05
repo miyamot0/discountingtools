@@ -8,21 +8,21 @@ discountingModelSelection(dat, A = NULL, models = c("all"), idCol = "id",
   detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1)
 }
 \arguments{
-\item{dat}{data frame with X column and Y column (0 <= Y <= 1)}
+\item{dat}{data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)}
 
-\item{A}{OPTIONAL: Modify line sizes for figures}
+\item{A}{OPTIONAL: The maximum value of the commodity (e.g., of 100 USD, out of 1, etc.)}
 
-\item{models}{vector of models to include in selection}
+\item{models}{vector of models to include in selection. Includes "noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "crdi", and "genhyp".  All models are included by specifying "all" or leaving the parameter at default ("all").}
 
-\item{idCol}{string content identifying participants}
+\item{idCol}{string content identifying participants (e.g., idCol = "ids")}
 
-\item{detailed}{include additional output details in results}
+\item{detailed}{include additional output details in results (TRUE/FALSE, FALSE by default)}
 
-\item{figures}{OPTIONAL: show figure of results}
+\item{figures}{OPTIONAL: show figure of results. Includes "ed50" for ed50 plotting, "auc" for numerical integration with normal delays, and "logauc" for numerical integration with log base 10 scaled delays.}
 
-\item{summarize}{OPTIONAL: Descriptive observations}
+\item{summarize}{OPTIONAL: Descriptive observations (TRUE/FALSE, FALSE by default)}
 
-\item{lineSize}{OPTIONAL: Modify line sizes for figures}
+\item{lineSize}{OPTIONAL: Modify line sizes for figures (numeric, 1 by default)}
 }
 \value{
 A data frame of model parameters
@@ -30,31 +30,23 @@ A data frame of model parameters
 data frame of fitted model parameters
 }
 \description{
-This function takes a data frame of temporal discounting values (X, Y)
-and performs approximate Bayesian model selection using the Bayesian
-Information Criterion and returns the log of the Effective Delay
-50 and numerical integration area.
-}
-\details{
-Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
+This function takes a data frame of temporal discounting values (X, Y) and performs approximate Bayesian model selection using the Bayesian Information Criterion and returns the log of the Effective Delay 50 and numerical integration area.
 }
 \examples{
-dat <- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-Y=  c(1, 0.9, 0.8, 0.7, 0.6,  0.4),
-ids= c(1, 1,   1,   1,   1,   1))
+dat <- data.frame(X=c(1,30,180,540,1080,2160),
+Y=c(1,0.9,0.8,0.7,0.6,0.4),
+ids=c(1,1,1,1,1,1))
 
-dat2<- data.frame(X=  c(1, 30,  180, 540, 1080, 2160),
-                  Y=  c(1, 0.9, 0.7, 0.6, 0.5,  0.4),
-                  ids=c(2, 2,   2,   2,   2,   2))
+dat2<- data.frame(X=c(1,30,180,540,1080,2160),
+                  Y=c(1,0.9,0.7,0.6,0.5, 0.4),
+                  ids=c(2,2,2,2,2,2))
 
 dat <- rbind(dat, dat2)
 
 dat$Y <- dat$Y * 100
-results <- discountingModelSelection(dat,
-                                     summarize = TRUE,
-                                     figures = "logauc",
-                                     idCol = "ids",
-                                     A = 100)
+
+results <- discountingModelSelection(dat, idCol = "ids", A = 100)
+
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

@@ -1,9 +1,6 @@
 #' Scoring for the log ED50
 #'
-#' Optionally, models without a straightforward exact solution
-#' will be scored numerically using a bisection search
-#'
-#' Only Ebert & Prelec, 2007 requires this bisection search
+#' Methods for routing computations of the ln(ED50). When possible, exact solutions are provided and models without a straightforward exact solution have ed50 calculated numerically using a bisection search.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -35,9 +32,7 @@ getED50 <- function(dat, results) {
 
 #' Numerically solve for ED50 value for Ebert & Prelec
 #'
-#' This method solves for ED50 for Ebert & Prelec using a point bisection procedure.
-#' This procedure will continue for n (20 currently) by default until a value of 50%
-#' is observed in the midpoint of two more moving delays.
+#' This method solves for ED50 for Ebert & Prelec using a point bisection procedure. This procedure will continue for n (20 currently) by default until a value of 50% is observed in the midpoint of two more moving delays.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -91,9 +86,7 @@ getED50ep <- function(dat, results) {
 
 #' Numerically solve for ED50 value for Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI)
 #'
-#' This method solves for ED50 for Bleichrodt CRDI using a point bisection procedure.
-#' This procedure will continue for n (20 currently) by default until a value of 50%
-#' is observed in the midpoint of two more moving delays.
+#' This method solves for ED50 for Bleichrodt CRDI using a point bisection procedure. This procedure will continue for n (20 currently) by default until a value of 50% is observed in the midpoint of two more moving delays.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -147,9 +140,7 @@ getED50crdi <- function(dat, results) {
 
 #' Numerically solve for ED50 value for Rodriguez & Logue Generalized Hyperbolioid
 #'
-#' This method solves for ED50 for Rodriguez & Logue using a point bisection procedure.
-#' This procedure will continue for n (20 currently) by default until a value of 50%
-#' is observed in the midpoint of two more moving delays.
+#' This method solves for ED50 for Rodriguez & Logue using a point bisection procedure. This procedure will continue for n (20 currently) by default until a value of 50% is observed in the midpoint of two more moving delays.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series

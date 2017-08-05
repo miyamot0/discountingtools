@@ -1,6 +1,8 @@
 #' minpack.lm logLik hack
 #'
-#' @param fit nls.lm object
+#' This function constructs a class, derived from an nls.lm object, similar to that of the logLik function in nls. This allows for native calls of the AIC and BIC functions from stats, using nls.lm fit objects.
+#'
+#' @param fit nls.lm fitted model
 #' @param REML determine whether or not to use ML (FALSE by default)
 #' @param ... inherit other args as necessary
 #' @author Katharine Mullen <kate@@few.vu.nl>

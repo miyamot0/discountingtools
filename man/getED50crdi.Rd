@@ -15,9 +15,7 @@ getED50crdi(dat, results)
 effective delay (value) for Ebert & Prelec ep
 }
 \description{
-This method solves for ED50 for Bleichrodt CRDI using a point bisection procedure.
-This procedure will continue for n (20 currently) by default until a value of 50%
-is observed in the midpoint of two more moving delays.
+This method solves for ED50 for Bleichrodt CRDI using a point bisection procedure. This procedure will continue for n (20 currently) by default until a value of 50% is observed in the midpoint of two more moving delays.
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

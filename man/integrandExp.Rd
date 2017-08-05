@@ -15,8 +15,7 @@ integrandExp(x, lnK)
 Numerical Integration Projection
 }
 \description{
-This integrand helper is a projection of the integrand
-with delays represented as normal
+This integrand helper is a projection of the integrand with delays represented as normal
 }
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>

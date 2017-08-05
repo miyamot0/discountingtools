@@ -1,8 +1,6 @@
 #' Scoring for the most probable model area
 #'
-#' In this set of methods, the area beneath the fitted model is
-#' calculated and divided by the maximum area using numerical integration
-#' methods.  All delays are calculated in the normal scale.
+#' In this set of methods, the area beneath the fitted model is calculated and divided by the maximum area using numerical integration methods.  All delays are calculated in the normal scale.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
@@ -78,9 +76,7 @@ getModelAUC <- function(dat, results) {
 
 #' Scoring for the most probable model area, in log10 space
 #'
-#' In this set of methods, the area beneath the fitted model is
-#' calculated and divided by the maximum area using numerical integration
-#' methods.  All delays are calculated in the log base 10 scale.
+#' In this set of methods, the area beneath the fitted model is calculated and divided by the maximum area using numerical integration methods.  All delays are calculated in the log base 10 scale.
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
