@@ -911,3 +911,491 @@ johnsonBickelScreen <- function(dat, idCol = "id") {
 
   returnFrame
 }
+
+#' Exponential Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesExponential(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesExponential <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 0.01
+  }
+
+  startlnK  <- seq(-15,  15, increment)
+  lengthLnK <- length(startlnK)
+  lengthX <- length(localDat$X)
+
+  # Params expand
+  MlnK <- sort(rep(startlnK, lengthX))
+
+  # Init SS vector
+  sumSquares<- rep(NA,lengthLnK)
+
+  # Observed Data
+  MX <- rep(localDat$X, lengthLnK)
+  MY <- rep(localDat$Y/A, lengthLnK)
+
+  # Projections
+  projection<- exp(-exp(MlnK)*MX)
+  sqResidual<- (MY-projection)^2
+
+  for(j in 1:lengthLnK){
+    sumSquares[j]  <-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
+  }
+
+  # Sort starting estimates
+  presort   <-data.frame(startlnK, sumSquares)
+  sorted    <-presort[order(presort[ ,"sumSquares"]), ]
+  ini.par   <-c(lnk=sorted$startlnK[1])
+
+  ini.par
+}
+
+#' Hyperbolic Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesHyperbolic(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesHyperbolic <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 0.01
+  }
+
+  startlnK  <- seq(-15,  15, increment)
+  lengthLnK <- length(startlnK)
+  lengthX <- length(localDat$X)
+
+  # Params expand
+  MlnK <- sort(rep(startlnK, lengthX))
+
+  # Init SS vector
+  sumSquares <- rep(NA,lengthLnK)
+
+  # Observed Data
+  MX <- rep(localDat$X, lengthLnK)
+  MY <- rep(localDat$Y/A, lengthLnK)
+
+  # Projections
+  projection <- (1+exp(MlnK)*MX)^(-1)
+  sqResidual <- (MY-projection)^2
+
+  for(j in 1:lengthLnK){
+    sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
+  }
+
+  # Sort starting estimates
+  presort <-data.frame(startlnK,
+                       sumSquares)
+  sorted  <-presort[order(presort[ ,"sumSquares"]), ]
+
+  ini.par <-c(lnk=sorted$startlnK[1])
+
+  ini.par
+}
+
+#' Laibson Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesLaibson(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesLaibson <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 3
+  }
+
+  # Starts
+  startbeta   <- seq(0, 1, 0.1/increment)
+  startdelta  <- seq(0, 1, 0.01/increment)
+
+  lengthBeta  <- length(startbeta)
+  lengthDelta <- length(startdelta)
+  lengthX <- length(localDat$X)
+
+  # Params expand
+  startBeta   <- rep(sort(rep(startbeta, lengthX)),lengthDelta)
+  startdelta  <- sort(rep(startdelta,lengthX*lengthBeta))
+
+  # Init SS vector
+  sumSquares  <- rep(NA,lengthBeta*lengthDelta)
+
+  # Observed Data
+  SY          <- rep(localDat$Y/A,lengthBeta*lengthDelta)
+
+  # Projections
+  projection  <- startBeta*startdelta^localDat$X
+  sqResidual  <- (SY-projection)^2
+
+  SSbeta      <- rep(startbeta,lengthDelta)
+  SSdelta     <- sort(rep(startdelta,lengthBeta))
+
+  for(j in 1:(lengthBeta*lengthDelta)){
+    sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+  }
+
+  # Sort starting estimates
+  presort<-data.frame(SSbeta,
+                      SSdelta,
+                      sumSquares)
+
+  sorted  <- presort[order(presort[,"sumSquares"]),]
+  ini.par <- c(beta  = sorted$SSbeta[1],
+               delta = sorted$SSdelta[1])
+
+  ini.par
+}
+
+#' Green/Myerson Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesGreenMyerson(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesGreenMyerson <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 3
+  }
+
+  # Starts
+  startlnK <- seq(-12, 12, 1/increment)
+  starts <- seq(.01, 10, 0.01/increment)
+
+  lengthLnK <- length(startlnK)
+  lengthS <- length(starts)
+  lengthX <- length(localDat$X)
+
+  # Params expand
+  SSlnK <- rep(startlnK,lengthS)
+  SSs <- sort(rep(starts,lengthLnK))
+
+  # Init SS vector
+  sumSquares <- rep(NA,lengthS*lengthLnK)
+
+  # Observed Data
+  SY <- rep(localDat$Y/A,lengthS*lengthLnK)
+
+  # Projections
+  SlnK <- rep(sort(rep(startlnK,lengthX)),lengthS)
+  Ss <- sort(rep(starts,lengthX*lengthLnK))
+
+  projection <- (1+exp(SlnK)*localDat$X)^(-Ss)
+  sqResidual <- (SY-projection)^2
+
+  for(j in 1:(lengthS*lengthLnK)){
+    sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
+  }
+
+  # Sort starting estimates
+  presort <- data.frame(SSlnK,SSs,sumSquares)
+  sorted <- presort[order(presort[,"sumSquares"]),]
+  ini.par <- c(lnk=sorted$SSlnK[1],
+               s=sorted$SSs[1])
+
+  ini.par
+}
+
+#' Rachlin Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesRachlin(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesRachlin <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 3
+  }
+
+  # Starts
+  startlnK <- seq(-12, 12, 1/increment)
+  starts <- seq(.01, 10, 0.01/increment)
+
+  lengthLnK<-length(startlnK)
+  lengthS<-length(starts)
+  lengthX <- length(localDat$X)
+
+  # Params expand
+  SSlnK<-rep(startlnK,lengthS)
+  SSs<-sort(rep(starts,lengthLnK))
+
+  # Init SS vector
+  sumSquares<-rep(NA,lengthS*lengthLnK)
+
+  # Observed Data
+  SY<-rep(localDat$Y/A,lengthS*lengthLnK)
+
+  # Projections
+  SlnK<-rep(sort(rep(startlnK,lengthX)),lengthS)
+  Ss<-sort(rep(starts,lengthX*lengthLnK))
+
+  projection<-(1+exp(SlnK)*(localDat$X^Ss))^(-1)
+  sqResidual<-(SY-projection)^2
+
+  for(j in 1:(lengthS*lengthLnK)){
+    sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
+  }
+
+  # Sort starting estimates
+  presort <- data.frame(SSlnK,
+                        SSs,
+                        sumSquares)
+  sorted <- presort[order(presort[,"sumSquares"]),]
+  ini.par <- c(lnk=sorted$SSlnK[1],
+               s=sorted$SSs[1])
+
+  ini.par
+}
+
+#' Ebert/Prelec Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesEbertPrelec(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesEbertPrelec <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 3
+  }
+
+  # Starts
+  startlnK <- seq(-12, 12, 1/increment)
+  starts <- seq(.01, 10, 0.01/increment)
+
+  lengthLnK <- length(startlnK)
+  lengthS <- length(starts)
+  lengthX <- length(localDat$X)
+
+  # Params expand
+  SSlnK <- rep(startlnK,lengthS)
+  SSs <- sort(rep(starts,lengthLnK))
+
+  # Init SS vector
+  sumSquares <- rep(NA,lengthS*lengthLnK)
+
+  # Observed Data
+  SY <- rep(localDat$Y/A,lengthS*lengthLnK)
+
+  # Projections
+  SlnK <- rep(sort(rep(startlnK,lengthX)),lengthS)
+  Ss <- sort(rep(starts,lengthX*lengthLnK))
+
+  projection <- exp(-(exp(SlnK)*localDat$X)^Ss)
+  sqResidual <- (SY-projection)^2
+
+  for(j in 1:(lengthS*lengthLnK)){
+    sumSquares[j]<-sum(sqResidual[(j-1)*lengthX +1:lengthX])
+
+  }
+
+  # Sort starting estimates
+  presort <- data.frame(SSlnK,
+                        SSs,
+                        sumSquares)
+  sorted <- presort[order(presort[,"sumSquares"]),]
+  ini.par <- c(lnk=sorted$SSlnK[1],
+               s=sorted$SSs[1])
+
+  ini.par
+}
+
+#' Bleichrodt et al. Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesBleichrodt(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesBleichrodt <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 2
+  }
+
+  startlnK <- seq(-12, 12, 1/increment)
+  starts <- seq(.01, 1, 0.11/increment)
+  startBeta <- seq(0.1, 1, 0.11/increment)
+
+  lengthX <- length(localDat$X)
+
+  # new Pre sort
+  presort <- expand.grid(startlnK = startlnK, starts = starts, startBeta = startBeta)
+  presort$sumSquares <- NA
+
+  # clean, merge, or move
+  getSS <- function(presort, index, Y, X) {
+    projections <- presort[index,]$startBeta*exp(-(exp(presort[index,]$startlnK)*X^presort[index,]$starts))
+    sqResidual <- (Y - projections)^2
+    sum(sqResidual)
+  }
+
+  for (j in 1:nrow(presort)) {
+    presort[j, ]$sumSquares <-getSS(presort, j, localDat$Y/A, localDat$X)
+  }
+
+  presort <- presort[order(presort$sumSquares),]
+
+  ini.par <- c(beta = presort[1,]$startBeta, lnk = presort[1,]$startlnK, s = presort[1,]$starts)
+
+  ini.par
+}
+
+#' Rodriguez/Logue Starting Values estimator
+#'
+#' This function applies a grid search for starting parameters
+#'
+#' @param A Maximum value of commodity
+#' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
+#' @param overkill optional higher resolution search
+#' @return A named vector of starting parameters
+#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @return data frame of Screening Criteria
+#' @examples
+#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
+#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
+#'                  ids=c(1,1,1,1,1,1))
+#'dat$Y <- dat$Y * 100
+#'startValuesRodriguezLogue(A = 100, dat, overkill = TRUE)
+#'
+#' @export
+startValuesRodriguezLogue <- function(A = 1, localDat, overkill = FALSE) {
+
+  increment <- 1
+
+  if (overkill == TRUE) {
+    increment <- 3
+  }
+
+  # Starts
+  startlnK <- seq(-12, 12, 1/increment)
+  startBeta <- seq(-12, 12, 1/increment)
+
+  # new Pre sort
+  presort <- expand.grid(startlnK = startlnK, startBeta = startBeta)
+  presort$sumSquares <- NA
+
+  # clean, merge, or move
+  getSS <- function(presort, index, Y, X) {
+    projections <- (1 + X * exp(presort[index,]$startlnK))^(-exp(presort[index,]$startBeta) / exp(presort[index,]$startlnK))
+    sqResidual <- (Y - projections)^2
+    sum(sqResidual)
+  }
+
+  for (j in 1:nrow(presort)) {
+    presort[j, ]$sumSquares <-getSS(presort, j, localDat$Y/A, localDat$X)
+  }
+
+  presort <- presort[order(presort$sumSquares),]
+
+  ini.par <- c(lnk = presort[1,]$startlnK, beta = presort[1,]$startBeta)
+
+  ini.par
+}

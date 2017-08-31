@@ -30,9 +30,6 @@ data frame of fitted model parameters
 \description{
 This function takes a data frame of temporal discounting values (X, Y) and performs approximate Bayesian model selection using the Bayesian Information Criterion and returns the log of the Effective Delay 50 and numerical integration area.
 }
-\details{
-Models: Exponential, Hyperbolic, BetaDelta, GreenMyerson, & Rachlin, Ebert & Prelec's Constant Sensitivity
-}
 \author{
 Shawn Gilroy <shawn.gilroy@temple.edu>
 }
