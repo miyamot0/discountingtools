@@ -19,21 +19,6 @@ data frame of Screening Criteria
 \description{
 This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria. These are included by default in all model selection calls.
 }
-\examples{
-dat <- data.frame(X=c(1,30,180,540,1080,2160),
-Y=c(1,0.9,0.8,0.7,0.6,0.4),
-ids=c(1,1,1,1,1,1))
-
-dat2<- data.frame(X=c(1,30,180,540,1080,2160),
-                  Y=c(1,0.9,0.7,0.6,0.5,0.4),
-                  ids=c(2,2,2,2,2,2))
-
-dat <- rbind(dat, dat2)
-
-dat$Y <- dat$Y * 100
-johnsonBickelScreen(dat, idCol = "ids")
-
-}
 \author{
 Shawn Gilroy <sgilroy1@lsu.edu>
 }
