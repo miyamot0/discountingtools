@@ -10,7 +10,7 @@
 #' @param summarize OPTIONAL: Descriptive observations
 #' @param lineSize OPTIONAL: Modify line sizes for figures
 #' @return A data frame of model parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @importFrom stats lm nls
 #' @importFrom minpack.lm nls.lm nls.lm.control
 #' @return data frame of fitted model parameters
@@ -742,7 +742,7 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 #' @param summarize OPTIONAL: Descriptive observations (TRUE/FALSE, FALSE by default)
 #' @param lineSize OPTIONAL: Modify line sizes for figures (numeric, 1 by default)
 #' @return A data frame of model parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of fitted model parameters
 #' @examples
 #' dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -844,7 +844,7 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 #' @param dat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param idCol string content identifying participants (e.g., idCol = "ids")
 #' @return A data frame of model screenings
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #' dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -920,7 +920,7 @@ johnsonBickelScreen <- function(dat, idCol = "id") {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -977,7 +977,7 @@ startValuesExponential <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -1036,7 +1036,7 @@ startValuesHyperbolic <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -1103,7 +1103,7 @@ startValuesLaibson <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -1168,7 +1168,7 @@ startValuesGreenMyerson <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -1235,7 +1235,7 @@ startValuesRachlin <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -1302,7 +1302,7 @@ startValuesEbertPrelec <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),
@@ -1356,7 +1356,7 @@ startValuesBleichrodt <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @examples
 #'dat <- data.frame(X=c(1,30,180,540,1080,2160),

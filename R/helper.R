@@ -7,7 +7,7 @@
 #' @param value observation at point n (Y)
 #' @param valueFunction function to get projected value
 #' @param jacobianFunction function to create jacobian
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return residual value of referenced function
 residualFunction <- function(params, x, value, valueFunction, jacobianFunction)
 {
@@ -23,7 +23,7 @@ residualFunction <- function(params, x, value, valueFunction, jacobianFunction)
 #' @param value observation at point n (Y)
 #' @param valueFunction function to get projected value
 #' @param jacobianFunction function to create jacobian
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return difference value for jacobian
 jacobianMatrix <- function(params, x, value, valueFunction, jacobianFunction)
 {
@@ -34,7 +34,7 @@ jacobianMatrix <- function(params, x, value, valueFunction, jacobianFunction)
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 exponentialDiscountFunc <- function(x, lnk)
 {
@@ -46,7 +46,7 @@ exponentialDiscountFunc <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 exponentialDiscountGradient <- function(x, lnk)
 {
@@ -58,7 +58,7 @@ exponentialDiscountGradient <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 hyperbolicDiscountFunc <- function(x, lnk)
 {
@@ -70,7 +70,7 @@ hyperbolicDiscountFunc <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 hyperbolicDiscountGradient <- function(x, lnk)
 {
@@ -83,7 +83,7 @@ hyperbolicDiscountGradient <- function(x, lnk)
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 betaDeltaDiscountFunc <- function(x, beta, delta)
 {
@@ -96,7 +96,7 @@ betaDeltaDiscountFunc <- function(x, beta, delta)
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 betaDeltaDiscountGradient <- function(x, beta, delta)
 {
@@ -110,7 +110,7 @@ betaDeltaDiscountGradient <- function(x, beta, delta)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 {
@@ -123,7 +123,7 @@ myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 {
@@ -137,7 +137,7 @@ myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
 {
@@ -150,7 +150,7 @@ rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
 {
@@ -164,7 +164,7 @@ rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 ebertPrelecDiscountFunc <- function(x, lnk, s)
 {
@@ -177,7 +177,7 @@ ebertPrelecDiscountFunc <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 ebertPrelecDiscountGradient <- function(x, lnk, s)
 {
@@ -192,7 +192,7 @@ ebertPrelecDiscountGradient <- function(x, lnk, s)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
 {
@@ -206,7 +206,7 @@ BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
 {
@@ -221,7 +221,7 @@ BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 RodriguezLogueDiscountFunc <- function(x, lnk, beta)
 {
@@ -234,7 +234,7 @@ RodriguezLogueDiscountFunc <- function(x, lnk, beta)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 RodriguezLogueDiscountGradient <- function(x, lnk, beta)
 {

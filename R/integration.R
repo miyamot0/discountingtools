@@ -4,7 +4,7 @@
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
 
@@ -14,7 +14,7 @@ integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandExpLog <- function(x, lnK) { exp(-exp(lnK)*(10^x)) }
 
@@ -24,7 +24,7 @@ integrandExpLog <- function(x, lnK) { exp(-exp(lnK)*(10^x)) }
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandHyp <- function(x, lnK) { (1+exp(lnK)*x)^(-1) }
 
@@ -34,7 +34,7 @@ integrandHyp <- function(x, lnK) { (1+exp(lnK)*x)^(-1) }
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandHypLog <- function(x, lnK) { (1+exp(lnK)*(10^x))^(-1) }
 
@@ -45,7 +45,7 @@ integrandHypLog <- function(x, lnK) { (1+exp(lnK)*(10^x))^(-1) }
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 
@@ -56,7 +56,7 @@ integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandBetaDeltaLog <- function(x, beta, delta) { beta*delta^(10^x) }
 
@@ -67,7 +67,7 @@ integrandBetaDeltaLog <- function(x, beta, delta) { beta*delta^(10^x) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandMyerson <- function(x, lnK, s) { (1+exp(lnK)*x)^(-s) }
 
@@ -78,7 +78,7 @@ integrandMyerson <- function(x, lnK, s) { (1+exp(lnK)*x)^(-s) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandMyersonLog <- function(x, lnK, s) { (1+exp(lnK)*(10^x))^(-s) }
 
@@ -89,7 +89,7 @@ integrandMyersonLog <- function(x, lnK, s) { (1+exp(lnK)*(10^x))^(-s) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 
@@ -100,7 +100,7 @@ integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
 
@@ -111,7 +111,7 @@ integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 
@@ -122,7 +122,7 @@ integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
 
@@ -134,7 +134,7 @@ integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
 #' @param lnK fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s) }
 
@@ -146,7 +146,7 @@ integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s
 #' @param lnK fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandBleichrodtCRDILog <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*(10^x)^s) }
 
@@ -157,7 +157,7 @@ integrandBleichrodtCRDILog <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-beta / exp(lnK)) }
 
@@ -168,6 +168,6 @@ integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-beta / 
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-beta / exp(lnK)) }

@@ -5,7 +5,7 @@
 #' @param dat observed data
 #' @param results Results of analyses for data series
 #' @param lineWidth Line width
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @importFrom reshape melt
 #' @importFrom ggplot2 geom_point geom_line aes annotation_logticks element_blank element_line element_rect element_text expand_limits guide_legend guides labs scale_x_continuous scale_colour_manual theme theme_bw xlab ylab
 #' @importFrom scales trans_breaks trans_format math_format
@@ -276,7 +276,7 @@ displayED50Figure <- function(dat, results, lineWidth = 1) {
 #' @param dat observed data
 #' @param results Results of analyses for data series
 #' @param lineWidth Line width
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return display figure
 displayAUCFigure <- function(dat, results, lineWidth = 1) {
 
@@ -509,7 +509,7 @@ displayAUCFigure <- function(dat, results, lineWidth = 1) {
 #' @param dat observed data
 #' @param results Results of analyses for data series
 #' @param lineWidth Line width
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return display figure
 displayLogAUCFigure <- function(dat, results, lineWidth = 1) {
 
