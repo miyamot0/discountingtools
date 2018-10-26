@@ -24,5 +24,5 @@ residual value of referenced function
 General, shared method for coordinating nls.lm fitting calls. Routes a supplied "valueFunction" with observed data and supplied parameters.
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

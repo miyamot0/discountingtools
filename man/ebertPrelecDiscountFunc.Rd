@@ -20,5 +20,5 @@ projected, subjective value
 Ebert & Prelec Value Function
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

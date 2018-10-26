@@ -5,7 +5,8 @@
 \title{Perform Discounting Model Selection}
 \usage{
 discountingModelSelectionCall(dat, A = NULL, models = c("noise"),
-  detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1)
+  detailed = FALSE, figures = FALSE, summarize = FALSE,
+  lineSize = 1)
 }
 \arguments{
 \item{dat}{data frame with X column and Y column (0 <= Y <= 1)}
@@ -31,5 +32,5 @@ data frame of fitted model parameters
 This function takes a data frame of temporal discounting values (X, Y) and performs approximate Bayesian model selection using the Bayesian Information Criterion and returns the log of the Effective Delay 50 and numerical integration area.
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

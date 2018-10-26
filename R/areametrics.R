@@ -4,7 +4,7 @@
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return area beneath the fitted model
 getModelAUC <- function(dat, results) {
 
@@ -80,7 +80,7 @@ getModelAUC <- function(dat, results) {
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return area beneath the fitted model, in log10 space
 getModelAUCLog10Scaled <- function(dat, results) {
 

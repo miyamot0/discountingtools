@@ -20,5 +20,5 @@ Numerical Integration Projection
 This integrand helper is a projection of the integrand (log10) with delays represented in the log base 10 scale
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

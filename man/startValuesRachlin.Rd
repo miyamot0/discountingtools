@@ -21,14 +21,6 @@ data frame of Screening Criteria
 \description{
 This function applies a grid search for starting parameters
 }
-\examples{
-dat <- data.frame(X=c(1,30,180,540,1080,2160),
-                 Y=c(1,0.9,0.8,0.7,0.6,0.4),
-                 ids=c(1,1,1,1,1,1))
-dat$Y <- dat$Y * 100
-startValuesRachlin(A = 100, dat, overkill = TRUE)
-
-}
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

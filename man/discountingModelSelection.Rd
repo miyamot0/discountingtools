@@ -4,8 +4,9 @@
 \alias{discountingModelSelection}
 \title{Perform Discounting Model Selection}
 \usage{
-discountingModelSelection(dat, A = NULL, models = c("all"), idCol = "id",
-  detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1)
+discountingModelSelection(dat, A = NULL, models = c("all"),
+  idCol = "id", detailed = FALSE, figures = FALSE,
+  summarize = FALSE, lineSize = 1)
 }
 \arguments{
 \item{dat}{data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)}
@@ -32,22 +33,6 @@ data frame of fitted model parameters
 \description{
 This function takes a data frame of temporal discounting values (X, Y) and performs approximate Bayesian model selection using the Bayesian Information Criterion and returns the log of the Effective Delay 50 and numerical integration area.
 }
-\examples{
-dat <- data.frame(X=c(1,30,180,540,1080,2160),
-Y=c(1,0.9,0.8,0.7,0.6,0.4),
-ids=c(1,1,1,1,1,1))
-
-dat2<- data.frame(X=c(1,30,180,540,1080,2160),
-                  Y=c(1,0.9,0.7,0.6,0.5, 0.4),
-                  ids=c(2,2,2,2,2,2))
-
-dat <- rbind(dat, dat2)
-
-dat$Y <- dat$Y * 100
-
-results <- discountingModelSelection(dat, idCol = "ids", A = 100)
-
-}
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

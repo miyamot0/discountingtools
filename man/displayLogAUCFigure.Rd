@@ -20,5 +20,5 @@ display figure
 This method constructs a figure that displays the most probable model as well as the probability that it is the "true" model.  The model-based AUC metric in log base 10 scale is also provided for the most probable model.
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

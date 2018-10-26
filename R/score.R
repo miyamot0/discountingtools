@@ -10,7 +10,7 @@
 #' @param summarize OPTIONAL: Descriptive observations
 #' @param lineSize OPTIONAL: Modify line sizes for figures
 #' @return A data frame of model parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @importFrom stats lm nls
 #' @importFrom minpack.lm nls.lm nls.lm.control
 #' @return data frame of fitted model parameters
@@ -43,8 +43,8 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (detailed == TRUE) {
       tempList <- list(Noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
                        Noise.RMSE = summary(modelFitNoise)[["sigma"]],
-                       Noise.BIC  = stats::BIC(modelFitNoise),
-                       Noise.AIC  = stats::AIC(modelFitNoise))
+                       Noise.BIC  = ifelse(summary(modelFitNoise)[["sigma"]] == 0, Inf, stats::BIC(modelFitNoise)),
+                       Noise.AIC  = ifelse(summary(modelFitNoise)[["sigma"]] == 0, Inf, stats::AIC(modelFitNoise)))
 
       returnList <- c(returnList, tempList)
 
@@ -55,10 +55,8 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
       returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(Noise.BIC = stats::BIC(modelFitNoise)))
-
+      bicList <- c(bicList, list(Noise.BIC  = ifelse(summary(modelFitNoise)[["sigma"]] == 0, Inf, stats::BIC(modelFitNoise))))
     }
-
   }
 
   if ('exponential' %in% models) {
@@ -655,26 +653,50 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
   bfList <- list()
   bfSum <- 0.0
 
-  for (i in 1:length(bicList)) {
-    bfName = gsub("BIC", "BF", names(bicList)[i])
-    bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["Noise.BIC"]]))
-
-    bfSum <- bfSum + bfList[[bfName]]
-
-  }
-
-  if (detailed == TRUE) {
-    returnList <- c(returnList, bfList)
-  }
-
   ### probs
   probList <- list()
 
-  for (i in 1:length(bfList)) {
-    probName = gsub("BF", "prob", names(bfList)[i])
-    probList[[probName]] = bfList[[names(bfList)[i]]]/bfSum
+  # Perfect fit, hacky workaround
+  if (bicList[["Noise.BIC"]] == Inf) {
+    for (i in 1:length(bicList)) {
+      bfName = gsub("BIC", "BF", names(bicList)[i])
+      bfList[[bfName]] = 0
 
+      bfSum <- bfSum + bfList[[bfName]]
+    }
+
+    if (detailed == TRUE) {
+      returnList <- c(returnList, bfList)
+    }
+
+    for (i in 1:length(bfList)) {
+      probName = gsub("BF", "prob", names(bfList)[i])
+      probList[[probName]] = 0
+    }
+
+    # Hack
+    probList[["Noise.prob"]] <- 1
+
+  } else {
+    for (i in 1:length(bicList)) {
+      bfName = gsub("BIC", "BF", names(bicList)[i])
+      bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["Noise.BIC"]]))
+
+      bfSum <- bfSum + bfList[[bfName]]
+
+    }
+
+    if (detailed == TRUE) {
+      returnList <- c(returnList, bfList)
+    }
+
+    for (i in 1:length(bfList)) {
+      probName = gsub("BF", "prob", names(bfList)[i])
+      probList[[probName]] = bfList[[names(bfList)[i]]]/bfSum
+
+    }
   }
+
 
   returnList <- c(returnList, probList)
 
@@ -742,23 +764,8 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 #' @param summarize OPTIONAL: Descriptive observations (TRUE/FALSE, FALSE by default)
 #' @param lineSize OPTIONAL: Modify line sizes for figures (numeric, 1 by default)
 #' @return A data frame of model parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of fitted model parameters
-#' @examples
-#' dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#' Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#' ids=c(1,1,1,1,1,1))
-#'
-#' dat2<- data.frame(X=c(1,30,180,540,1080,2160),
-#'                   Y=c(1,0.9,0.7,0.6,0.5, 0.4),
-#'                   ids=c(2,2,2,2,2,2))
-#'
-#' dat <- rbind(dat, dat2)
-#'
-#' dat$Y <- dat$Y * 100
-#'
-#' results <- discountingModelSelection(dat, idCol = "ids", A = 100)
-#'
 #' @export
 discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = "id", detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1) {
 
@@ -796,43 +803,39 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 
   lengthReturn <- length(unique(dat$id))
 
+  cores <- parallel::detectCores()
+  cl <- makeSOCKcluster(cores)
+  registerDoSNOW(cl)
+
+  pb <- txtProgressBar(min = min(unique(dat$id)), max = max(unique(dat$id)), style=3)
+  progress <- function(n) setTxtProgressBar(pb, n)
+  opts <- list(progress=progress)
+
   finalResult <- NA
+  finalResult <- foreach(i = unique(dat$id), .combine="rbind", .packages = c("discountingtools"), .options.snow=opts) %dopar% {
+    localDat <- subset(dat, id == i)
 
-  for (id in unique(dat$id)) {
-
-    localDat <- dat[dat$id == id, ]
+    result <- data.frame(id = i)
 
     if (nrow(localDat) < 3) {
-      message(paste("Dropping Series: ", id, ", Fewer than 3 data points", sep = ""));
-      next
+      message(paste("Dropping Series: ", i, ", Fewer than 3 data points", sep = ""));
 
     } else {
-      message(paste("Calculating series id: ", id, sep = ""))
+      message(paste("Calculating series id: ", i, sep = ""))
 
+      screenRes <- johnsonBickelScreen(localDat)
+
+      result <- cbind(id = i,
+                      JB.C1 = screenRes$C1,
+                      JB.C2 = screenRes$C2,
+                      discountingModelSelectionCall(localDat, A, models, detailed, figures, summarize, lineSize))
     }
 
-    result <- NA
-    result <- discountingModelSelectionCall(localDat, A, models, detailed, figures, summarize, lineSize)
-
-    screenRes <- johnsonBickelScreen(localDat)
-
-    if (id == unique(dat$id)[1]) {
-
-      finalResult <- cbind(id = id,
-                           JB.C1 = screenRes$C1,
-                           JB.C2 = screenRes$C2,
-                           result)
-
-    } else {
-
-      finalResult <- rbind(finalResult,
-                           cbind(id = id,
-                                 JB.C1 = screenRes$C1,
-                                 JB.C2 = screenRes$C2,
-                                 result))
-
-    }
+    result
   }
+
+  stopCluster(cl)
+  close(pb)
 
   finalResult
 }
@@ -844,22 +847,8 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 #' @param dat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param idCol string content identifying participants (e.g., idCol = "ids")
 #' @return A data frame of model screenings
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#' dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#' Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#' ids=c(1,1,1,1,1,1))
-#'
-#' dat2<- data.frame(X=c(1,30,180,540,1080,2160),
-#'                   Y=c(1,0.9,0.7,0.6,0.5,0.4),
-#'                   ids=c(2,2,2,2,2,2))
-#'
-#' dat <- rbind(dat, dat2)
-#'
-#' dat$Y <- dat$Y * 100
-#' johnsonBickelScreen(dat, idCol = "ids")
-#'
 #' @export
 johnsonBickelScreen <- function(dat, idCol = "id") {
 
@@ -920,15 +909,8 @@ johnsonBickelScreen <- function(dat, idCol = "id") {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesExponential(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesExponential <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -977,15 +959,8 @@ startValuesExponential <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesHyperbolic(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesHyperbolic <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -1036,15 +1011,8 @@ startValuesHyperbolic <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesLaibson(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesLaibson <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -1103,15 +1071,8 @@ startValuesLaibson <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesGreenMyerson(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesGreenMyerson <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -1168,15 +1129,8 @@ startValuesGreenMyerson <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesRachlin(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesRachlin <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -1235,15 +1189,8 @@ startValuesRachlin <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesEbertPrelec(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesEbertPrelec <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -1302,15 +1249,8 @@ startValuesEbertPrelec <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesBleichrodt(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesBleichrodt <- function(A = 1, localDat, overkill = FALSE) {
 
@@ -1356,15 +1296,8 @@ startValuesBleichrodt <- function(A = 1, localDat, overkill = FALSE) {
 #' @param localDat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
 #' @param overkill optional higher resolution search
 #' @return A named vector of starting parameters
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
-#' @examples
-#'dat <- data.frame(X=c(1,30,180,540,1080,2160),
-#'                  Y=c(1,0.9,0.8,0.7,0.6,0.4),
-#'                  ids=c(1,1,1,1,1,1))
-#'dat$Y <- dat$Y * 100
-#'startValuesRodriguezLogue(A = 100, dat, overkill = TRUE)
-#'
 #' @export
 startValuesRodriguezLogue <- function(A = 1, localDat, overkill = FALSE) {
 

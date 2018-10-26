@@ -4,7 +4,7 @@
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return natural logarithm of the Effective Delay 50%
 getED50 <- function(dat, results) {
   returnValue <- NaN
@@ -36,7 +36,7 @@ getED50 <- function(dat, results) {
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return effective delay (value) for Ebert & Prelec ep
 getED50ep <- function(dat, results) {
   lowDelay <- 0
@@ -90,7 +90,7 @@ getED50ep <- function(dat, results) {
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return effective delay (value) for Ebert & Prelec ep
 getED50crdi <- function(dat, results) {
   lowDelay <- 0
@@ -144,7 +144,7 @@ getED50crdi <- function(dat, results) {
 #'
 #' @param dat observed data
 #' @param results Results of analyses for data series
-#' @author Shawn Gilroy <shawn.gilroy@temple.edu>
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return effective delay (value) for Ebert & Prelec ep
 getED50genhyp <- function(dat, results) {
   lowDelay <- 0
