@@ -43,8 +43,8 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     if (detailed == TRUE) {
       tempList <- list(Noise.mean = modelFitNoise$coefficients[["(Intercept)"]],
                        Noise.RMSE = summary(modelFitNoise)[["sigma"]],
-                       Noise.BIC  = stats::BIC(modelFitNoise),
-                       Noise.AIC  = stats::AIC(modelFitNoise))
+                       Noise.BIC  = ifelse(summary(modelFitNoise)[["sigma"]] == 0, Inf, stats::BIC(modelFitNoise)),
+                       Noise.AIC  = ifelse(summary(modelFitNoise)[["sigma"]] == 0, Inf, stats::AIC(modelFitNoise)))
 
       returnList <- c(returnList, tempList)
 
@@ -55,10 +55,8 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
 
       returnList <- c(returnList, tempList)
 
-      bicList <- c(bicList, list(Noise.BIC = stats::BIC(modelFitNoise)))
-
+      bicList <- c(bicList, list(Noise.BIC  = ifelse(summary(modelFitNoise)[["sigma"]] == 0, Inf, stats::BIC(modelFitNoise))))
     }
-
   }
 
   if ('exponential' %in% models) {
@@ -655,26 +653,50 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
   bfList <- list()
   bfSum <- 0.0
 
-  for (i in 1:length(bicList)) {
-    bfName = gsub("BIC", "BF", names(bicList)[i])
-    bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["Noise.BIC"]]))
-
-    bfSum <- bfSum + bfList[[bfName]]
-
-  }
-
-  if (detailed == TRUE) {
-    returnList <- c(returnList, bfList)
-  }
-
   ### probs
   probList <- list()
 
-  for (i in 1:length(bfList)) {
-    probName = gsub("BF", "prob", names(bfList)[i])
-    probList[[probName]] = bfList[[names(bfList)[i]]]/bfSum
+  # Perfect fit, hacky workaround
+  if (bicList[["Noise.BIC"]] == Inf) {
+    for (i in 1:length(bicList)) {
+      bfName = gsub("BIC", "BF", names(bicList)[i])
+      bfList[[bfName]] = 0
 
+      bfSum <- bfSum + bfList[[bfName]]
+    }
+
+    if (detailed == TRUE) {
+      returnList <- c(returnList, bfList)
+    }
+
+    for (i in 1:length(bfList)) {
+      probName = gsub("BF", "prob", names(bfList)[i])
+      probList[[probName]] = 0
+    }
+
+    # Hack
+    probList[["Noise.prob"]] <- 1
+
+  } else {
+    for (i in 1:length(bicList)) {
+      bfName = gsub("BIC", "BF", names(bicList)[i])
+      bfList[[bfName]] = exp(-.5*(bicList[[names(bicList)[i]]]-bicList[["Noise.BIC"]]))
+
+      bfSum <- bfSum + bfList[[bfName]]
+
+    }
+
+    if (detailed == TRUE) {
+      returnList <- c(returnList, bfList)
+    }
+
+    for (i in 1:length(bfList)) {
+      probName = gsub("BF", "prob", names(bfList)[i])
+      probList[[probName]] = bfList[[names(bfList)[i]]]/bfSum
+
+    }
   }
+
 
   returnList <- c(returnList, probList)
 
