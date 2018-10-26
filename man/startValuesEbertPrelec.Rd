@@ -30,5 +30,5 @@ startValuesEbertPrelec(A = 100, dat, overkill = TRUE)
 
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

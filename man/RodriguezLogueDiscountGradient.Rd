@@ -20,5 +20,5 @@ projected, subjective value
 Rodriguez & Logue Helper for Nonlinear Fitting
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

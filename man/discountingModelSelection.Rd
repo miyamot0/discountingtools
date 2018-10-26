@@ -4,8 +4,9 @@
 \alias{discountingModelSelection}
 \title{Perform Discounting Model Selection}
 \usage{
-discountingModelSelection(dat, A = NULL, models = c("all"), idCol = "id",
-  detailed = FALSE, figures = FALSE, summarize = FALSE, lineSize = 1)
+discountingModelSelection(dat, A = NULL, models = c("all"),
+  idCol = "id", detailed = FALSE, figures = FALSE,
+  summarize = FALSE, lineSize = 1)
 }
 \arguments{
 \item{dat}{data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)}
@@ -49,5 +50,5 @@ results <- discountingModelSelection(dat, idCol = "ids", A = 100)
 
 }
 \author{
-Shawn Gilroy <shawn.gilroy@temple.edu>
+Shawn Gilroy <sgilroy1@lsu.edu>
 }
