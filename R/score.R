@@ -818,43 +818,59 @@ discountingModelSelection <- function(dat, A = NULL, models = c("all"), idCol = 
 
   lengthReturn <- length(unique(dat$id))
 
+  cl <- makeCluster(2)
+  registerDoParallel(cores=detectCores())
+
   finalResult <- NA
 
-  for (id in unique(dat$id)) {
+  #for (id in unique(dat$id)) {
+  finalResult <- foreach(i = unique(dat$id), .combine=rbind, .packages = c("discountingtools")) %dopar% {
+#    indData
+#
+#    resultFrame <- data.frame(id = i,
+#                              Equation = equation)
 
-    localDat <- dat[dat$id == id, ]
+    localDat <- subset(dat, id == i)
+
+    result <- data.frame(id = i)
 
     if (nrow(localDat) < 3) {
-      message(paste("Dropping Series: ", id, ", Fewer than 3 data points", sep = ""));
-      next
-
+      message(paste("Dropping Series: ", i, ", Fewer than 3 data points", sep = ""));
     } else {
-      message(paste("Calculating series id: ", id, sep = ""))
+      message(paste("Calculating series id: ", i, sep = ""))
 
+      screenRes <- johnsonBickelScreen(localDat)
+
+      result <- cbind(id = i,
+                      JB.C1 = screenRes$C1,
+                      JB.C2 = screenRes$C2,
+                      discountingModelSelectionCall(localDat, A, models, detailed, figures, summarize, lineSize))
     }
 
-    result <- NA
-    result <- discountingModelSelectionCall(localDat, A, models, detailed, figures, summarize, lineSize)
+    result
 
-    screenRes <- johnsonBickelScreen(localDat)
+    #
 
-    if (id == unique(dat$id)[1]) {
 
-      finalResult <- cbind(id = id,
-                           JB.C1 = screenRes$C1,
-                           JB.C2 = screenRes$C2,
-                           result)
-
-    } else {
-
-      finalResult <- rbind(finalResult,
-                           cbind(id = id,
-                                 JB.C1 = screenRes$C1,
-                                 JB.C2 = screenRes$C2,
-                                 result))
-
-    }
+#    if (id == unique(dat$id)[1]) {
+#
+#      finalResult <- cbind(id = id,
+#                           JB.C1 = screenRes$C1,
+#                           JB.C2 = screenRes$C2,
+#                           result)
+#
+#    } else {
+#
+#      finalResult <- rbind(finalResult,
+#                           cbind(id = id,
+#                                 JB.C1 = screenRes$C1,
+#                                 JB.C2 = screenRes$C2,
+#                                 result))
+#
+    #}
   }
+
+  stopCluster(cl)
 
   finalResult
 }
