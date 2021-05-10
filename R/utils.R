@@ -73,6 +73,14 @@ summary.discountingtools <- function(fittingObject) {
                         "GreenMyerson.BIC",
                         "GreenMyerson.AIC",
                         "GreenMyerson.Status")
+    } else if (m == "rachlin") {
+      buildColNames = c(buildColNames,
+                        "Rachlin.Lnk",
+                        "Rachlin.S",
+                        "Rachlin.RMSE",
+                        "Rachlin.BIC",
+                        "Rachlin.AIC",
+                        "Rachlin.Status")
     }
   }
 
@@ -90,8 +98,6 @@ summary.discountingtools <- function(fittingObject) {
     index = which(names(localCopy) == name)
 
     for (res in localCopy[[name]]) {
-
-      print(res)
 
       if (res$Model == "noise") {
         resFrame[index, c("Noise.Intercept",
@@ -146,6 +152,18 @@ summary.discountingtools <- function(fittingObject) {
                                                                            "BIC",
                                                                            "AIC",
                                                                            "Status")]
+      } else if (res$Model == "rachlin") {
+        resFrame[index, c("Rachlin.Lnk",
+                          "Rachlin.S",
+                          "Rachlin.RMSE",
+                          "Rachlin.BIC",
+                          "Rachlin.AIC",
+                          "Rachlin.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                      "S",
+                                                                      "RMSE",
+                                                                      "BIC",
+                                                                      "AIC",
+                                                                      "Status")]
       }
     }
   }

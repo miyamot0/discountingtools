@@ -101,6 +101,7 @@ dd_analyze <- function(fittingObject) {
       if (model == "exponential")  fittingObject = dd_fit_exponential(fittingObject, id)
       if (model == "laibson")      fittingObject = dd_fit_laibson(fittingObject, id)
       if (model == "greenmyerson") fittingObject = dd_fit_greenmyerson(fittingObject, id)
+      if (model == "rachlin")      fittingObject = dd_fit_rachlin(fittingObject, id)
 
     }
 

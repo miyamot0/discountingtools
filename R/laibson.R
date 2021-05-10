@@ -29,8 +29,6 @@ dd_fit_laibson <- function(fittingObject, id) {
 
   startParams = dd_start_laibson(currentData)
 
-  print(startParams)
-
   modelFitLaibson <- NULL
 
   try(modelFitLaibson <- nls.lm(par              = startParams,

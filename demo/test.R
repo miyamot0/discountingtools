@@ -19,8 +19,11 @@ results = fitDDCurves(data = dat,
                             Individual = ids),
             maxValue = 1000) %>%
   dd_modelOptions(plan = c("mazur",
-                           "exponential")) %>%
-  dd_metricOptions(metrics = c("ED50")) %>%
+                           "exponential",
+                           "laibson",
+                           "greenmyerson",
+                           "rachlin")) %>%
+  #dd_metricOptions(metrics = c("ED50")) %>%
   dd_analyze()
 
 summary(results)
