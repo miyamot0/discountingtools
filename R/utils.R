@@ -98,6 +98,14 @@ summary.discountingtools <- function(fittingObject) {
                         "Bleichrodt.BIC",
                         "Bleichrodt.AIC",
                         "Bleichrodt.Status")
+    } else if (m == "rodriguezlogue") {
+      buildColNames = c(buildColNames,
+                        "RodriguezLogue.Lnk",
+                        "RodriguezLogue.Beta",
+                        "RodriguezLogue.RMSE",
+                        "RodriguezLogue.BIC",
+                        "RodriguezLogue.AIC",
+                        "RodriguezLogue.Status")
 
     }
   }
@@ -208,6 +216,18 @@ summary.discountingtools <- function(fittingObject) {
                                                                          "BIC",
                                                                          "AIC",
                                                                          "Status")]
+      } else if (res$Model == "rodriguezlogue") {
+        resFrame[index, c("RodriguezLogue.Lnk",
+                          "RodriguezLogue.Beta",
+                          "RodriguezLogue.RMSE",
+                          "RodriguezLogue.BIC",
+                          "RodriguezLogue.AIC",
+                          "RodriguezLogue.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                             "Beta",
+                                                                             "RMSE",
+                                                                             "BIC",
+                                                                             "AIC",
+                                                                             "Status")]
       }
     }
   }
