@@ -103,6 +103,7 @@ dd_analyze <- function(fittingObject) {
       if (model == "greenmyerson") fittingObject = dd_fit_greenmyerson( fittingObject, id)
       if (model == "rachlin")      fittingObject = dd_fit_rachlin(      fittingObject, id)
       if (model == "ebertprelec")  fittingObject = dd_fit_ebertprelec(  fittingObject, id)
+      if (model == "bleichrodt")   fittingObject = dd_fit_bleichrodt(   fittingObject, id)
 
     }
   }

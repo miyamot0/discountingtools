@@ -23,7 +23,8 @@ results = fitDDCurves(data = dat,
                            "laibson",
                            "greenmyerson",
                            "rachlin",
-                           "ebertprelec")) %>%
+                           "ebertprelec",
+                           "bleichrodt")) %>%
   #dd_metricOptions(metrics = c("ED50")) %>%
   dd_analyze()
 

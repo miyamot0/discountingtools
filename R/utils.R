@@ -89,6 +89,16 @@ summary.discountingtools <- function(fittingObject) {
                         "EbertPrelec.BIC",
                         "EbertPrelec.AIC",
                         "EbertPrelec.Status")
+    } else if (m == "bleichrodt") {
+      buildColNames = c(buildColNames,
+                        "Bleichrodt.Lnk",
+                        "Bleichrodt.S",
+                        "Bleichrodt.Beta",
+                        "Bleichrodt.RMSE",
+                        "Bleichrodt.BIC",
+                        "Bleichrodt.AIC",
+                        "Bleichrodt.Status")
+
     }
   }
 
@@ -184,6 +194,20 @@ summary.discountingtools <- function(fittingObject) {
                                                                           "BIC",
                                                                           "AIC",
                                                                           "Status")]
+      } else if (res$Model == "bleichrodt") {
+        resFrame[index, c("Bleichrodt.Lnk",
+                          "Bleichrodt.S",
+                          "Bleichrodt.Beta",
+                          "Bleichrodt.RMSE",
+                          "Bleichrodt.BIC",
+                          "Bleichrodt.AIC",
+                          "Bleichrodt.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                         "S",
+                                                                         "Beta",
+                                                                         "RMSE",
+                                                                         "BIC",
+                                                                         "AIC",
+                                                                         "Status")]
       }
     }
   }
