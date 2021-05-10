@@ -11,34 +11,47 @@
 dd_probableModel <- function(fittingObject, id) {
 
   modelComparison     = list(
-    Models            = fittingObject$models,
-    ProbableModel     = NA,
-    ProbableModelProb = NA,
-    BFSum             = 0.0,
     BFs               = list(),
+    BFSum             = 0.0,
     Probs             = list(),
-    BICs              = list()
+    ProbableModel     = NA,
+    ProbableModelProb = NA
   )
 
-  paramList <- c("Noise.BIC")
+  currentResults = fittingObject$results[[as.character(id)]]
 
-  for (model in as.character(fittingObject$models)) {
+  # Perfect fit for noise model, hacky workaround
+  if (currentResults$noise$BIC == Inf) {
+    for (model in as.character(fittingObject$models)) {
+      modelComparison$BFs[[ model ]] = NULL
+      modelComparison$BFSum = NULL
+    }
 
-    #print(model)
+    for (model in as.character(fittingObject$models))
+      modelComparison$Probs[[ model ]] = 0
 
-    if (model == "mazur")          paramList = c(paramList, "Mazur.BIC")
-    if (model == "exponential")    paramList = c(paramList, "Exponential.BIC")
-    if (model == "laibson")        paramList = c(paramList, "Laibson.BIC")
-    if (model == "greenmyerson")   paramList = c(paramList, "GreenMyerson.BIC")
-    if (model == "rachlin")        paramList = c(paramList, "Rachlin.BIC")
-    if (model == "ebertprelec")    paramList = c(paramList, "EbertPrelec.BIC")
-    if (model == "bleichrodt")     paramList = c(paramList, "Bleichrodt.BIC")
-    if (model == "rodriguezlogue") paramList = c(paramList, "RodriguezLogue.BIC")
+    modelComparison$ProbableModel     = "noise"
+    modelComparison$ProbableModelProb = 1
+
+  } else {
+    for (model in as.character(fittingObject$models)) {
+      modelComparison$BFs[[ model ]] = exp(-.5*(currentResults[[model]]$BIC - currentResults$noise$BIC))
+      modelComparison$BFSum = modelComparison$BFSum + modelComparison$BFs[[ model ]]
+    }
+
+    for (model in as.character(fittingObject$models))
+      modelComparison$Probs[[ model ]] = modelComparison$BFs[[ model ]] / modelComparison$BFSum
   }
 
-  print(paramList)
+  sortedProbs = sort(unlist(modelComparison[["Probs"]]), decreasing = TRUE)
 
-  # TODO: Check if Noise.BIC == Inf
+  mostProbModel <- names(sortedProbs)[1]
+
+  fittingObject$rotation[[as.character(id)]] = list(
+    ProbableModel       = mostProbModel,
+    ProbableModel.BF    = modelComparison$BFs[[mostProbModel]],
+    ProbableModel.Prob  = modelComparison$Probs[[mostProbModel]]
+  )
 
   fittingObject
 }

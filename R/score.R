@@ -697,7 +697,6 @@ discountingModelSelectionCall <- function(dat, A = NULL, models = c("noise"), de
     }
   }
 
-
   returnList <- c(returnList, probList)
 
   mostProb <- names(probList[which.max(probList)])

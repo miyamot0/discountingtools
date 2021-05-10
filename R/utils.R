@@ -34,8 +34,6 @@ summary.discountingtools <- function(fittingObject) {
 
   buildColNames = c("ID")
 
-  # TODO: build out additional models
-
   for (m in fittingObject$models) {
     if (m == "noise") {
       buildColNames = c(buildColNames,
@@ -109,6 +107,10 @@ summary.discountingtools <- function(fittingObject) {
 
     }
   }
+
+  if (fittingObject$ModelSelection == TRUE) buildColNames = append(buildColNames, c("ProbableModel",
+                                                                                    "ProbableModel.BF",
+                                                                                    "ProbableModel.Prob"))
 
   nRows    = length(names(localCopy))
   resFrame = data.frame(matrix(ncol = length(buildColNames),
@@ -229,6 +231,12 @@ summary.discountingtools <- function(fittingObject) {
                                                                              "AIC",
                                                                              "Status")]
       }
+    }
+
+    if (fittingObject$ModelSelection == TRUE) {
+      resFrame[index, "ProbableModel"]      = fittingObject$rotation[[name]]$ProbableModel
+      resFrame[index, "ProbableModel.BF"]   = fittingObject$rotation[[name]]$ProbableModel.BF
+      resFrame[index, "ProbableModel.Prob"] = fittingObject$rotation[[name]]$ProbableModel.Prob
     }
   }
 

@@ -84,6 +84,8 @@ dd_metricOptions <- function(fittingObject, metrics) {
 #' @export
 dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
+  fittingObject[[ "ModelSelection" ]] = modelSelection
+
   # Add in noise model as a comparator
   if (!("noise" %in% fittingObject[["models"]]))
     fittingObject[["models"]] = c("noise", fittingObject[["models"]])
@@ -108,7 +110,6 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
     }
 
     if (modelSelection)              fittingObject = dd_probableModel(      fittingObject, id)
-
 
     ### TODO: loop through metrics
   }
