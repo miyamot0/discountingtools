@@ -2,13 +2,16 @@
 % Please edit documentation in R/mazur.R
 \name{dd_start_mazur}
 \alias{dd_start_mazur}
-\title{Title}
+\title{dd_start_mazur}
 \usage{
-dd_start_mazur()
+dd_start_mazur(currentData)
+}
+\arguments{
+\item{currentData}{}
 }
 \value{
 
 }
 \description{
-Title
+Extract starting parameters
 }

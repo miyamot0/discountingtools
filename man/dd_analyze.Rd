@@ -2,16 +2,16 @@
 % Please edit documentation in R/discounting.R
 \name{dd_analyze}
 \alias{dd_analyze}
-\title{Title}
+\title{dd_analyze}
 \usage{
 dd_analyze(fittingObject)
 }
 \arguments{
-\item{fittingObject}{}
+\item{fittingObject}{core dd fitting object}
 }
 \value{
 
 }
 \description{
-Title
+this is the business end of the analytical process
 }

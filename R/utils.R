@@ -18,3 +18,86 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 
   logLikelihood
 }
+
+#' summary.discountingtools
+#'
+#' Override summary output
+#'
+#' @param fittingObject
+#'
+#' @return
+#' @export summary.discountingtools
+#' @export
+summary.discountingtools <- function(fittingObject) {
+
+  print("summary.discountingtools")
+
+  localCopy <- fittingObject$results
+
+  print(localCopy)
+
+  buildColNames = c("ID")
+
+  # TODO: build out additional models
+
+  for (m in fittingObject$models) {
+    if (m == "noise") {
+      buildColNames = c(buildColNames,
+                        "Noise.Intercept",
+                        "Noise.RMSE",
+                        "Noise.BIC",
+                        "Noise.AIC")
+    } else if (m == "mazur") {
+      buildColNames = c(buildColNames,
+                        "Mazur.Lnk",
+                        "Mazur.RMSE",
+                        "Mazur.BIC",
+                        "Mazur.AIC",
+                        "Mazur.Status")
+    }
+  }
+
+  print(buildColNames)
+
+  nRows    = length(names(localCopy))
+  resFrame = data.frame(matrix(ncol = length(buildColNames),
+                               nrow = nRows))
+
+  colnames(resFrame) <- buildColNames
+
+  resFrame$ID <- names(localCopy)
+
+  ### Load results
+
+  for (name in names(localCopy)) {
+    index = which(names(localCopy) == name)
+
+    for (res in localCopy[[name]]) {
+
+      print(res)
+
+      if (res$Model == "noise") {
+        resFrame[index, c("Noise.Intercept",
+                          "Noise.RMSE",
+                          "Noise.BIC",
+                          "Noise.AIC")] = as.data.frame(res)[, c("Intercept",
+                                                                 "RMSE",
+                                                                 "BIC",
+                                                                 "AIC")]
+
+      } else if (res$Model == "mazur") {
+        resFrame[index, c("Mazur.Lnk",
+                          "Mazur.RMSE",
+                          "Mazur.BIC",
+                          "Mazur.AIC",
+                          "Mazur.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                    "RMSE",
+                                                                    "BIC",
+                                                                    "AIC",
+                                                                    "Status")]
+      }
+    }
+  }
+
+  resFrame
+}

@@ -2,16 +2,18 @@
 % Please edit documentation in R/discounting.R
 \name{dd_metricOptions}
 \alias{dd_metricOptions}
-\title{Title}
+\title{dd_metricOptions}
 \usage{
 dd_metricOptions(fittingObject, metrics)
 }
 \arguments{
-\item{metrics}{}
+\item{fittingObject}{core dd fitting object}
+
+\item{metrics}{vector specifying metrics}
 }
 \value{
 
 }
 \description{
-Title
+method to indicate metrics of interest in the analysis
 }

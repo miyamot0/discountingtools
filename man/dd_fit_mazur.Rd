@@ -2,16 +2,18 @@
 % Please edit documentation in R/mazur.R
 \name{dd_fit_mazur}
 \alias{dd_fit_mazur}
-\title{Title}
+\title{dd_fit_mazur}
 \usage{
 dd_fit_mazur(fittingObject, id)
 }
 \arguments{
+\item{fittingObject}{core dd fitting object}
+
 \item{id}{id tag}
 }
 \value{
 
 }
 \description{
-Title
+This fits a hyperbolic model to the data.
 }

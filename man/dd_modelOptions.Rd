@@ -2,16 +2,18 @@
 % Please edit documentation in R/discounting.R
 \name{dd_modelOptions}
 \alias{dd_modelOptions}
-\title{Title}
+\title{dd_modelOptions}
 \usage{
-dd_modelOptions(fittingObject, plan = c("mazur"))
+dd_modelOptions(fittingObject, plan)
 }
 \arguments{
-\item{plan}{}
+\item{fittingObject}{core dd fitting object}
+
+\item{plan}{vector of model candidates}
 }
 \value{
 
 }
 \description{
-Title
+method to specify which models to include as candidates
 }

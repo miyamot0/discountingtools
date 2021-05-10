@@ -41,7 +41,8 @@ dd_fit_noise <- function(fittingObject, id) {
                                            stats::AIC(modelFitNoise))
   }
 
-  fittingObject$results[[as.character(id)]][[(length(fittingObject[["results"]]) + 1)]] = modelResults
+  fittingObject$results[[as.character(id)]][[
+    (length(fittingObject$results[[as.character(id)]]) + 1)]] = modelResults
 
   fittingObject
 }

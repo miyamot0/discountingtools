@@ -28,12 +28,9 @@ library(dplyr)
 #'
 #' @return
 #' @export
-#'
-#' @examples
 fitDDCurves <- function(data, settings, maxValue) {
 
   fittingObject = list()                             # Primary plotting object
-  fittingObject[[ "layers"   ]] = list()             #
   fittingObject[[ "settings" ]] = enexpr(settings)   #
   fittingObject[[ "data"     ]] = data               # Stored data
   fittingObject[[ "models"   ]] = character(0)       #
@@ -47,23 +44,27 @@ fitDDCurves <- function(data, settings, maxValue) {
   fittingObject
 }
 
-#' Title
+#' dd_modelOptions
 #'
-#' @param fittingObject
-#' @param plan
+#' method to specify which models to include as candidates
+#'
+#' @param fittingObject core dd fitting object
+#' @param plan vector of model candidates
 #'
 #' @return
 #' @export
-dd_modelOptions <- function(fittingObject, plan = c("mazur")) {
+dd_modelOptions <- function(fittingObject, plan) {
   fittingObject[[ "models" ]] = plan
 
   fittingObject
 }
 
-#' Title
+#' dd_metricOptions
 #'
-#' @param fittingObject
-#' @param metrics
+#' method to indicate metrics of interest in the analysis
+#'
+#' @param fittingObject core dd fitting object
+#' @param metrics vector specifying metrics
 #'
 #' @return
 #' @export
@@ -73,14 +74,14 @@ dd_metricOptions <- function(fittingObject, metrics) {
   fittingObject
 }
 
-#' Title
+#' dd_analyze
 #'
-#' @param fittingObject
+#' this is the business end of the analytical process
+#'
+#' @param fittingObject core dd fitting object
 #'
 #' @return
 #' @export
-#'
-#' @examples
 dd_analyze <- function(fittingObject) {
 
   # Add in noise model as a comparator
@@ -96,13 +97,11 @@ dd_analyze <- function(fittingObject) {
     for (model in fittingObject[["models"]]) {
 
       if (model == "noise") fittingObject = dd_fit_noise(fittingObject, id)
-      #if (model == "mazur") fittingObject = dd_fit_mazur(fittingObject, id)
+      if (model == "mazur") fittingObject = dd_fit_mazur(fittingObject, id)
 
     }
 
   }
 
   fittingObject
-
-
 }
