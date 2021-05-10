@@ -120,8 +120,6 @@ summary.discountingtools <- function(fittingObject) {
 
   resFrame$ID <- names(localCopy)
 
-  ### Load results
-
   for (name in names(localCopy)) {
     index = which(names(localCopy) == name)
 

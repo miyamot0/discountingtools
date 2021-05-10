@@ -111,7 +111,12 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
     if (modelSelection)              fittingObject = dd_probableModel(      fittingObject, id)
 
-    ### TODO: loop through metrics
+    for (metric in fittingObject[["metrics"]]) {
+
+      # TODO: ED50
+
+      # TODO: MB-AUC
+    }
   }
 
   fittingObject
