@@ -53,8 +53,7 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
                                        sep = " ")
   }
 
-  fittingObject$results[[as.character(id)]][[
-    (length(fittingObject$results[[as.character(id)]]) + 1)]] = modelResults
+  fittingObject$results[[as.character(id)]][["rodriguezlogue"]] = modelResults
 
   fittingObject
 }

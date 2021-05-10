@@ -55,8 +55,7 @@ dd_fit_laibson <- function(fittingObject, id) {
                                        sep = " ")
   }
 
-  fittingObject$results[[as.character(id)]][[
-    (length(fittingObject$results[[as.character(id)]]) + 1)]] = modelResults
+  fittingObject$results[[as.character(id)]][["laibson"]] = modelResults
 
   fittingObject
 }

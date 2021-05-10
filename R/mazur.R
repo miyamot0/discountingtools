@@ -51,8 +51,7 @@ dd_fit_mazur <- function(fittingObject, id) {
                                           sep = " ")
   }
 
-  fittingObject$results[[as.character(id)]][[
-    (length(fittingObject$results[[as.character(id)]]) + 1)]] = modelResults
+  fittingObject$results[[as.character(id)]][["mazur"]] = modelResults
 
   fittingObject
 }
