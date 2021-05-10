@@ -82,7 +82,7 @@ dd_metricOptions <- function(fittingObject, metrics) {
 #'
 #' @return
 #' @export
-dd_analyze <- function(fittingObject) {
+dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
   # Add in noise model as a comparator
   if (!("noise" %in% fittingObject[["models"]]))
@@ -91,7 +91,6 @@ dd_analyze <- function(fittingObject) {
   # loop through individual id's
   for (id in unique(fittingObject$data[[as.character(fittingObject$settings['Individual'])]])) {
 
-    # add in keyed list of results
     fittingObject$results[[as.character(id)]] = list()
 
     for (model in fittingObject[["models"]]) {
@@ -107,6 +106,11 @@ dd_analyze <- function(fittingObject) {
       if (model == "rodriguezlogue") fittingObject = dd_fit_rodriguezlogue( fittingObject, id)
 
     }
+
+    if (modelSelection)              fittingObject = dd_probableModel(      fittingObject, id)
+
+
+    ### TODO: loop through metrics
   }
 
   fittingObject
