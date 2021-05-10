@@ -10,8 +10,6 @@
 #' @export
 dd_fit_laibson <- function(fittingObject, id) {
 
-  print("dd_fit_laibson")
-
   modelResults = list(
     Model      = "laibson",
     Beta       = NA,
@@ -74,8 +72,6 @@ dd_fit_laibson <- function(fittingObject, id) {
 #' @return
 #' @export
 dd_start_laibson <- function(currentData) {
-
-  print("dd_start_laibson")
 
   startbeta   <- seq(0, 1, 0.1)
   startdelta  <- seq(0, 1, 0.01)
