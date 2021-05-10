@@ -7,7 +7,7 @@
 dd_start_mazur(currentData)
 }
 \arguments{
-\item{currentData}{}
+\item{currentData}{current data set}
 }
 \value{
 

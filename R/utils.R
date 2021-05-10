@@ -54,6 +54,13 @@ summary.discountingtools <- function(fittingObject) {
                         "Mazur.BIC",
                         "Mazur.AIC",
                         "Mazur.Status")
+    } else if (m == "Exponential") {
+      buildColNames = c(buildColNames,
+                        "Exponential.Lnk",
+                        "Exponential.RMSE",
+                        "Exponential.BIC",
+                        "Exponential.AIC",
+                        "Exponential.Status")
     }
   }
 
@@ -95,6 +102,16 @@ summary.discountingtools <- function(fittingObject) {
                                                                     "BIC",
                                                                     "AIC",
                                                                     "Status")]
+      } else if (res$Model == "exponential") {
+        resFrame[index, c("Exponential.Lnk",
+                          "Exponential.RMSE",
+                          "Exponential.BIC",
+                          "Exponential.AIC",
+                          "Exponential.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                          "RMSE",
+                                                                          "BIC",
+                                                                          "AIC",
+                                                                          "Status")]
       }
     }
   }

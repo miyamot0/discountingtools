@@ -61,7 +61,7 @@ dd_fit_mazur <- function(fittingObject, id) {
 #'
 #' Extract starting parameters
 #'
-#' @param currentData
+#' @param currentData current data set
 #'
 #' @return
 #' @export
