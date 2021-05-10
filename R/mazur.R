@@ -40,7 +40,7 @@ dd_fit_mazur <- function(fittingObject, id) {
                                    control          = nls.lm.control(maxiter = 1000)),
       silent = TRUE)
 
-  if (!is.character(modelFitHyperbolic)) {
+  if (!is.null(modelFitHyperbolic)) {
 
     modelResults[[ "Lnk"    ]] = modelFitHyperbolic$par[["lnk"]]
     modelResults[[ "RMSE"      ]] = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec))

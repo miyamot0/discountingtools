@@ -45,7 +45,7 @@ dd_fit_laibson <- function(fittingObject, id) {
                                 control          = nls.lm.control(maxiter = 1000)),
       silent = TRUE)
 
-  if (!is.character(modelFitLaibson)) {
+  if (!is.null(modelFitLaibson)) {
 
     modelResults[[ "Beta"   ]] = modelFitLaibson$par[["beta"]]
     modelResults[[ "Delta"  ]] = modelFitLaibson$par[["delta"]]

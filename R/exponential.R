@@ -40,7 +40,7 @@ dd_fit_exponential <- function(fittingObject, id) {
                                     control          = nls.lm.control(maxiter = 1000)),
       silent = TRUE)
 
-  if (!is.character(modelFitExponential)) {
+  if (!is.null(modelFitExponential)) {
 
     modelResults[[ "Lnk"    ]] = modelFitExponential$par[["lnk"]]
     modelResults[[ "RMSE"   ]] = sqrt(modelFitExponential$deviance/length(modelFitExponential$fvec))

@@ -30,11 +30,7 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 #' @export
 summary.discountingtools <- function(fittingObject) {
 
-  print("summary.discountingtools")
-
   localCopy <- fittingObject$results
-
-  print(localCopy)
 
   buildColNames = c("ID")
 
@@ -69,6 +65,14 @@ summary.discountingtools <- function(fittingObject) {
                         "Laibson.BIC",
                         "Laibson.AIC",
                         "Laibson.Status")
+    } else if (m == "greenmyerson") {
+      buildColNames = c(buildColNames,
+                        "GreenMyerson.Lnk",
+                        "GreenMyerson.S",
+                        "GreenMyerson.RMSE",
+                        "GreenMyerson.BIC",
+                        "GreenMyerson.AIC",
+                        "GreenMyerson.Status")
     }
   }
 
@@ -130,6 +134,18 @@ summary.discountingtools <- function(fittingObject) {
                                                                       "BIC",
                                                                       "AIC",
                                                                       "Status")]
+      } else if (res$Model == "greenmyerson") {
+        resFrame[index, c("GreenMyerson.Lnk",
+                          "GreenMyerson.S",
+                          "GreenMyerson.RMSE",
+                          "GreenMyerson.BIC",
+                          "GreenMyerson.AIC",
+                          "GreenMyerson.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                           "S",
+                                                                           "RMSE",
+                                                                           "BIC",
+                                                                           "AIC",
+                                                                           "Status")]
       }
     }
   }
