@@ -22,7 +22,8 @@ results = fitDDCurves(data = dat,
                            "exponential",
                            "laibson",
                            "greenmyerson",
-                           "rachlin")) %>%
+                           "rachlin",
+                           "ebertprelec")) %>%
   #dd_metricOptions(metrics = c("ED50")) %>%
   dd_analyze()
 

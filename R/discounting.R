@@ -30,7 +30,7 @@ library(dplyr)
 #' @export
 fitDDCurves <- function(data, settings, maxValue) {
 
-  fittingObject = list()                             # Primary plotting object
+  fittingObject = list()                             # Primary object
   fittingObject[[ "settings" ]] = enexpr(settings)   #
   fittingObject[[ "data"     ]] = data               # Stored data
   fittingObject[[ "models"   ]] = character(0)       #
@@ -96,15 +96,15 @@ dd_analyze <- function(fittingObject) {
 
     for (model in fittingObject[["models"]]) {
 
-      if (model == "noise")        fittingObject = dd_fit_noise(fittingObject, id)
-      if (model == "mazur")        fittingObject = dd_fit_mazur(fittingObject, id)
-      if (model == "exponential")  fittingObject = dd_fit_exponential(fittingObject, id)
-      if (model == "laibson")      fittingObject = dd_fit_laibson(fittingObject, id)
-      if (model == "greenmyerson") fittingObject = dd_fit_greenmyerson(fittingObject, id)
-      if (model == "rachlin")      fittingObject = dd_fit_rachlin(fittingObject, id)
+      if (model == "noise")        fittingObject = dd_fit_noise(        fittingObject, id)
+      if (model == "mazur")        fittingObject = dd_fit_mazur(        fittingObject, id)
+      if (model == "exponential")  fittingObject = dd_fit_exponential(  fittingObject, id)
+      if (model == "laibson")      fittingObject = dd_fit_laibson(      fittingObject, id)
+      if (model == "greenmyerson") fittingObject = dd_fit_greenmyerson( fittingObject, id)
+      if (model == "rachlin")      fittingObject = dd_fit_rachlin(      fittingObject, id)
+      if (model == "ebertprelec")  fittingObject = dd_fit_ebertprelec(  fittingObject, id)
 
     }
-
   }
 
   fittingObject

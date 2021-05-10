@@ -81,6 +81,14 @@ summary.discountingtools <- function(fittingObject) {
                         "Rachlin.BIC",
                         "Rachlin.AIC",
                         "Rachlin.Status")
+    } else if (m == "ebertprelec") {
+      buildColNames = c(buildColNames,
+                        "EbertPrelec.Lnk",
+                        "EbertPrelec.S",
+                        "EbertPrelec.RMSE",
+                        "EbertPrelec.BIC",
+                        "EbertPrelec.AIC",
+                        "EbertPrelec.Status")
     }
   }
 
@@ -164,6 +172,18 @@ summary.discountingtools <- function(fittingObject) {
                                                                       "BIC",
                                                                       "AIC",
                                                                       "Status")]
+      } else if (res$Model == "ebertprelec") {
+        resFrame[index, c("EbertPrelec.Lnk",
+                          "EbertPrelec.S",
+                          "EbertPrelec.RMSE",
+                          "EbertPrelec.BIC",
+                          "EbertPrelec.AIC",
+                          "EbertPrelec.Status")] = as.data.frame(res)[, c("Lnk",
+                                                                          "S",
+                                                                          "RMSE",
+                                                                          "BIC",
+                                                                          "AIC",
+                                                                          "Status")]
       }
     }
   }
