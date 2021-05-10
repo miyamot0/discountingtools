@@ -99,6 +99,7 @@ dd_analyze <- function(fittingObject) {
       if (model == "noise")       fittingObject = dd_fit_noise(fittingObject, id)
       if (model == "mazur")       fittingObject = dd_fit_mazur(fittingObject, id)
       if (model == "exponential") fittingObject = dd_fit_exponential(fittingObject, id)
+      if (model == "laibson")     fittingObject = dd_fit_laibson(fittingObject, id)
 
     }
 

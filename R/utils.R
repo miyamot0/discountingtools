@@ -54,17 +54,23 @@ summary.discountingtools <- function(fittingObject) {
                         "Mazur.BIC",
                         "Mazur.AIC",
                         "Mazur.Status")
-    } else if (m == "Exponential") {
+    } else if (m == "exponential") {
       buildColNames = c(buildColNames,
                         "Exponential.Lnk",
                         "Exponential.RMSE",
                         "Exponential.BIC",
                         "Exponential.AIC",
                         "Exponential.Status")
+    } else if (m == "laibson") {
+      buildColNames = c(buildColNames,
+                        "Laibson.Beta",
+                        "Laibson.Delta",
+                        "Laibson.RMSE",
+                        "Laibson.BIC",
+                        "Laibson.AIC",
+                        "Laibson.Status")
     }
   }
-
-  print(buildColNames)
 
   nRows    = length(names(localCopy))
   resFrame = data.frame(matrix(ncol = length(buildColNames),
@@ -112,6 +118,18 @@ summary.discountingtools <- function(fittingObject) {
                                                                           "BIC",
                                                                           "AIC",
                                                                           "Status")]
+      } else if (res$Model == "laibson") {
+        resFrame[index, c("Laibson.Beta",
+                          "Laibson.Delta",
+                          "Laibson.RMSE",
+                          "Laibson.BIC",
+                          "Laibson.AIC",
+                          "Laibson.Status")] = as.data.frame(res)[, c("Beta",
+                                                                      "Delta",
+                                                                      "RMSE",
+                                                                      "BIC",
+                                                                      "AIC",
+                                                                      "Status")]
       }
     }
   }
