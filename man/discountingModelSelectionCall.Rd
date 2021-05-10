@@ -4,9 +4,15 @@
 \alias{discountingModelSelectionCall}
 \title{Perform Discounting Model Selection}
 \usage{
-discountingModelSelectionCall(dat, A = NULL, models = c("noise"),
-  detailed = FALSE, figures = FALSE, summarize = FALSE,
-  lineSize = 1)
+discountingModelSelectionCall(
+  dat,
+  A = NULL,
+  models = c("noise"),
+  detailed = FALSE,
+  figures = FALSE,
+  summarize = FALSE,
+  lineSize = 1
+)
 }
 \arguments{
 \item{dat}{data frame with X column and Y column (0 <= Y <= 1)}
