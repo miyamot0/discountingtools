@@ -28,7 +28,8 @@ results = fitDDCurves(data = dat,
                            "rachlin",
                            "rodriguezlogue")) %>%
   dd_metricOptions(metrics = c("lned50",
-                               "mbauc")) %>%
+                               "mbauc",
+                               "logmbauc")) %>%
   dd_analyze()
 
 summary(results)

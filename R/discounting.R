@@ -115,7 +115,7 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
       for (metric in fittingObject[["metrics"]]) {
         if (metric == "lned50")   fittingObject = getED50(fittingObject, id)
         if (metric == "mbauc")    fittingObject = getMBAUC(fittingObject, id)
-        if (metric == "logmbauc") {}
+        if (metric == "logmbauc") fittingObject = getMBAUCLog10(fittingObject, id)
       }
 
     }
@@ -134,7 +134,6 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #'
 #' @return natural logarithm of the Effective Delay 50%
-#' @export
 getED50 <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
@@ -172,6 +171,31 @@ getMBAUC <- function(fittingObject, id) {
   if (probableModel == "ebertprelec")    fittingObject = dd_mbauc_ebertprelec(fittingObject, id)
   if (probableModel == "bleichrodt")     fittingObject = dd_mbauc_bleichrodt(fittingObject, id)
   if (probableModel == "rodriguezlogue") fittingObject = dd_mbauc_rodriguezlogue(fittingObject, id)
+
+  fittingObject
+}
+
+#' Scoring for the most probable model area, in log10 space
+#'
+#' In this set of methods, the area beneath the fitted model is calculated and divided by the maximum area using numerical integration methods.  All delays are calculated in the log base 10 scale.
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
+#' @return area beneath the fitted model, in log10 space
+getMBAUCLog10 <- function(fittingObject, id) {
+  probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
+
+  if (probableModel == "noise")          fittingObject = dd_mbauc_log10_noise(fittingObject, id)
+  if (probableModel == "mazur")          fittingObject = dd_mbauc_log10_mazur(fittingObject, id)
+  if (probableModel == "exponential")    fittingObject = dd_mbauc_log10_exponential(fittingObject, id)
+  if (probableModel == "laibson")        fittingObject = dd_mbauc_log10_laibson(fittingObject, id)
+  if (probableModel == "greenmyerson")   fittingObject = dd_mbauc_log10_greenmyerson(fittingObject, id)
+  if (probableModel == "rachlin")        fittingObject = dd_mbauc_log10_rachlin(fittingObject, id)
+  if (probableModel == "ebertprelec")    fittingObject = dd_mbauc_log10_ebertprelec(fittingObject, id)
+  if (probableModel == "bleichrodt")     fittingObject = dd_mbauc_log10_bleichrodt(fittingObject, id)
+  if (probableModel == "rodriguezlogue") fittingObject = dd_mbauc_log10_rodriguezlogue(fittingObject, id)
 
   fittingObject
 }

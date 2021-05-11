@@ -132,6 +132,35 @@ dd_mbauc_mazur <- function(fittingObject, id) {
   fittingObject
 }
 
+#' dd_mbauc_log10_mazur
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_mbauc_log10_mazur <- function(fittingObject, id) {
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  maxX        = log10(max(currentData$ddX))
+  minX        = log10(min(currentData$ddX))
+  maximumArea = maxX - minX
+
+  lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
+
+  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandHypLog,
+                                                                  lower = minX,
+                                                                  upper = maxX,
+                                                                  lnK = lnk)$value/maximumArea
+
+  fittingObject
+}
+
 #' Hyperbolic Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

@@ -146,6 +146,37 @@ dd_mbauc_rachlin <- function(fittingObject, id) {
   fittingObject
 }
 
+#' dd_mbauc_log10_rachlin
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_mbauc_log10_rachlin <- function(fittingObject, id) {
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  maxX        = log10(max(currentData$ddX))
+  minX        = log10(min(currentData$ddX))
+  maximumArea = maxX - minX
+
+  lnk = fittingObject$results[[as.character(id)]][["rachlin"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["rachlin"]][["S"]]
+
+  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandRachlinLog,
+                                                                  lower = minX,
+                                                                  upper = maxX,
+                                                                  lnK   = lnk,
+                                                                  s     = s)$value/maximumArea
+
+  fittingObject
+}
+
 #' Rachlin Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal
