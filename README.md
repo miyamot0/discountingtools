@@ -103,6 +103,7 @@ Questions? Suggestions for features? <sgilroy1@lsu.edu>.
 
 * Modeling options: individual (default)
 * Modeling options: pooled (fit to group)
+* Plotting tools (corresponding with modeling options)
 
 ### License
 -----------
