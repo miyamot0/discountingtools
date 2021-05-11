@@ -149,3 +149,36 @@ dd_ed50_bleichrodt <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' dd_mbauc_bleichrodt
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_mbauc_bleichrodt <- function(fittingObject, id) {
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  maxX        = max(currentData$ddX)
+  minX        = min(currentData$ddX)
+  maximumArea = maxX - minX
+
+  lnk = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["S"]]
+  b   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Beta"]]
+
+  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandBleichrodtCRDI,
+                                                             lower = minX,
+                                                             upper = maxX,
+                                                             lnK   = lnk,
+                                                             s     = s,
+                                                             beta  = b)$value/maximumArea
+
+  fittingObject
+}

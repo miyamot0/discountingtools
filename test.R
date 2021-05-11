@@ -18,6 +18,7 @@ results = fitDDCurves(data = dat,
                             Values     = Y,
                             Individual = ids),
             maxValue = 1000) %>%
+  #dd_modelOptions(plan = c("mazur")) %>%
   dd_modelOptions(plan = c("bleichrodt",
                            "ebertprelec",
                            "exponential",
@@ -27,7 +28,7 @@ results = fitDDCurves(data = dat,
                            "noise",
                            "rachlin",
                            "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50")) %>%
+  dd_metricOptions(metrics = c("lned50", "mbauc")) %>%
   dd_analyze()
 
 summary(results)

@@ -102,3 +102,32 @@ dd_ed50_mazur <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' dd_mbauc_mazur
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_mbauc_mazur <- function(fittingObject, id) {
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  maxX        = max(currentData$ddX)
+  minX        = min(currentData$ddX)
+  maximumArea = maxX - minX
+
+  lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
+
+  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandHyp,
+                                                             lower = minX,
+                                                             upper = maxX,
+                                                             lnK = lnk)$value/maximumArea
+
+  fittingObject
+}

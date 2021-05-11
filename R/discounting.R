@@ -114,11 +114,8 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
       for (metric in fittingObject[["metrics"]]) {
         if (metric == "lned50")   fittingObject = getED50(fittingObject, id)
-        if (metric == "mbauc")    {}
+        if (metric == "mbauc")    fittingObject = getMBAUC(fittingObject, id)
         if (metric == "logmbauc") {}
-        # TODO: ED50
-
-        # TODO: MB-AUC
       }
 
     }
@@ -141,7 +138,6 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 getED50 <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
-
   if (probableModel == "noise")          fittingObject = dd_ed50_noise(fittingObject, id)
   if (probableModel == "mazur")          fittingObject = dd_ed50_mazur(fittingObject, id)
   if (probableModel == "exponential")    fittingObject = dd_ed50_exponential(fittingObject, id)
@@ -151,6 +147,31 @@ getED50 <- function(fittingObject, id) {
   if (probableModel == "ebertprelec")    fittingObject = dd_ed50_ebertprelec(fittingObject, id)
   if (probableModel == "bleichrodt")     fittingObject = dd_ed50_bleichrodt(fittingObject, id)
   if (probableModel == "rodriguezlogue") fittingObject = dd_ed50_rodriguezlogue(fittingObject, id)
+
+  fittingObject
+}
+
+#' Scoring for the most probable model area
+#'
+#' In this set of methods, the area beneath the fitted model is calculated and divided by the maximum area using numerical integration methods.  All delays are calculated in the normal scale.
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
+#' @return area beneath the fitted model
+getMBAUC <- function(fittingObject, id) {
+  probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
+
+  if (probableModel == "noise")          fittingObject = dd_mbauc_noise(fittingObject, id)
+  if (probableModel == "mazur")          fittingObject = dd_mbauc_mazur(fittingObject, id)
+  if (probableModel == "exponential")    fittingObject = dd_mbauc_exponential(fittingObject, id)
+  if (probableModel == "laibson")        fittingObject = dd_mbauc_laibson(fittingObject, id)
+  if (probableModel == "greenmyerson")   fittingObject = dd_mbauc_greenmyerson(fittingObject, id)
+  if (probableModel == "rachlin")        fittingObject = dd_mbauc_rachlin(fittingObject, id)
+  if (probableModel == "ebertprelec")    fittingObject = dd_mbauc_ebertprelec(fittingObject, id)
+  if (probableModel == "bleichrodt")     fittingObject = dd_mbauc_bleichrodt(fittingObject, id)
+  if (probableModel == "rodriguezlogue") fittingObject = dd_mbauc_rodriguezlogue(fittingObject, id)
 
   fittingObject
 }

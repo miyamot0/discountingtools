@@ -59,3 +59,19 @@ dd_ed50_noise <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' dd_mbauc_noise
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_mbauc_noise <- function(fittingObject, id) {
+
+  intercept = fittingObject$results[[as.character(id)]][["noise"]][["Intercept"]]
+
+  fittingObject$mbauc[[as.character(id)]] = intercept
+
+  fittingObject
+}

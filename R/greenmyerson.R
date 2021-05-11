@@ -114,3 +114,34 @@ dd_ed50_greenmyerson <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' dd_mbauc_greenmyerson
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_mbauc_greenmyerson <- function(fittingObject, id) {
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  maxX        = max(currentData$ddX)
+  minX        = min(currentData$ddX)
+  maximumArea = maxX - minX
+
+  lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
+
+  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandMyerson,
+                                                             lower = minX,
+                                                             upper = maxX,
+                                                             lnK   = lnk,
+                                                             s     = s)$value/maximumArea
+
+  fittingObject
+}
