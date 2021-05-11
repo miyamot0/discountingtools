@@ -117,9 +117,7 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
         if (metric == "mbauc")    fittingObject = getMBAUC(fittingObject, id)
         if (metric == "logmbauc") fittingObject = getMBAUCLog10(fittingObject, id)
       }
-
     }
-
   }
 
   fittingObject

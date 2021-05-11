@@ -7,7 +7,6 @@
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_fit_greenmyerson <- function(fittingObject, id) {
 
   modelResults = list(
@@ -65,7 +64,6 @@ dd_fit_greenmyerson <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
-#' @export
 dd_start_greenmyerson <- function(currentData) {
 
   startlnK <- seq(-12, 12, 1)
@@ -104,7 +102,6 @@ dd_start_greenmyerson <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_ed50_greenmyerson <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
@@ -121,7 +118,6 @@ dd_ed50_greenmyerson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_greenmyerson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -152,7 +148,6 @@ dd_mbauc_greenmyerson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[

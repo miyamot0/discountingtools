@@ -7,7 +7,6 @@
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_fit_rodriguezlogue <- function(fittingObject, id) {
 
   modelResults = list(
@@ -65,7 +64,6 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
-#' @export
 dd_start_rodriguezlogue <- function(currentData) {
 
   startlnK <- seq(-12, 12, 1)
@@ -99,7 +97,6 @@ dd_start_rodriguezlogue <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_ed50_rodriguezlogue <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Lnk"]]
@@ -141,7 +138,6 @@ dd_ed50_rodriguezlogue <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -172,7 +168,6 @@ dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
 
   currentData = fittingObject$data[

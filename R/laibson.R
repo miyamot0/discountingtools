@@ -7,7 +7,6 @@
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_fit_laibson <- function(fittingObject, id) {
 
   modelResults = list(
@@ -67,7 +66,6 @@ dd_fit_laibson <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
-#' @export
 dd_start_laibson <- function(currentData) {
 
   startbeta   <- seq(0, 1, 0.1)
@@ -109,7 +107,6 @@ dd_start_laibson <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_ed50_laibson <- function(fittingObject, id) {
 
   b = fittingObject$results[[as.character(id)]][["laibson"]][["Beta"]]
@@ -126,7 +123,6 @@ dd_ed50_laibson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_laibson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -157,7 +153,6 @@ dd_mbauc_laibson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_log10_laibson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[

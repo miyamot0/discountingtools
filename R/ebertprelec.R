@@ -7,7 +7,6 @@
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_fit_ebertprelec <- function(fittingObject, id) {
 
   modelResults = list(
@@ -65,7 +64,6 @@ dd_fit_ebertprelec <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
-#' @export
 dd_start_ebertprelec <- function(currentData) {
 
   startlnK <- seq(-12, 12, 0.1)
@@ -104,7 +102,6 @@ dd_start_ebertprelec <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_ed50_ebertprelec <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["ebertprelec"]][["Lnk"]]
@@ -146,7 +143,6 @@ dd_ed50_ebertprelec <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_ebertprelec <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -177,7 +173,6 @@ dd_mbauc_ebertprelec <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
 
   currentData = fittingObject$data[

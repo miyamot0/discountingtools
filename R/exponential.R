@@ -7,7 +7,6 @@
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_fit_exponential <- function(fittingObject, id) {
 
   modelResults = list(
@@ -64,7 +63,6 @@ dd_fit_exponential <- function(fittingObject, id) {
 #' @param increment step size for span
 #'
 #' @return
-#' @export
 dd_start_exponential <- function(currentData, increment = 1) {
 
   startlnK  <- seq(-15,  15, increment)
@@ -95,7 +93,6 @@ dd_start_exponential <- function(currentData, increment = 1) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_ed50_exponential <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["exponential"]][["Lnk"]]
@@ -111,7 +108,6 @@ dd_ed50_exponential <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_exponential <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -140,7 +136,6 @@ dd_mbauc_exponential <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
-#' @export
 dd_mbauc_log10_exponential <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
