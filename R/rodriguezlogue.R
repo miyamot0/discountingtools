@@ -197,6 +197,33 @@ dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Rodriguez & Logue Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+RodriguezLogueDiscountFunc <- function(x, lnk, beta)
+{
+  func <- (1 + x * exp(lnk))^(-exp(beta) / exp(lnk))
+  eval(func)
+}
+
+#' Rodriguez & Logue Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+RodriguezLogueDiscountGradient <- function(x, lnk, beta)
+{
+  func <- expression((1 + x * exp(lnk))^(-exp(beta) / exp(lnk)))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "beta")))
+}
+
 #' Rodriguez & Logue Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

@@ -199,3 +199,35 @@ getMBAUCLog10 <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' Generalized residual call
+#'
+#' General, shared method for coordinating nls.lm fitting calls. Routes a supplied "valueFunction" with observed data and supplied parameters.
+#'
+#' @param params model parameters
+#' @param x observation at point n (X)
+#' @param value observation at point n (Y)
+#' @param valueFunction function to get projected value
+#' @param jacobianFunction function to create jacobian
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return residual value of referenced function
+residualFunction <- function(params, x, value, valueFunction, jacobianFunction)
+{
+  value - do.call("valueFunction", c(list(x = x), as.list(params)))
+}
+
+#' Generalized Jacobian call
+#'
+#' General, shared method for constructing the Jacobian matrix. Routes a supplied "jacobianFunction" with pre-computed derivatives to construct matrix with observed data and supplied parameters.
+#'
+#' @param params model parameters
+#' @param x observation at point n (X)
+#' @param value observation at point n (Y)
+#' @param valueFunction function to get projected value
+#' @param jacobianFunction function to create jacobian
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return difference value for jacobian
+jacobianMatrix <- function(params, x, value, valueFunction, jacobianFunction)
+{
+  -do.call("jacobianFunction", c(list(x = x), as.list(params)))
+}

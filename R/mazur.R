@@ -161,6 +161,30 @@ dd_mbauc_log10_mazur <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Hyperbolic Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+hyperbolicDiscountFunc <- function(x, lnk)
+{
+  func <- (1+exp(lnk)*x)^(-1)
+  eval(func)
+}
+
+#' Hyperbolic Gradient Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+hyperbolicDiscountGradient <- function(x, lnk)
+{
+  func <- expression((1+exp(lnk)*x)^(-1))
+  c(eval(stats::D(func, "lnk")))
+}
+
 #' Hyperbolic Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

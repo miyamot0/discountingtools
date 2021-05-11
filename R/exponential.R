@@ -163,6 +163,30 @@ dd_mbauc_log10_exponential <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Exponential Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+exponentialDiscountFunc <- function(x, lnk)
+{
+  func <- exp(-exp(lnk)*x)
+  eval(func)
+}
+
+#' Exponential Gradient Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+exponentialDiscountGradient <- function(x, lnk)
+{
+  func <- expression(exp(-exp(lnk)*x))
+  c(eval(stats::D(func, "lnk")))
+}
+
 #' Exponential Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

@@ -177,6 +177,33 @@ dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Green & Myerson Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+myersonHyperboloidDiscountFunc <- function(x, lnk, s)
+{
+  func <- (1+exp(lnk)*x)^(-s)
+  eval(func)
+}
+
+#' Green & Myerson Gradient Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+myersonHyperboloidDiscountGradient <- function(x, lnk, s)
+{
+  func <- expression((1+exp(lnk)*x)^(-s))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")))
+}
+
 #' Green & Myerson Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

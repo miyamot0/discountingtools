@@ -216,6 +216,36 @@ dd_mbauc_log10_bleichrodt <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
+{
+  func <- beta * exp(-exp(lnk)*x^s)
+  eval(func)
+}
+
+#' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
+{
+  func <- beta * exp(-exp(lnk)*x^s)
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")),
+    eval(stats::deriv(func, "beta")))
+}
+
 #' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

@@ -177,6 +177,33 @@ dd_mbauc_log10_rachlin <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Rachlin Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
+{
+  func <- (1+exp(lnk)*(x^s))^(-1)
+  eval(func)
+}
+
+#' Rachlin Gradient Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
+{
+  func <- expression((1+exp(lnk)*x)^(-s))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")))
+}
+
 #' Rachlin Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

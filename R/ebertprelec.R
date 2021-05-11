@@ -202,6 +202,33 @@ dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Ebert & Prelec Value Function
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+ebertPrelecDiscountFunc <- function(x, lnk, s)
+{
+  func <- exp(-(exp(lnk)*x)^s)
+  eval(func)
+}
+
+#' Ebert & Prelec Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param lnk fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+ebertPrelecDiscountGradient <- function(x, lnk, s)
+{
+  func <- expression(exp(-(exp(lnk)*x)^s))
+  c(eval(stats::deriv(func, "lnk")),
+    eval(stats::deriv(func, "s")))
+}
+
 #' Ebert & Prelec's Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal

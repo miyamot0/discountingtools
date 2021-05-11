@@ -4,7 +4,7 @@
 \alias{getMBAUCLog10}
 \title{Scoring for the most probable model area, in log10 space}
 \usage{
-getMBAUCLog10(dat, results)
+getMBAUCLog10(fittingObject, id)
 }
 \arguments{
 \item{fittingObject}{core dd fitting object}

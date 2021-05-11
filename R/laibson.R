@@ -182,6 +182,33 @@ dd_mbauc_log10_laibson <- function(fittingObject, id) {
   fittingObject
 }
 
+#' Beta Delta Value Function
+#'
+#' @param x observation at point n (X)
+#' @param beta fitted parameter
+#' @param delta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+betaDeltaDiscountFunc <- function(x, beta, delta)
+{
+  func <- beta*delta^x
+  eval(func)
+}
+
+#' Beta Delta Gradient Helper for Nonlinear Fitting
+#'
+#' @param x observation at point n (X)
+#' @param beta fitted parameter
+#' @param delta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return projected, subjective value
+betaDeltaDiscountGradient <- function(x, beta, delta)
+{
+  func <- expression(beta*delta^x)
+  c(eval(stats::D(func, "delta")),
+    eval(stats::D(func, "beta")))
+}
+
 #' Beta Delta Integrand helper
 #'
 #' This integrand helper is a projection of the integrand with delays represented as normal
