@@ -112,6 +112,12 @@ summary.discountingtools <- function(fittingObject) {
                                                                                     "ProbableModel.BF",
                                                                                     "ProbableModel.Prob"))
 
+  for (metric in fittingObject[["metrics"]]) {
+    if (metric == "lned50")   buildColNames = append(buildColNames, c("LnED50"))
+    if (metric == "mbauc")    buildColNames = append(buildColNames, c("MBAUC"))
+    if (metric == "logmbauc") buildColNames = append(buildColNames, c("Log10MBAUC"))
+  }
+
   nRows    = length(names(localCopy))
   resFrame = data.frame(matrix(ncol = length(buildColNames),
                                nrow = nRows))
@@ -235,6 +241,12 @@ summary.discountingtools <- function(fittingObject) {
       resFrame[index, "ProbableModel"]      = fittingObject$rotation[[name]]$ProbableModel
       resFrame[index, "ProbableModel.BF"]   = fittingObject$rotation[[name]]$ProbableModel.BF
       resFrame[index, "ProbableModel.Prob"] = fittingObject$rotation[[name]]$ProbableModel.Prob
+    }
+
+    for (metric in fittingObject[["metrics"]]) {
+      if (metric == "lned50")   resFrame[index, "LnED50"]     = fittingObject$ed50[[name]]
+      if (metric == "mbauc")    resFrame[index, "MBAUC"]      = fittingObject$mbauc[[name]]
+      if (metric == "logmbauc") resFrame[index, "Log10MBAUC"] = fittingObject$mbauclog10[[name]]
     }
   }
 
