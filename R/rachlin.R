@@ -97,3 +97,20 @@ dd_start_rachlin <- function(currentData) {
 
   ini.par
 }
+
+#' dd_ed50_rachlin
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_rachlin <- function(fittingObject, id) {
+
+  lnk = fittingObject$results[[as.character(id)]][["rachlin"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["rachlin"]][["S"]]
+
+  fittingObject$ed50[[as.character(id)]] = log( (1/(exp(lnk)))^(1/s))
+
+  fittingObject
+}

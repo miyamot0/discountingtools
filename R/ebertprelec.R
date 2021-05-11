@@ -97,3 +97,45 @@ dd_start_ebertprelec <- function(currentData) {
 
   ini.par
 }
+
+#' dd_ed50_ebertprelec
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_ebertprelec <- function(fittingObject, id) {
+
+  lnk = fittingObject$results[[as.character(id)]][["ebertprelec"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["ebertprelec"]][["S"]]
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  lowDelay <- 0
+  highDelay <- max(currentData$ddX)*10
+
+  while ((highDelay - lowDelay) > 0.001) {
+    lowEst  <- integrandEbertPrelec(  lowDelay, lnk, s)
+    midEst  <- integrandEbertPrelec( (lowDelay+highDelay)/2, lnk, s)
+    highEst <- integrandEbertPrelec(  highDelay, lnk, s)
+
+    if (lowEst > 0.5 && midEst > 0.5) {
+      lowDelay <- (lowDelay+highDelay)/2
+      highDelay <- highDelay
+
+    } else if (highEst < 0.5 && midEst < 0.5) {
+      lowDelay <- lowDelay
+      highDelay <- (lowDelay+highDelay)/2
+
+    }
+  }
+
+  fittingObject$ed50[[as.character(id)]] = log((lowDelay+highDelay)/2)
+
+  fittingObject
+}

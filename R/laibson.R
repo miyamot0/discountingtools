@@ -102,3 +102,20 @@ dd_start_laibson <- function(currentData) {
 
   ini.par
 }
+
+#' dd_ed50_laibson
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_laibson <- function(fittingObject, id) {
+
+  b = fittingObject$results[[as.character(id)]][["laibson"]][["Beta"]]
+  d = fittingObject$results[[as.character(id)]][["laibson"]][["Delta"]]
+
+  fittingObject$ed50[[as.character(id)]] = log(log( (1/(2*b)),base=d))
+
+  fittingObject
+}

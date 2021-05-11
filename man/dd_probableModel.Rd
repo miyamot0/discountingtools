@@ -7,7 +7,9 @@
 dd_probableModel(fittingObject, id)
 }
 \arguments{
-\item{id}{}
+\item{fittingObject}{core dd fitting object}
+
+\item{id}{id tag}
 }
 \value{
 

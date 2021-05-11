@@ -97,3 +97,20 @@ dd_start_greenmyerson <- function(currentData) {
 
   ini.par
 }
+
+#' dd_ed50_greenmyerson
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_greenmyerson <- function(fittingObject, id) {
+
+  lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
+
+  fittingObject$ed50[[as.character(id)]] = log( (2^(1/s)-1)/exp(lnk))
+
+  fittingObject
+}

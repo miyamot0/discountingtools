@@ -45,3 +45,17 @@ dd_fit_noise <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' dd_ed50_noise
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_noise <- function(fittingObject, id) {
+
+  fittingObject$ed50[[as.character(id)]] = NA
+
+  fittingObject
+}

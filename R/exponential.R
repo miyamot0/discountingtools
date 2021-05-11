@@ -88,3 +88,19 @@ dd_start_exponential <- function(currentData, increment = 1) {
 
   ini.par
 }
+
+#' dd_ed50_exponential
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_exponential <- function(fittingObject, id) {
+
+  lnk = fittingObject$results[[as.character(id)]][["exponential"]][["Lnk"]]
+
+  fittingObject$ed50[[as.character(id)]] = log(log(2)/exp(lnk))
+
+  fittingObject
+}

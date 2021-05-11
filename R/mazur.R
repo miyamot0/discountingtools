@@ -43,10 +43,10 @@ dd_fit_mazur <- function(fittingObject, id) {
   if (!is.null(modelFitHyperbolic)) {
 
     modelResults[[ "Lnk"    ]] = modelFitHyperbolic$par[["lnk"]]
-    modelResults[[ "RMSE"      ]] = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec))
-    modelResults[[ "BIC"       ]] = stats::BIC(logLik.nls.lm(modelFitHyperbolic))
-    modelResults[[ "AIC"       ]] = stats::AIC(logLik.nls.lm(modelFitHyperbolic))
-    modelResults[[ "Status"    ]] = paste("Code:", modelFitHyperbolic$info,
+    modelResults[[ "RMSE"   ]] = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec))
+    modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitHyperbolic))
+    modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitHyperbolic))
+    modelResults[[ "Status" ]] = paste("Code:", modelFitHyperbolic$info,
                                           "- Message:", modelFitHyperbolic$message,
                                           sep = " ")
   }
@@ -85,4 +85,20 @@ dd_start_mazur <- function(currentData) {
   ini.par    = c(lnk = sorted$startlnK[1])
 
   ini.par
+}
+
+#' dd_ed50_mazur
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_mazur <- function(fittingObject, id) {
+
+  lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
+
+  fittingObject$ed50[[as.character(id)]] = log(1/(exp(lnk)))
+
+  fittingObject
 }

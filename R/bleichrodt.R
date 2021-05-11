@@ -106,3 +106,46 @@ dd_start_bleichrodt <- function(currentData) {
 
   ini.par
 }
+
+#' dd_ed50_bleichrodt
+#'
+#' @param fittingObject core dd fitting object
+#' @param id id tag
+#'
+#' @return
+#' @export
+dd_ed50_bleichrodt <- function(fittingObject, id) {
+
+  lnk = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Lnk"]]
+  s   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["S"]]
+  b   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Beta"]]
+
+  currentData = fittingObject$data[
+    which(fittingObject$data[,
+                             as.character(fittingObject$settings['Individual'])] == id),]
+
+  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+
+  lowDelay <- 0
+  highDelay <- max(currentData$ddX)*10
+
+  while ((highDelay - lowDelay) > 0.001) {
+    lowEst  <- integrandBleichrodtCRDI(  lowDelay, lnk, s, b)
+    midEst  <- integrandBleichrodtCRDI( (lowDelay+highDelay)/2, lnk, s, b)
+    highEst <- integrandBleichrodtCRDI(  highDelay, lnk, s, b)
+
+    if (lowEst > 0.5 && midEst > 0.5) {
+      lowDelay <- (lowDelay+highDelay)/2
+      highDelay <- highDelay
+
+    } else if (highEst < 0.5 && midEst < 0.5) {
+      lowDelay <- lowDelay
+      highDelay <- (lowDelay+highDelay)/2
+
+    }
+  }
+
+  fittingObject$ed50[[as.character(id)]] = log((lowDelay+highDelay)/2)
+
+  fittingObject
+}

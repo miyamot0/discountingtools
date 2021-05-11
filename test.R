@@ -27,7 +27,7 @@ results = fitDDCurves(data = dat,
                            "noise",
                            "rachlin",
                            "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("ED50")) %>%
+  dd_metricOptions(metrics = c("lned50")) %>%
   dd_analyze()
 
 summary(results)

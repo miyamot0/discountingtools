@@ -3,8 +3,8 @@
 #'
 #' Return model probabilities
 #'
-#' @param fittingObject
-#' @param id
+#' @param fittingObject core dd fitting object
+#' @param id id tag
 #'
 #' @return
 #' @export
