@@ -4,7 +4,7 @@ R package for performing delay discounting analyses.  Features include approxima
 
 ### Version
 -------------------
-0.0.1.0 (beta)
+0.0.2.0 (beta)
 
 ### Installation
 ----------------
@@ -47,240 +47,32 @@ library(discountingtools)
 #### Effective Delay Plotting
 
 ```r
-dat <- data.frame(X=  c(1, 30,   180,  540,  1080, 2160,  4320, 8640),
-                  Y=  c(1, 0.88, 0.68, 0.45, 0.4,  0.35,  0.2,  0.1),
-                  ids=c(2, 2,    2,    2,    2,    2,     2,    2))
 
-dat$Y <- dat$Y * 100
+# TODO
 
-library(discountingtools)
-
-results <- discountingModelSelection(dat,
-                                     summarize = TRUE,
-                                     figures = "ed50",
-                                     idCol = "ids",
-                                     A = 100)
-
-Calculating series id: 2
-Model Comparison Summary:
-Rank #:  1  =  Rachlin
- Probability  =  0.556058
- BIC  =  -25.445513
- Most Probable ln(ED50)  =  6.25
- Most Probable Model AUC  =  0.251432
- Most Probable Model AUC (log)  =  0.666313
-
-Rank #:  2  =  GreenMyerson
- Probability  =  0.209078
- BIC  =  -23.489184
-
-Rank #:  3  =  EbertPrelec
- Probability  =  0.190619
- BIC  =  -23.304321
-
-Rank #:  4  =  BleichrodtCRDI
- Probability  =  0.036335
- BIC  =  -19.989357
-
-Rank #:  5  =  RodriguezLogue
- Probability  =  0.005586
- BIC  =  -16.244268
-
-Rank #:  6  =  Hyperbolic
- Probability  =  0.002302
- BIC  =  -14.471566
-
-Rank #:  7  =  Exponential
- Probability  =  2e-05
- BIC  =  -4.934802
-
-Rank #:  8  =  Laibson
- Probability  =  1e-06
- BIC  =  0.44605
-
-Rank #:  9  =  Noise
- Probability  =  0
- BIC  =  7.501642
- 
-print(results)
-                                     
-  id JB.C1 JB.C2 noise.mean noise.RMSE noise.BIC noise.AIC   exp.lnk   exp.RMSE    exp.BIC    exp.AIC Mazur.lnk Mazur.RMSE
-1  1  TRUE  TRUE  0.7333333  0.2160247  1.128501  1.544982 -7.615692 0.07500726 -11.565193 -11.148712 -7.217119 0.05533467
-2  2  TRUE  TRUE  0.6833333  0.2316607  1.967073  2.383554 -7.369143 0.12400210  -5.532629  -5.116148 -6.846340 0.08482117
-  Mazur.BIC  Mazur.AIC   BD.beta  BD.delta   BD.RMSE    BD.BIC    BD.AIC Rachlin.lnk Rachlin.s Rachlin.RMSE Rachlin.BIC
-1 -15.21541 -14.798933 0.9999994 0.9993449 0.1124525 -6.252941 -5.628220   -5.000000 0.6800000   0.03775746   -19.34912
-2 -10.08967  -9.673188 0.9999967 0.9991767 0.1542008 -2.464244 -1.839522   -3.941156 0.5676217   0.02057374   -26.63513
-  Rachlin.AIC    ep.lnk      ep.s    ep.RMSE    ep.BIC    ep.AIC noise.BF    exp.BF  Mazur.BF     BD.BF Rachlin.BF    ep.BF
-1   -18.72439 -7.976814 0.5702152 0.02970408 -22.22790 -21.60318        1 570.69054 3540.2682 40.073737   27967.79 117971.8
-2   -26.01040 -7.796464 0.4521181 0.02740064 -23.19652 -22.57180        1  42.51475  415.0383  9.167443 1625131.21 291208.5
-    noise.prob     exp.prob   Mazur.prob      BD.prob Rachlin.prob   ep.prob probable.model probable.ED50 probable.AUC
-1 6.662599e-06 3.802282e-03 0.0235873880 2.669952e-04    0.1863382 0.7859985             ep      7.334051    0.5976186
-2 5.217008e-07 2.217998e-05 0.0002165258 4.782663e-06    0.8478323 0.1519237        Rachlin      6.943280    0.5302546
-  probable.Log10AUC
-1         0.8438519
-2         0.7925787
 ```
 
-![Alt text](Figure_ED50_2.png?raw=true "ED50 Visuals")
+![Alt text](...)
 
 #### Model-based Area
 
 ```r
-dat <- data.frame(X=  c(1, 30,   180,  540,  1080, 2160,  4320, 8640),
-                  Y=  c(1, 0.88, 0.68, 0.45, 0.4,  0.35,  0.2,  0.1),
-                  ids=c(2, 2,    2,    2,    2,    2,     2,    2))
 
-dat$Y <- dat$Y * 100
+# TODO
 
-library(discountingtools)
-
-results <- discountingModelSelection(dat,
-                                     summarize = TRUE,
-                                     figures = "auc",
-                                     idCol = "ids",
-                                     A = 100)
-
-Calculating series id: 2
-Model Comparison Summary:
-Rank #:  1  =  Rachlin
- Probability  =  0.556058
- BIC  =  -25.445513
- Most Probable ln(ED50)  =  6.25
- Most Probable Model AUC  =  0.251432
- Most Probable Model AUC (log)  =  0.666313
-
-Rank #:  2  =  GreenMyerson
- Probability  =  0.209078
- BIC  =  -23.489184
-
-Rank #:  3  =  EbertPrelec
- Probability  =  0.190619
- BIC  =  -23.304321
-
-Rank #:  4  =  BleichrodtCRDI
- Probability  =  0.036335
- BIC  =  -19.989357
-
-Rank #:  5  =  RodriguezLogue
- Probability  =  0.005586
- BIC  =  -16.244268
-
-Rank #:  6  =  Hyperbolic
- Probability  =  0.002302
- BIC  =  -14.471566
-
-Rank #:  7  =  Exponential
- Probability  =  2e-05
- BIC  =  -4.934802
-
-Rank #:  8  =  Laibson
- Probability  =  1e-06
- BIC  =  0.44605
-
-Rank #:  9  =  Noise
- Probability  =  0
- BIC  =  7.501642
- 
-print(results)
-                                     
-  id JB.C1 JB.C2 noise.mean noise.RMSE noise.BIC noise.AIC   exp.lnk   exp.RMSE    exp.BIC    exp.AIC Mazur.lnk Mazur.RMSE
-1  1  TRUE  TRUE  0.7333333  0.2160247  1.128501  1.544982 -7.615692 0.07500726 -11.565193 -11.148712 -7.217119 0.05533467
-2  2  TRUE  TRUE  0.6833333  0.2316607  1.967073  2.383554 -7.369143 0.12400210  -5.532629  -5.116148 -6.846340 0.08482117
-  Mazur.BIC  Mazur.AIC   BD.beta  BD.delta   BD.RMSE    BD.BIC    BD.AIC Rachlin.lnk Rachlin.s Rachlin.RMSE Rachlin.BIC
-1 -15.21541 -14.798933 0.9999994 0.9993449 0.1124525 -6.252941 -5.628220   -5.000000 0.6800000   0.03775746   -19.34912
-2 -10.08967  -9.673188 0.9999967 0.9991767 0.1542008 -2.464244 -1.839522   -3.941156 0.5676217   0.02057374   -26.63513
-  Rachlin.AIC    ep.lnk      ep.s    ep.RMSE    ep.BIC    ep.AIC noise.BF    exp.BF  Mazur.BF     BD.BF Rachlin.BF    ep.BF
-1   -18.72439 -7.976814 0.5702152 0.02970408 -22.22790 -21.60318        1 570.69054 3540.2682 40.073737   27967.79 117971.8
-2   -26.01040 -7.796464 0.4521181 0.02740064 -23.19652 -22.57180        1  42.51475  415.0383  9.167443 1625131.21 291208.5
-    noise.prob     exp.prob   Mazur.prob      BD.prob Rachlin.prob   ep.prob probable.model probable.ED50 probable.AUC
-1 6.662599e-06 3.802282e-03 0.0235873880 2.669952e-04    0.1863382 0.7859985             ep      7.334051    0.5976186
-2 5.217008e-07 2.217998e-05 0.0002165258 4.782663e-06    0.8478323 0.1519237        Rachlin      6.943280    0.5302546
-  probable.Log10AUC
-1         0.8438519
-2         0.7925787
 ```
 
-![Alt text](Figure_AUC_2.png?raw=true "Model AUC Visuals")
+![Alt text](...)
 
 #### Model-based Area (logarithmic scaling)
 
 ```r
-dat <- data.frame(X=  c(1, 30,   180,  540,  1080, 2160,  4320, 8640),
-                  Y=  c(1, 0.88, 0.68, 0.45, 0.4,  0.35,  0.2,  0.1),
-                  ids=c(2, 2,    2,    2,    2,    2,     2,    2))
 
-dat$Y <- dat$Y * 100
-
-library(discountingtools)
-
-results <- discountingModelSelection(dat,
-                                     summarize = TRUE,
-                                     figures = "logauc",
-                                     idCol = "ids",
-                                     A = 100)
-
-Calculating series id: 2
-Model Comparison Summary:
-Rank #:  1  =  Rachlin
- Probability  =  0.556058
- BIC  =  -25.445513
- Most Probable ln(ED50)  =  6.25
- Most Probable Model AUC  =  0.251432
- Most Probable Model AUC (log)  =  0.666313
-
-Rank #:  2  =  GreenMyerson
- Probability  =  0.209078
- BIC  =  -23.489184
-
-Rank #:  3  =  EbertPrelec
- Probability  =  0.190619
- BIC  =  -23.304321
-
-Rank #:  4  =  BleichrodtCRDI
- Probability  =  0.036335
- BIC  =  -19.989357
-
-Rank #:  5  =  RodriguezLogue
- Probability  =  0.005586
- BIC  =  -16.244268
-
-Rank #:  6  =  Hyperbolic
- Probability  =  0.002302
- BIC  =  -14.471566
-
-Rank #:  7  =  Exponential
- Probability  =  2e-05
- BIC  =  -4.934802
-
-Rank #:  8  =  Laibson
- Probability  =  1e-06
- BIC  =  0.44605
-
-Rank #:  9  =  Noise
- Probability  =  0
- BIC  =  7.501642
- 
-print(results)
-
-  id JB.C1 JB.C2 noise.mean noise.RMSE noise.BIC noise.AIC   exp.lnk   exp.RMSE    exp.BIC    exp.AIC Mazur.lnk Mazur.RMSE
-1  1  TRUE  TRUE  0.7333333  0.2160247  1.128501  1.544982 -7.615692 0.07500726 -11.565193 -11.148712 -7.217119 0.05533467
-2  2  TRUE  TRUE  0.6833333  0.2316607  1.967073  2.383554 -7.369143 0.12400210  -5.532629  -5.116148 -6.846340 0.08482117
-  Mazur.BIC  Mazur.AIC   BD.beta  BD.delta   BD.RMSE    BD.BIC    BD.AIC Rachlin.lnk Rachlin.s Rachlin.RMSE Rachlin.BIC
-1 -15.21541 -14.798933 0.9999994 0.9993449 0.1124525 -6.252941 -5.628220   -5.000000 0.6800000   0.03775746   -19.34912
-2 -10.08967  -9.673188 0.9999967 0.9991767 0.1542008 -2.464244 -1.839522   -3.941156 0.5676217   0.02057374   -26.63513
-  Rachlin.AIC    ep.lnk      ep.s    ep.RMSE    ep.BIC    ep.AIC noise.BF    exp.BF  Mazur.BF     BD.BF Rachlin.BF    ep.BF
-1   -18.72439 -7.976814 0.5702152 0.02970408 -22.22790 -21.60318        1 570.69054 3540.2682 40.073737   27967.79 117971.8
-2   -26.01040 -7.796464 0.4521181 0.02740064 -23.19652 -22.57180        1  42.51475  415.0383  9.167443 1625131.21 291208.5
-    noise.prob     exp.prob   Mazur.prob      BD.prob Rachlin.prob   ep.prob probable.model probable.ED50 probable.AUC
-1 6.662599e-06 3.802282e-03 0.0235873880 2.669952e-04    0.1863382 0.7859985             ep      7.334051    0.5976186
-2 5.217008e-07 2.217998e-05 0.0002165258 4.782663e-06    0.8478323 0.1519237        Rachlin      6.943280    0.5302546
-  probable.Log10AUC
-1         0.8438519
-2         0.7925787
+# TODO
 
 ```
 
-![Alt text](Figure_Model_AUC_Log10_2.png?raw=true "Log10 Model AUC Visuals")
+![Alt text](...)
 
 ### Referenced Works (academic works)
 -------------------
