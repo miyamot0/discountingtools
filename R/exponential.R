@@ -133,3 +133,23 @@ dd_mbauc_exponential <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' Exponential Integrand helper
+#'
+#' This integrand helper is a projection of the integrand with delays represented as normal
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return Numerical Integration Projection
+integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
+
+#' Exponential Integrand helper (log10)
+#'
+#' This integrand helper is a projection of the integrand with delays represented in the log base 10 scale
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return Numerical Integration Projection
+integrandExpLog <- function(x, lnK) { exp(-exp(lnK)*(10^x)) }

@@ -165,3 +165,25 @@ dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' Rodriguez & Logue Integrand helper
+#'
+#' This integrand helper is a projection of the integrand with delays represented as normal
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return Numerical Integration Projection
+integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-beta / exp(lnK)) }
+
+#' Rodriguez & Logue Integrand helper
+#'
+#' This integrand helper is a projection of the integrand (log10) with delays represented in the log base 10 scale
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param beta fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return Numerical Integration Projection
+integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-beta / exp(lnK)) }

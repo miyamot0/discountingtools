@@ -170,3 +170,25 @@ dd_mbauc_ebertprelec <- function(fittingObject, id) {
 
   fittingObject
 }
+
+#' Ebert & Prelec's Integrand helper
+#'
+#' This integrand helper is a projection of the integrand with delays represented as normal
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return Numerical Integration Projection
+integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
+
+#' Ebert & Prelec's ep Integrand helper (log10)
+#'
+#' This integrand helper is a projection of the integrand with delays represented in the log base 10 scale
+#'
+#' @param x observation at point n (X)
+#' @param lnK fitted parameter
+#' @param s fitted parameter
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @return Numerical Integration Projection
+integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
