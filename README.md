@@ -44,7 +44,7 @@ library(discountingtools)
 ### Examples
 -------------------------
 
-#### Effective Delay Plotting
+#### Effective Delay
 
 ```r
 
@@ -97,6 +97,12 @@ The Small N Stats Discounting Model Selector is based on the following academic 
 ---------------------------------------------
 
 Questions? Suggestions for features? <sgilroy1@lsu.edu>.
+
+### To Do
+-----------
+
+* Modeling options: individual (default)
+* Modeling options: pooled (fit to group)
 
 ### License
 -----------
