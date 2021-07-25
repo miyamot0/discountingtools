@@ -41,6 +41,10 @@ fitDDCurves <- function(data, settings, maxValue) {
 
   class(fittingObject) <- c("discountingtools")
 
+  if (is.null(fittingObject$settings[["Delays"]]))     stop('No Delays aesthetic specified')
+  if (is.null(fittingObject$settings[["Values"]]))     stop('No Values aesthetic specified')
+  if (is.null(fittingObject$settings[["Individual"]])) stop('No Individual aesthetic specified')
+
   fittingObject
 }
 

@@ -369,14 +369,15 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
 #' @return
 plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin) {
 
+  if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
+
   preDraw = TRUE
   yLimits = c(0, fittingObject$maxValue)
 
   vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
   vecColors = rainbow(length(vecGroups), alpha = 1)
 
-  print(vecGroups)
-  print(vecColors)
+  #unique(results$data[,as.character(results$settings['Group'])])
 
   for (id in names(fittingObject$results)) {
 
