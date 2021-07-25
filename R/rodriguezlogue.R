@@ -229,7 +229,7 @@ RodriguezLogueDiscountGradient <- function(x, lnk, beta)
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-beta / exp(lnK)) }
+integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-exp(beta) / exp(lnK)) }
 
 #' Rodriguez & Logue Integrand helper
 #'
@@ -240,4 +240,4 @@ integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-beta / 
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-beta / exp(lnK)) }
+integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-exp(beta) / exp(lnK)) }
