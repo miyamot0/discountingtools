@@ -8,7 +8,8 @@ set.seed(65535)
 
 dataFrame = data.frame(
   ids = 1:10,
-  ks  = NA
+  ks  = NA,
+  grp = "A"
 )
 
 dataFrame$ks  = rnorm(length(dataFrame$ids), 0.09, 0.05)
@@ -24,19 +25,40 @@ for (row in 1:nrow(dataFrame)) {
   dataFrame[row, as.character(delays)] = ys
 }
 
-dataFrame[,"1"]    = ifelse(dataFrame[,"1"] > 1,    1, dataFrame[,"1"])
-dataFrame[,"8640"] = ifelse(dataFrame[,"8640"] < 0, 0, dataFrame[,"8640"])
+dataFrame2 = data.frame(
+  ids = 11:20,
+  ks  = NA,
+  grp = "B"
+)
+
+dataFrame2$ks  = rnorm(length(dataFrame2$ids), 0.018, 0.005)
+dataFrame2$ks  = log(dataFrame2$ks)
+
+for (row in 1:nrow(dataFrame2)) {
+  ys = hyperbolicDiscountFunc(delays, dataFrame2[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  dataFrame2[row, as.character(delays)] = ys
+}
+
+dataFrame = rbind(dataFrame,
+                  dataFrame2)
 
 dataFrame.long = dataFrame %>%
-  gather(Delay, Value, -ids, -ks) %>%
+  gather(Delay, Value, -ids, -ks, -grp) %>%
   mutate(Delay = as.numeric(Delay))
+
+dataFrame.long[,"Value"] = ifelse(dataFrame.long[,"Value"] > 1, 1, dataFrame.long[,"Value"])
+dataFrame.long[,"Value"] = ifelse(dataFrame.long[,"Value"] < 0, 0, dataFrame.long[,"Value"])
 
 str(dataFrame.long)
 
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
-                            Individual = ids),
+                            Individual = ids,
+                            Group      = grp),
             maxValue = 1) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
@@ -52,7 +74,6 @@ results = fitDDCurves(data = dataFrame.long,
                                "logmbauc")) %>%
   dd_analyze()
 
-# TODO rodrig mbauc
-# TODO warn types
+vecGroups = unique(results$data[,as.character(results$settings['Group'])])
 
-plot(results, logAxis = "x", position = "topright")
+plot(results, logAxis = "x", position = "topright", which = "group")

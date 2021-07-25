@@ -52,7 +52,6 @@ results = fitDDCurves(data = dataFrame.long,
                                "logmbauc")) %>%
   dd_analyze()
 
-# TODO rodrig mbauc
-# TODO warn types
-
-plot(results, logAxis = "x", position = "topright")
+plot(results,
+     logAxis = "x",
+     position = "topright")
