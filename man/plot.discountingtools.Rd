@@ -6,6 +6,7 @@
 \usage{
 \method{plot}{discountingtools}(
   fittingObject,
+  position0 = "bottomleft",
   ylab0 = "Subjective Value",
   xlab0 = "Delay",
   logAxis = "x",
@@ -14,6 +15,8 @@
 }
 \arguments{
 \item{fittingObject}{core frame}
+
+\item{position0}{position legend}
 
 \item{ylab0}{y axis label}
 

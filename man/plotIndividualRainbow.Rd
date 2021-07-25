@@ -4,10 +4,12 @@
 \alias{plotIndividualRainbow}
 \title{plotIndividualRainbow}
 \usage{
-plotIndividualRainbow(fittingObject, ylab0, xlab0, logAxis, yMin)
+plotIndividualRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
 }
 \arguments{
 \item{fittingObject}{core frame}
+
+\item{position0}{position legend}
 
 \item{ylab0}{y axis label}
 

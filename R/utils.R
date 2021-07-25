@@ -258,6 +258,7 @@ summary.discountingtools <- function(fittingObject) {
 #' Override plot output
 #'
 #' @param fittingObject core frame
+#' @param position0 position legend
 #' @param ylab0 y axis label
 #' @param xlab0 x axis label
 #' @param logAxis axis designation
@@ -266,28 +267,32 @@ summary.discountingtools <- function(fittingObject) {
 #' @return
 #' @export plot.discountingtools
 #' @export
-plot.discountingtools <- function(fittingObject, ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01) {
+plot.discountingtools <- function(fittingObject, position0 = "bottomleft", ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01) {
 
   # TODO simple multi plot
-  plotIndividualRainbow(fittingObject, ylab0, xlab0, logAxis, yMin)
+  plotIndividualRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
 }
 
 #' plotIndividualRainbow
 #'
 #' @param fittingObject core frame
+#' @param position0 position legend
 #' @param ylab0 y axis label
 #' @param xlab0 x axis label
 #' @param logAxis axis designation
 #' @param yMin y axis lower limit
 #'
 #' @return
-plotIndividualRainbow <- function(fittingObject, ylab0, xlab0, logAxis, yMin) {
+plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin) {
 
   preDraw = TRUE
   yLimits = c(0, fittingObject$maxValue)
 
   vecModels = fittingObject$models
   vecColors = rainbow(length(vecModels), alpha = 1)
+
+  legendBuildModel = NA
+  legendBuildColor = NA
 
   for (id in names(fittingObject$results)) {
 
@@ -312,6 +317,16 @@ plotIndividualRainbow <- function(fittingObject, ylab0, xlab0, logAxis, yMin) {
 
     col = vecColors[match(model, vecModels)]
 
+    if (!(model %in% legendBuildModel)) {
+      if (is.na(legendBuildModel)) {
+        legendBuildModel = c(model)
+        legendBuildColor = c(col)
+      } else {
+        legendBuildModel = c(legendBuildModel, model)
+        legendBuildColor = c(legendBuildColor, col)
+      }
+    }
+
     if (grepl("y", logAxis) == TRUE) {
       yhat    = yhat[yhat >= 0]
       yLimits = c(yMin, fittingObject$maxValue)
@@ -334,9 +349,9 @@ plotIndividualRainbow <- function(fittingObject, ylab0, xlab0, logAxis, yMin) {
     }
   }
 
-  legend("bottomleft",
-         legend = vecModels,
-         col    = vecColors,
+  legend(position0,
+         legend = legendBuildModel,
+         col    = legendBuildColor,
          lty    = 1)
 
 }
