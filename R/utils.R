@@ -252,3 +252,91 @@ summary.discountingtools <- function(fittingObject) {
 
   resFrame
 }
+
+#' plot.discountingtools
+#'
+#' Override plot output
+#'
+#' @param fittingObject core frame
+#' @param ylab0 y axis label
+#' @param xlab0 x axis label
+#' @param logAxis axis designation
+#' @param yMin y axis lower limit
+#'
+#' @return
+#' @export plot.discountingtools
+#' @export
+plot.discountingtools <- function(fittingObject, ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01) {
+
+  # TODO simple multi plot
+  plotIndividualRainbow(fittingObject, ylab0, xlab0, logAxis, yMin)
+}
+
+#' plotIndividualRainbow
+#'
+#' @param fittingObject core frame
+#' @param ylab0 y axis label
+#' @param xlab0 x axis label
+#' @param logAxis axis designation
+#' @param yMin y axis lower limit
+#'
+#' @return
+plotIndividualRainbow <- function(fittingObject, ylab0, xlab0, logAxis, yMin) {
+
+  preDraw = TRUE
+  yLimits = c(0, fittingObject$maxValue)
+
+  vecModels = fittingObject$models
+  vecColors = rainbow(length(vecModels), alpha = 1)
+
+  for (id in names(fittingObject$results)) {
+
+    ogData = subset(fittingObject$data, ids == id)
+
+    model  = fittingObject$rotation[[id]]$ProbableModel
+    result = fittingObject$results[[id]][[model]]
+
+    xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+             max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+
+    if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+
+    if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+    if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+    if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+    if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+    if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+    if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+    if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+    if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+
+    col = vecColors[match(model, vecModels)]
+
+    if (grepl("y", logAxis) == TRUE) {
+      yhat    = yhat[yhat >= 0]
+      yLimits = c(yMin, fittingObject$maxValue)
+    }
+
+    if (preDraw) {
+      plot(xs, yhat * fittingObject$maxValue,
+           type = "l",
+           ylim = yLimits,
+           log  = logAxis,
+           main = "Summary Fits",
+           col  = col,
+           ylab = ylab0,
+           xlab = xlab0)
+
+      preDraw = FALSE
+    } else {
+      lines(xs, yhat * fittingObject$maxValue,
+            col  = col)
+    }
+  }
+
+  legend("bottomleft",
+         legend = vecModels,
+         col    = vecColors,
+         lty    = 1)
+
+}

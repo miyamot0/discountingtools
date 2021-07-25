@@ -199,6 +199,7 @@ dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 RodriguezLogueDiscountFunc <- function(x, lnk, beta)
 {
   func <- (1 + x * exp(lnk))^(-exp(beta) / exp(lnk))

@@ -204,6 +204,7 @@ dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 ebertPrelecDiscountFunc <- function(x, lnk, s)
 {
   func <- exp(-(exp(lnk)*x)^s)

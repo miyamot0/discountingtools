@@ -219,6 +219,7 @@ dd_mbauc_log10_bleichrodt <- function(fittingObject, id) {
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
 {
   func <- beta * exp(-exp(lnk)*x^s)

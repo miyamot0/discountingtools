@@ -162,9 +162,10 @@ dd_mbauc_log10_mazur <- function(fittingObject, id) {
 #' @param lnk fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 hyperbolicDiscountFunc <- function(x, lnk)
 {
-  func <- (1+exp(lnk)*x)^(-1)
+  func <- (1 + exp(lnk)*x)^(-1)
   eval(func)
 }
 
@@ -176,7 +177,7 @@ hyperbolicDiscountFunc <- function(x, lnk)
 #' @return projected, subjective value
 hyperbolicDiscountGradient <- function(x, lnk)
 {
-  func <- expression((1+exp(lnk)*x)^(-1))
+  func <- expression((1 + exp(lnk)*x)^(-1))
   c(eval(stats::D(func, "lnk")))
 }
 
@@ -188,7 +189,7 @@ hyperbolicDiscountGradient <- function(x, lnk)
 #' @param lnK fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandHyp <- function(x, lnK) { (1+exp(lnK)*x)^(-1) }
+integrandHyp <- function(x, lnK) { (1 + exp(lnK)*x)^(-1) }
 
 #' Hyperbolic Integrand helper (log10)
 #'
@@ -198,4 +199,4 @@ integrandHyp <- function(x, lnK) { (1+exp(lnK)*x)^(-1) }
 #' @param lnK fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandHypLog <- function(x, lnK) { (1+exp(lnK)*(10^x))^(-1) }
+integrandHypLog <- function(x, lnK) { (1 + exp(lnK)*(10^x))^(-1) }

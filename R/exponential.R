@@ -164,6 +164,7 @@ dd_mbauc_log10_exponential <- function(fittingObject, id) {
 #' @param lnk fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 exponentialDiscountFunc <- function(x, lnk)
 {
   func <- exp(-exp(lnk)*x)

@@ -179,9 +179,10 @@ dd_mbauc_log10_rachlin <- function(fittingObject, id) {
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
 {
-  func <- (1+exp(lnk)*(x^s))^(-1)
+  func <- (1 + exp(lnk)*(x^s))^(-1)
   eval(func)
 }
 
@@ -194,7 +195,7 @@ rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
 #' @return projected, subjective value
 rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
 {
-  func <- expression((1+exp(lnk)*x)^(-s))
+  func <- expression((1 + exp(lnk)*x)^(-s))
   c(eval(stats::deriv(func, "lnk")),
     eval(stats::deriv(func, "s")))
 }
@@ -208,7 +209,7 @@ rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
+integrandRachlin <- function(x, lnK, s) { (1 + exp(lnK)*(x^s))^(-1) }
 
 #' Rachlin Integrand helper (log10)
 #'
@@ -219,4 +220,4 @@ integrandRachlin <- function(x, lnK, s) { (1+exp(lnK)*(x^s))^(-1) }
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandRachlinLog <- function(x, lnK, s) { (1+exp(lnK)*((10^x)^s))^(-1) }
+integrandRachlinLog <- function(x, lnK, s) { (1 + exp(lnK)*((10^x)^s))^(-1) }

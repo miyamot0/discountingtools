@@ -107,7 +107,7 @@ dd_ed50_greenmyerson <- function(fittingObject, id) {
   lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
   s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
 
-  fittingObject$ed50[[as.character(id)]] = log( (2^(1/s)-1)/exp(lnk))
+  fittingObject$ed50[[as.character(id)]] = log( (2^(1/s) - 1)/exp(lnk))
 
   fittingObject
 }
@@ -179,9 +179,10 @@ dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 {
-  func <- (1+exp(lnk)*x)^(-s)
+  func <- (1 + exp(lnk)*x)^(-s)
   eval(func)
 }
 
@@ -194,7 +195,7 @@ myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 #' @return projected, subjective value
 myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 {
-  func <- expression((1+exp(lnk)*x)^(-s))
+  func <- expression((1 + exp(lnk)*x)^(-s))
   c(eval(stats::deriv(func, "lnk")),
     eval(stats::deriv(func, "s")))
 }
@@ -208,7 +209,7 @@ myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandMyerson <- function(x, lnK, s) { (1+exp(lnK)*x)^(-s) }
+integrandMyerson <- function(x, lnK, s) { (1 + exp(lnK)*x)^(-s) }
 
 #' Green & Myerson Integrand helper (log10)
 #'
@@ -219,4 +220,4 @@ integrandMyerson <- function(x, lnK, s) { (1+exp(lnK)*x)^(-s) }
 #' @param s fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
-integrandMyersonLog <- function(x, lnK, s) { (1+exp(lnK)*(10^x))^(-s) }
+integrandMyersonLog <- function(x, lnK, s) { (1 + exp(lnK)*(10^x))^(-s) }

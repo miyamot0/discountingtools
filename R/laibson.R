@@ -184,6 +184,7 @@ dd_mbauc_log10_laibson <- function(fittingObject, id) {
 #' @param delta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @export
 betaDeltaDiscountFunc <- function(x, beta, delta)
 {
   func <- beta*delta^x
