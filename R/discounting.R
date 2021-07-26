@@ -89,10 +89,12 @@ dd_metricOptions <- function(fittingObject, metrics) {
 #'
 #' @return
 #' @export
-dd_screenOption <- function(fittingObject, screen, filter) {
+dd_screenOption <- function(fittingObject, screen, filterPassing = NULL) {
   messageDebug(fittingObject, "Setting Screening Options")
   fittingObject[[ "screen" ]] = screen
-  fittingObject[[ "filter" ]] = filter
+
+  if (!is.null(filterPassing))
+    fittingObject[[ "filterPassing" ]] = filterPassing
 
   fittingObject
 }
@@ -107,10 +109,20 @@ dd_screenOption <- function(fittingObject, screen, filter) {
 #' @export
 dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
-  if ("screen" %in% names(fittingObject) | "filter" %in% names(fittingObject)) {
+  if ("screen" %in% names(fittingObject) | "filterPassing" %in% names(fittingObject)) {
     messageDebug(fittingObject, "Beginning JB Screening")
 
     fittingObject = johnsonBickelScreen(fittingObject)
+  }
+
+  if ("filterPassing" %in% names(fittingObject)) {
+    messageDebug(fittingObject, "Filtering based on JB Screen")
+
+    if ("JB1" %in% fittingObject[[ "filterPassing" ]])
+      fittingObject$data = fittingObject$data[fittingObject$data$JB1 == TRUE, ]
+
+    if ("JB2" %in% fittingObject[[ "filterPassing" ]])
+      fittingObject$data = fittingObject$data[fittingObject$data$JB2 == TRUE, ]
   }
 
   messageDebug(fittingObject, "Beginning Model Fitting(s)")

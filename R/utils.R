@@ -60,7 +60,7 @@ johnsonBickelScreen <- function(fittingObject) {
       curr = currentData[index,     "ddY"]
 
       if ((curr - prev) > 0.2) {
-        messageDebug(fittingObject, paste("JB Screen: ", id, "Fail JB1"))
+        messageDebug(fittingObject, paste("JB Screen: ", id, "[Fail JB1]"))
 
         fittingObject$data[
           which(fittingObject$data[,
@@ -72,7 +72,7 @@ johnsonBickelScreen <- function(fittingObject) {
     curr <- currentData[length(currentData$ddX), "ddY"]
 
     if ((prev - curr) < 0.1) {
-      messageDebug(fittingObject, paste("JB Screen: ", id, "Fail JB2"))
+      messageDebug(fittingObject, paste("JB Screen: ", id, "[Fail JB2]"))
 
       fittingObject$data[
         which(fittingObject$data[,

@@ -4,7 +4,7 @@
 \alias{dd_screenOption}
 \title{dd_screenOption}
 \usage{
-dd_screenOption(fittingObject, screen, filter)
+dd_screenOption(fittingObject, screen, filterPassing = NULL)
 }
 \arguments{
 \item{fittingObject}{}
