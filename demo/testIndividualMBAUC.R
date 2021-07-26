@@ -7,11 +7,11 @@ library(tidyr)
 set.seed(65535)
 
 dataFrame = data.frame(
-  ids = 1:30,
+  ids = 1:100,
   ks  = NA
 )
 
-dataFrame$ks  = rnorm(length(dataFrame$ids), 0.09, 0.05)
+dataFrame$ks  = rnorm(length(dataFrame$ids), 0.35, 0.125)
 dataFrame$ks  = log(dataFrame$ks)
 
 delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
@@ -24,20 +24,18 @@ for (row in 1:nrow(dataFrame)) {
   dataFrame[row, as.character(delays)] = ys
 }
 
-dataFrame[,"1"]    = ifelse(dataFrame[,"1"] > 1,    1, dataFrame[,"1"])
-dataFrame[,"8640"] = ifelse(dataFrame[,"8640"] < 0, 0, dataFrame[,"8640"])
-
 dataFrame.long = dataFrame %>%
   gather(Delay, Value, -ids, -ks) %>%
-  mutate(Delay = as.numeric(Delay))
-
-str(dataFrame.long)
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
 
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
-            maxValue = 1) %>%
+            maxValue = 1,
+            verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -48,6 +46,7 @@ results = fitDDCurves(data = dataFrame.long,
                            "rachlin",
                            "rodriguezlogue")) %>%
   dd_metricOptions(metrics = c("mbauc")) %>%
+  dd_screenOption(screen = FALSE) %>%
   dd_analyze()
 
 png(filename = "MultiModelEvaluationMBAUC.png", width = 6, height = 6, res = 300, units = "in")
