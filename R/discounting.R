@@ -20,14 +20,15 @@ library(dplyr)
 
 #' fitDDCurves
 #'
-#' Core fitting object
+#' This is the entry point for users. It constructs a core fitting object that is passed through the program, with branching options based on those specified by the user.
 #'
-#' @param data assigned data
-#' @param settings mappings
-#' @param maxValue A parameter
-#' @param verbose output level (default FALSE)
+#' @param data (dataframe) assigned data
+#' @param settings (named list) mappings
+#' @param maxValue (num) A parameter
+#' @param verbose (bool) output level (default FALSE)
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 fitDDCurves <- function(data, settings, maxValue, verbose = FALSE) {
 
@@ -52,12 +53,13 @@ fitDDCurves <- function(data, settings, maxValue, verbose = FALSE) {
 
 #' dd_modelOptions
 #'
-#' method to specify which models to include as candidates
+#' This call builds out the model(s) included in subsequent regressions.
 #'
 #' @param fittingObject core dd fitting object
-#' @param plan vector of model candidates
+#' @param plan (char vector) This vector contains a list of possible model candidates.
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_modelOptions <- function(fittingObject, plan) {
   messageDebug(fittingObject, "Setting Model Options")
@@ -69,12 +71,13 @@ dd_modelOptions <- function(fittingObject, plan) {
 
 #' dd_metricOptions
 #'
-#' method to indicate metrics of interest in the analysis
+#' This call builds out the metrics used to conduct cross-model comparisons (e.g., ED50, MBAUC)
 #'
 #' @param fittingObject core dd fitting object
-#' @param metrics vector specifying metrics
+#' @param metrics (char vector) This vector contains a list of possible cross-model metrics.
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_metricOptions <- function(fittingObject, metrics) {
   messageDebug(fittingObject, "Setting Cross Model Metrics")
@@ -85,6 +88,8 @@ dd_metricOptions <- function(fittingObject, metrics) {
 
 #' dd_screenOption
 #'
+#' This call applies screening criteria to a data dataset. Specifically, it can be used to apply criteria (no filtering) or apply criteria and filter based on one or more criteria (e.g., JB1, JB2)
+#'
 #' @param fittingObject core fitting object
 #' @param screen (bool) set screen TRUE or FALSE (i.e. NULL)
 #' @param JB1Flag (num) bounce constant per authors (set at initial defaults)
@@ -92,6 +97,7 @@ dd_metricOptions <- function(fittingObject, metrics) {
 #' @param filterPassing (char vector) which JB criteria to retain in dataset, e.g. c("JB1", "JB2")
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_screenOption <- function(fittingObject, screen, JB1Flag = 0.2, JB2Flag = 0.1, filterPassing = NULL) {
   messageDebug(fittingObject, "Setting Screening Options")
@@ -107,11 +113,13 @@ dd_screenOption <- function(fittingObject, screen, JB1Flag = 0.2, JB2Flag = 0.1,
 
 #' dd_analyze
 #'
-#' this is the business end of the analytical process
+#' This call is the workhorse of the program. Based on the settings applied, this method applies all relevant methods and calculations to the supplied data.
 #'
 #' @param fittingObject core dd fitting object
+#' @param modelSelection (bool) this flag determines whether or not a model selection procedure will be applied in the results frame.
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
@@ -176,12 +184,13 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
 #' dd_probableModel
 #'
-#' Return model probabilities
+#' This method is used to perform approximate Bayesian model selection using extracted Bayes Factors from calculated BIC values.
 #'
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_probableModel <- function(fittingObject, id) {
 
   modelComparison     = list(
@@ -236,9 +245,9 @@ dd_probableModel <- function(fittingObject, id) {
 #'
 #' @param fittingObject core dd fitting object
 #' @param id id tag
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #'
 #' @return natural logarithm of the Effective Delay 50%
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 getED50 <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
@@ -263,9 +272,9 @@ getED50 <- function(fittingObject, id) {
 #'
 #' @param fittingObject core dd fitting object
 #' @param id id tag
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #'
 #' @return area beneath the fitted model
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 getMBAUC <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
@@ -290,9 +299,9 @@ getMBAUC <- function(fittingObject, id) {
 #'
 #' @param fittingObject core dd fitting object
 #' @param id id tag
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #'
 #' @return area beneath the fitted model, in log10 space
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 getMBAUCLog10 <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
@@ -320,8 +329,9 @@ getMBAUCLog10 <- function(fittingObject, id) {
 #' @param value observation at point n (Y)
 #' @param valueFunction function to get projected value
 #' @param jacobianFunction function to create jacobian
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return residual value of referenced function
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 residualFunction <- function(params, x, value, valueFunction, jacobianFunction)
 {
   value - do.call("valueFunction", c(list(x = x), as.list(params)))
@@ -336,8 +346,9 @@ residualFunction <- function(params, x, value, valueFunction, jacobianFunction)
 #' @param value observation at point n (Y)
 #' @param valueFunction function to get projected value
 #' @param jacobianFunction function to create jacobian
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return difference value for jacobian
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 jacobianMatrix <- function(params, x, value, valueFunction, jacobianFunction)
 {
   -do.call("jacobianFunction", c(list(x = x), as.list(params)))

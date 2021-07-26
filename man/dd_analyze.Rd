@@ -8,10 +8,15 @@ dd_analyze(fittingObject, modelSelection = TRUE)
 }
 \arguments{
 \item{fittingObject}{core dd fitting object}
+
+\item{modelSelection}{(bool) this flag determines whether or not a model selection procedure will be applied in the results frame.}
 }
 \value{
 
 }
 \description{
-this is the business end of the analytical process
+This call is the workhorse of the program. Based on the settings applied, this method applies all relevant methods and calculations to the supplied data.
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

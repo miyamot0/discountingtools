@@ -9,11 +9,14 @@ dd_metricOptions(fittingObject, metrics)
 \arguments{
 \item{fittingObject}{core dd fitting object}
 
-\item{metrics}{vector specifying metrics}
+\item{metrics}{(char vector) This vector contains a list of possible cross-model metrics.}
 }
 \value{
 
 }
 \description{
-method to indicate metrics of interest in the analysis
+This call builds out the metrics used to conduct cross-model comparisons (e.g., ED50, MBAUC)
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

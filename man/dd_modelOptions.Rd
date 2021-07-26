@@ -9,11 +9,14 @@ dd_modelOptions(fittingObject, plan)
 \arguments{
 \item{fittingObject}{core dd fitting object}
 
-\item{plan}{vector of model candidates}
+\item{plan}{(char vector) This vector contains a list of possible model candidates.}
 }
 \value{
 
 }
 \description{
-method to specify which models to include as candidates
+This call builds out the model(s) included in subsequent regressions.
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

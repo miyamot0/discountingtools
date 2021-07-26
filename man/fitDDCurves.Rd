@@ -7,17 +7,20 @@
 fitDDCurves(data, settings, maxValue, verbose = FALSE)
 }
 \arguments{
-\item{data}{assigned data}
+\item{data}{(dataframe) assigned data}
 
-\item{settings}{mappings}
+\item{settings}{(named list) mappings}
 
-\item{maxValue}{A parameter}
+\item{maxValue}{(num) A parameter}
 
-\item{verbose}{output level (default FALSE)}
+\item{verbose}{(bool) output level (default FALSE)}
 }
 \value{
 
 }
 \description{
-Core fitting object
+This is the entry point for users. It constructs a core fitting object that is passed through the program, with branching options based on those specified by the user.
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

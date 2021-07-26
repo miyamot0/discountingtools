@@ -15,5 +15,8 @@ dd_probableModel(fittingObject, id)
 
 }
 \description{
-Return model probabilities
+This method is used to perform approximate Bayesian model selection using extracted Bayes Factors from calculated BIC values.
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

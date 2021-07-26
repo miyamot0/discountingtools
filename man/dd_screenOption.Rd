@@ -27,5 +27,8 @@ dd_screenOption(
 
 }
 \description{
-dd_screenOption
+This call applies screening criteria to a data dataset. Specifically, it can be used to apply criteria (no filtering) or apply criteria and filter based on one or more criteria (e.g., JB1, JB2)
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }
