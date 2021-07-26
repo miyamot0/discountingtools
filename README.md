@@ -181,7 +181,29 @@ plot(results, which = "Log10MBAUC")
 
 ### Multi-Model Evaluation (Grouped)
 
-...
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  dd_analyze()
+
+plot(results, logAxis = "x", position = "topright", which = "group")
+```
 
 A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
 
@@ -189,7 +211,29 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 #### ED50
 
-...
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  dd_analyze()
+
+plot(results, which = "ED50")
+```
 
 The full code necessary to re-create this result is provided in demo/testGroupED50.R.
 
@@ -197,7 +241,29 @@ The full code necessary to re-create this result is provided in demo/testGroupED
 
 #### MB-AUC
 
-...
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  dd_analyze()
+
+plot(results, which = "MBAUC")
+```
 
 The full code necessary to re-create this result is provided in demo/testGroupMBAUC.R.
 
@@ -205,7 +271,29 @@ The full code necessary to re-create this result is provided in demo/testGroupMB
 
 #### Log10 MB-AUC
 
-...
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  dd_analyze()
+
+plot(results, which = "Log10MBAUC")
+```
 
 The full code necessary to re-create this result is provided in demo/testGroupLog10MBAUC.R.
 
