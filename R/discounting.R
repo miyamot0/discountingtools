@@ -106,6 +106,13 @@ dd_screenOption <- function(fittingObject, screen, filter) {
 #' @return
 #' @export
 dd_analyze <- function(fittingObject, modelSelection = TRUE) {
+
+  if ("screen" %in% names(fittingObject) | "filter" %in% names(fittingObject)) {
+    messageDebug(fittingObject, "Beginning JB Screening")
+
+    fittingObject = johnsonBickelScreen(fittingObject)
+  }
+
   messageDebug(fittingObject, "Beginning Model Fitting(s)")
 
   fittingObject[[ "ModelSelection" ]] = modelSelection

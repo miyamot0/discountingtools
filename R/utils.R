@@ -24,65 +24,63 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 #'
 #' This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria. These are included by default in all model selection calls.
 #'
-#' @param dat data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)
-#' @param idCol string content identifying participants (e.g., idCol = "ids")
+#' @param fittingObject ...
+#'
 #' @return A data frame of model screenings
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return data frame of Screening Criteria
 #' @export
-johnsonBickelScreen <- function(fittingObject, yMax = 1) {
+johnsonBickelScreen <- function(fittingObject) {
 
-  # if (!idCol %in% colnames(dat)) {
-  #   stop("Id column not found, please check naming")
-  # } else {
-  #   colnames(dat)[colnames(dat) == idCol] <- 'id'
-  # }
-  #
-  # newdat = dat
-  #
-  # newdat$Y = newdat$Y/yMax
-  #
-  # lengthReturn <- length(unique(newdat$id))
-  #
-  # returnFrame <- data.frame(id = rep(NA, lengthReturn),
-  #                           C1 = rep(NA, lengthReturn),
-  #                           C2 = rep(NA, lengthReturn))
-  #
-  # mIndex <- 1
-  #
-  # for (i in unique(newdat$id)) {
-  #   subsetData <- newdat[dat$id == i,]
-  #
-  #   criteriaOne <- TRUE
-  #   criteriaTwo <- TRUE
-  #
-  #   subsetData <- subsetData[order(subsetData$X), ]
-  #
-  #   for (index in 2:length(subsetData$X)) {
-  #     prev = subsetData[index - 1, ]$Y
-  #     curr = subsetData[index, ]$Y
-  #
-  #     if ((curr - prev) > 0.2) {
-  #       criteriaOne = FALSE
-  #     }
-  #   }
-  #
-  #   prev <- subsetData[1, ]$Y
-  #   curr <- subsetData[length(subsetData$X), ]$Y
-  #
-  #   if ((prev - curr) < 0.1) {
-  #     criteriaTwo = FALSE
-  #   }
-  #
-  #   returnFrame[mIndex, ]$id <- i
-  #   returnFrame[mIndex, ]$C1 <- criteriaOne
-  #   returnFrame[mIndex, ]$C2 <- criteriaTwo
-  #
-  #   mIndex <- mIndex + 1
-  #
-  # }
-  #
-  # returnFrame
+  listOfIds = unique(fittingObject$data[[as.character(fittingObject$settings['Individual'])]])
+
+  for (id in listOfIds) {
+    messageDebug(fittingObject, paste("JB Screen: ", id))
+
+    currentData = fittingObject$data[
+      which(fittingObject$data[,
+           as.character(fittingObject$settings['Individual'])] == id),]
+
+    fittingObject$data[
+      which(fittingObject$data[,
+           as.character(fittingObject$settings['Individual'])] == id), "JB1"] = TRUE
+
+    fittingObject$data[
+      which(fittingObject$data[,
+           as.character(fittingObject$settings['Individual'])] == id), "JB2"] = TRUE
+
+    currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+    currentData$ddY = currentData[,as.character(fittingObject$settings['Values'])]
+    currentData$ddY = currentData$ddY / as.numeric(fittingObject[[ "maxValue" ]])
+
+    currentData = currentData[order(currentData$ddX), ]
+
+    for (index in 2:length(currentData$ddX)) {
+      prev = currentData[index - 1, "ddY"]
+      curr = currentData[index,     "ddY"]
+
+      if ((curr - prev) > 0.2) {
+        messageDebug(fittingObject, paste("JB Screen: ", id, "Fail JB1"))
+
+        fittingObject$data[
+          which(fittingObject$data[,
+            as.character(fittingObject$settings['Individual'])] == id), "JB1"] = FALSE
+      }
+    }
+
+    prev <- currentData[1,                       "ddY"]
+    curr <- currentData[length(currentData$ddX), "ddY"]
+
+    if ((prev - curr) < 0.1) {
+      messageDebug(fittingObject, paste("JB Screen: ", id, "Fail JB2"))
+
+      fittingObject$data[
+        which(fittingObject$data[,
+          as.character(fittingObject$settings['Individual'])] == id), "JB2"] = FALSE
+    }
+  }
+
+  fittingObject
 }
 
 #' summary.discountingtools

@@ -4,12 +4,10 @@
 \alias{johnsonBickelScreen}
 \title{Perform Johnson & Bickel Screen}
 \usage{
-johnsonBickelScreen(fittingObject, yMax = 1)
+johnsonBickelScreen(fittingObject)
 }
 \arguments{
-\item{dat}{data frame with X column and Y column (0 <= Y <= 1, NOTE capitalized letters)}
-
-\item{idCol}{string content identifying participants (e.g., idCol = "ids")}
+\item{fittingObject}{...}
 }
 \value{
 A data frame of model screenings

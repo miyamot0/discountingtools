@@ -24,20 +24,22 @@ for (row in 1:nrow(dataFrame)) {
   dataFrame[row, as.character(delays)] = ys
 }
 
-dataFrame[,"1"]    = ifelse(dataFrame[,"1"] > 1,    1, dataFrame[,"1"])
-dataFrame[,"8640"] = ifelse(dataFrame[,"8640"] < 0, 0, dataFrame[,"8640"])
-
 dataFrame.long = dataFrame %>%
   gather(Delay, Value, -ids, -ks) %>%
-  mutate(Delay = as.numeric(Delay))
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value)) %>%
+  filter(ids < 6)
 
-str(dataFrame.long)
+dataFrame.long[dataFrame.long$Delay == 540 &
+               dataFrame.long$ids == 1, "Value"] = 0.21
 
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
-            maxValue = 1) %>%
+            maxValue = 1,
+            verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -50,12 +52,15 @@ results = fitDDCurves(data = dataFrame.long,
   dd_metricOptions(metrics = c("lned50",
                                "mbauc",
                                "logmbauc")) %>%
+  dd_screenOption(screen = TRUE, filter = FALSE) %>%
   dd_analyze()
 
-png(filename = "MultiModelEvaluation.png", width = 6, height = 6, res = 300, units = "in")
+screen = results$data
 
-plot(results,
-     logAxis = "x",
-     position = "topright")
-
-dev.off()
+# png(filename = "MultiModelEvaluation.png", width = 6, height = 6, res = 300, units = "in")
+#
+# plot(results,
+#      logAxis = "x",
+#      position = "topright")
+#
+# dev.off()
