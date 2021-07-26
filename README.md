@@ -209,7 +209,7 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 ![Figure of Multi Model (Group) Method](figures/MultiModelEvaluationGroup.png "Multi Model (Group) Method")
 
-#### ED50
+#### ED50 (Grouped)
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
@@ -239,7 +239,7 @@ The full code necessary to re-create this result is provided in demo/testGroupED
 
 ![Figure of Multi Model ED50 (Group)](figures/MultiModelEvaluationGroupED50.png "Multi Model ED50 (Group)")
 
-#### MB-AUC
+#### MB-AUC (Grouped)
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
@@ -269,7 +269,7 @@ The full code necessary to re-create this result is provided in demo/testGroupMB
 
 ![Figure of Multi Model MBAUC (Group)](figures/MultiModelEvaluationGroupMBAUC.png "Multi Model MBAUC (Group)")
 
-#### Log10 MB-AUC
+#### Log10 MB-AUC (Grouped)
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
