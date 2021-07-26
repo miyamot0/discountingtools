@@ -148,7 +148,7 @@ dd_probableModel <- function(fittingObject, id) {
   currentResults = fittingObject$results[[as.character(id)]]
 
   # Perfect fit for noise model, hacky workaround
-  if (currentResults$noise$BIC == Inf) {
+  if (is.infinite(currentResults$noise$BIC)) {
     for (model in as.character(fittingObject$models)) {
       modelComparison$BFs[[ model ]] = NULL
       modelComparison$BFSum = NULL

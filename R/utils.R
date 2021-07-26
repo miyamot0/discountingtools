@@ -34,6 +34,10 @@ summary.discountingtools <- function(fittingObject) {
 
   buildColNames = c("ID")
 
+  if (!is.null(fittingObject$settings[["Group"]])) {
+    buildColNames = c(buildColNames, "Group")
+  }
+
   for (m in fittingObject$models) {
     if (m == "noise") {
       buildColNames = c(buildColNames,
@@ -248,6 +252,12 @@ summary.discountingtools <- function(fittingObject) {
       if (metric == "mbauc")    resFrame[index, "MBAUC"]      = fittingObject$mbauc[[name]]
       if (metric == "logmbauc") resFrame[index, "Log10MBAUC"] = fittingObject$mbauclog10[[name]]
     }
+
+    if (!is.null(fittingObject$settings[["Group"]])) {
+        resFrame[index, "Group"] = unique(results$data[
+          which(results$data[,as.character(results$settings['Individual'])] == name),
+          as.character(results$settings['Group'])])
+    }
   }
 
   resFrame
@@ -270,8 +280,11 @@ summary.discountingtools <- function(fittingObject) {
 #' @export
 plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bottomleft", ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01) {
 
-  if (which == "ind")   plotIndividualRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
-  if (which == "group") plotGroupRainbow(fittingObject,      position0, ylab0, xlab0, logAxis, yMin)
+  if (which == "ind")        plotIndividualRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
+  if (which == "group")      plotGroupRainbow(fittingObject,      position0, ylab0, xlab0, logAxis, yMin)
+  if (which == "ED50")       plotRainbowCross(fittingObject, metric = "LnED50")
+  if (which == "MBAUC")      plotRainbowCross(fittingObject, metric = "MBAUC")
+  if (which == "Log10MBAUC") plotRainbowCross(fittingObject, metric = "Log10MBAUC")
 }
 
 #' plotIndividualRainbow
@@ -429,3 +442,32 @@ plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yM
          col    = vecColors,
          lty    = 1)
 }
+
+#' plotRainbowCross
+#'
+#' @param fittingObject core fitting object
+#' @param metric ...
+#'
+#' @return
+plotRainbowCross <- function(fittingObject, metric) {
+
+  vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
+  vecColors = rainbow(length(vecGroups), alpha = 1)
+
+  resultFrame = summary(fittingObject)
+
+  print(histogram(as.formula(paste("~", metric)),
+            data   = resultFrame,
+            type   = "p",
+            groups = Group,
+            panel  = function(...)
+              panel.superpose(...,
+                              panel.groups = panel.histogram,
+                              col          = vecColors,
+                              alpha        = 0.5),
+                              auto.key     = list(columns    = length(vecColors),
+                                                  rectangles = FALSE,
+                                                  col        = vecColors))
+  )
+}
+
