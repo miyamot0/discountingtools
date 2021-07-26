@@ -9,7 +9,7 @@ set.seed(65535)
 dataFrame = data.frame(
   ids = 1:30,
   ks  = NA,
-  grp = "A"
+  grp = "Group A"
 )
 
 dataFrame$ks  = rnorm(length(dataFrame$ids), 0.125, 0.08)
@@ -28,7 +28,7 @@ for (row in 1:nrow(dataFrame)) {
 dataFrame2 = data.frame(
   ids = 31:60,
   ks  = NA,
-  grp = "B"
+  grp = "Group B"
 )
 
 dataFrame2$ks  = rnorm(length(dataFrame2$ids), 0.225, 0.035)
@@ -75,9 +75,21 @@ results = fitDDCurves(data = dataFrame.long,
 
 summary(results)
 
+png(filename = "ED50.png", width = 6, height = 6, res = 300, units = "in")
+
 plot(results, which = "ED50")
+
+dev.off()
+
+png(filename = "MBAUC.png", width = 6, height = 6, res = 300, units = "in")
 
 plot(results, which = "MBAUC")
 
+dev.off()
+
+png(filename = "Log10MBAUC.png", width = 6, height = 6, res = 300, units = "in")
+
 plot(results, which = "Log10MBAUC")
+
+dev.off()
 
