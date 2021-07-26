@@ -1,6 +1,6 @@
 ---
 title: "discountingtools"
-author: "Shawn Gilroy <shawn.gilroy@temple.edu>"
+author: "Shawn Gilroy <shawn.gilroy@lsu.edu>"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,131 +9,92 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-##Delay Discounting Tools (discountingtools) - v 0.0.1.0
+# Delay Discounting Tools
 
-The discountingtools package is a collection of methods used to perform analyses in delay discounting research. Among the methods included, this package performs screening of data for systematicity (CITE), applies nonlinear model fitting for a range of conceptual models, and performs a model averaging operation to determine the most probable, true model.  A range of conceptual models used to examine intertemporal choice are included and are listed below.
+Current Version: 0.0.3
 
-##Discounting Model Candidates
+The *discountingtools* package is a collection of methods used to perform analyses in delay discounting research. Among the methods included, this package performs screening of data for systematic patterns of intertemporal choice, applies nonlinear model fitting for a range of conceptual models, and performs a model selection procedure to evaluate for the model that most likely generated the observed data.
 
-* Noise Model (Intercept only)
+## Rationale for Package
 
-* Exponential (Samuelson, 1937)
+The *discountingtools* R package was designed to provide a central repository and location for various methods and procedures often used in delay discounting experiments. For example, various methods exist for screening delay discounting data, determining optimal starting values, fitting a range of conceptual models, and systematically evaluating competing models. The goal of this work was to provide a resource that is accessible to a range of users (e.g., students, academics), can be peer-reviewed and subjected to scientific scrutiny, and systematically updated over time to assist the field in moving from dated and limited approaches (e.g., Point-based AUC).
 
-* Hyperbolic (Mazur, 1987)
+## Intended Audience and Usage
 
-* Rodriguez & Logue - Generalized Hyperboloid (Rodriguez & Logue, 1988)
+The intended audience is, of course, users of the R language. Within this group, the *discountingtools* package has adopted a functional programming style that is (typically) more easily to understand given its narrative execution. Copious examples are provided to assist both novice and veteran researchers in understanding the methods included as well as how to use them to summarize and prepare their data.
 
-* Quasi-Hyperbolic - Beta-Delta Exponential (Laibson, 1997)
+*discountingtools* has been developed as a repository of tools and methods that are helpful for visualizing and summarizing delay discounting data. That is, this toolkit makes no claims that the approaches included here are the most suited to answer any specific research question. Rather, this package is recommended as a element of scientific inquiry into these phenomena by facilitating a range of operations that are not present in commercial software (e.g., data screening, summarizing discounting in terms of area). If I had to articulate a preferred strategy, it would feature multi-level modeling using *discountingtools* to assist in gauging the influence of non-systematic responders and summarizing terminal estimates (assuming multiple parameters vary across individuals).
 
-* Green & Myerson - Two-parameter Hyperboloid (Green & Myerson, 2004)
+## Discounting Model Candidates
 
-* Rachlin - Two-parameter Hyperboloid (Rachlin, 2006)
+This package heavily emphasizes the perspective that the priori selection of a discounting model without formal evaluation invites the potential for researcher bias and issues with replication and generality. To address this source of bias, *discountingtools* provides a set of methods to 1) fit a range of conceptual discounting models and 2) evaluate conceptual models based on established criteria (e.g., Bayesian Information Criterion, Bayes Factors).
 
-* Ebert & Prelec - Constant-Sensitivity Model (Ebert & Prelec, 2007)
+The range of conceptual models used to examine discounting are listed below:
 
-* Bleichrodt Model - Constant Relative Decrease Impatience Model (Bleichrodt, Rohde & Wakker, 2009)
+-   Noise Model: Intercept-only comparison model (included by default during model selection)
 
-##Discounting Model Selection
+-   Exponential Model: Samuelson, P. A. (1937). A note on measurement of utility. The Review of Economic Studies, 4(2), 155--161. <https://doi.org/10.2307/2967612>
+
+-   Hyperbolic Model: Mazur, J. E. (1987). An adjusting procedure for studying delayed reinforcement. In Quantitative analysis of behavior: Vol. 5. The effect of delay and intervening events on reinforcement value (pp. 55--73). Hillsdale, NJ: Erlbaum.
+
+-   Rodriguez & Logue Model: Rodriguez, M. L., & Logue, A. W. (1988). Adjusting delay to reinforcement: Comparing choice in pigeons and humans. Journal of Experimental Psychology: Animal Behavior Processes, 14(1), 105--117. <https://doi.org/10.1037/0097-7403.14.1.105>
+
+-   Beta Delta Model: Laibson, D. (1997). Golden eggs and hyperbolic discounting. The Quarterly Journal of Economics, 112(2), 443--478. <https://doi.org/10.1162/003355397555253>
+
+-   Green & Myerson Model: Green, L., & Myerson, J. (2004). A discounting framework for choice with delayed and probabilistic rewards. Psychological Bulletin, 130(5), 769--792. <https://doi.org/10.1037/0033-2909.130.5.769>
+
+-   Rachlin Model: Rachlin, H. (2006). Notes on discounting. Journal of the Experimental Analysis of Behavior, 85(3), 425--435. <https://doi.org/10.1901/jeab.2006.85-05>
+
+-   Ebert & Prelec Model: Ebert, J. E. J., & Prelec, D. (2007). The Fragility of Time: Time-Insensitivity and Valuation of the Near and Far Future. Management Science, 53(9), 1423--1438. <https://doi.org/10.1287/mnsc.1060.0671>
+
+-   Bleichrodt et al. Constant Relative Decreasing Impatience: Bleichrodt, H., Rohde, K. I. M., & Wakker, P. P. (2009). Non-hyperbolic time inconsistency. Games and Economic Behavior, 66(1), 27--38. <https://doi.org/10.1016/j.geb.2008.05.007>
+
+## Conducting Delay Discounting Analyses
+
+### Loading Data
+
+TODO:
+
+### Specifying Mappings
+
+TODO:
+
+### Selecting Analytical Strategy
+
+TODO:
+
+# OLD STUFF
+
+## Discounting Model Selection
 
 Models included in analyses are compared using the Bayesian Information Criterion and subsequent Bayesian Model Averaging. Model averaging is performed with all (specified) models candidates to determine a probable, true model for a given data series. Once a true model has been determined, additional analyses are performed upon the specific, probable model. A general index of discounting is derived from the most probable, true model for each series.
 
-##General Indices of Discounting
+\#\#General Indices of Discounting
 
-Individual discounting phenomena have traditionally been interpreted using fitted parameters to specific, conceptual models (i.e., Exponential k, Hyperbolic k).  However, the use of a single model across widely differing types of data can present challenges. Specifically, individidual data series can and will be better characterized by different models. General (cross-model) indices of discounting have been used to address the need to directly compare individual discounting phenomena when discounting is characterized by a different model.
+Individual discounting phenomena have traditionally been interpreted using fitted parameters to specific, conceptual models (i.e., Exponential k, Hyperbolic k). However, the use of a single model across widely differing types of data can present challenges. Specifically, individidual data series can and will be better characterized by different models. General (cross-model) indices of discounting have been used to address the need to directly compare individual discounting phenomena when discounting is characterized by a different model.
 
-###Effective Delay 50
+\#\#\#Effective Delay 50
 
 The Effective Delay 50 (ED50) refers to the point at which the value of some commodity reaches 50% of its initial, starting value. Steep discounting would produce a shorter ED50 (i.e., took less time to lose value) while more gradual and shallow discounting would produce a larger ED50 (i.e., much more time until 50% of value is lost). The natural logarithm of ED50 is often taken to provide a cross-model discounting metric with a stable distribution of values (e.g., ln[ED50]).
 
-```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
-library(discountingtools)
-
-dat <- data.frame(X =  c(1,   30,  180, 540, 1080, 2160),
-                  Y =  c(1.0, 0.8, 0.7, 0.6, 0.5,  0.3),
-                  ids =c(1,   1,   1,   1,   1,    1))
-
-
-results <- discountingModelSelection(dat,
-                                     models = c("all"),
-                                     figures = "ed50",
-                                     idCol = "ids",
-                                     A = 1)
-
-print(results)
-```
-
-###Numerical Integration Area (Normal Scaling)
+### Numerical Integration Area (Normal Scaling)
 
 As an alternative to the ED50, probable discounting models can be systematically compared using the area under the fitted discounting function. This type of calculation entails the fitting of a discounting function and the application of numerical integration along the full domain of the data included (e.g., between first and last delay). This information reflects the changes in valuation as a function of time, as reflected by the differential changes in slope along the range of the domain.
 
-```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
-results <- discountingModelSelection(dat,
-                                     models = c("all"),
-                                     figures = "auc",
-                                     idCol = "ids",
-                                     A = 1)
-
-print(results)
-```
-
-###Numerical Integration Area (Log base 10 Delay Scaling)
+### Numerical Integration Area (Log base 10 Delay Scaling)
 
 As a means to address the differential representation of delays (i.e., more shorter, fewer further), area-based approximations of discounting have scaled delays to account for increasing large distances between delay densities. As such, this takes the form of a log-transformed x-axis and numerical integration is performed upon this function in these augmented dimensions. All other operations (i.e., numerical integration) remain the same as with normal scaling.
 
-```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
-results <- discountingModelSelection(dat,
-                                     models = c("all"),
-                                     figures = "logauc",
-                                     idCol = "ids",
-                                     A = 1)
-
-print(results)
-```
-
-
 ## Optional Methods
 
-###Detailed Fitting Summaries
+### Detailed Fitting Summaries
 
-In addition to fitted model parameters, additional information can be collected related to the model fitting procedures and other relevant details. This can be achieved by setting the ```detailed``` parameter to ```TRUE``` in the main function call. This will include additional information in the results related to the fittings, Bayes Factors, and other factors related to model probability.
+In addition to fitted model parameters, additional information can be collected related to the model fitting procedures and other relevant details. This can be achieved by setting the `detailed` parameter to `TRUE` in the main function call. This will include additional information in the results related to the fittings, Bayes Factors, and other factors related to model probability.
 
-```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
-results <- discountingModelSelection(dat,
-                                     models = c("all"),
-                                     detailed = TRUE,
-                                     idCol = "ids",
-                                     A = 1)
-
-print(results)
-```
-
-###Customized Model Comparisons
+### Customized Model Comparisons
 
 Model selection procedures are performed with all models considered in the selection process by default. This setting is suggested as a default to ensure that models are compared to a range of other, competing models at ranging levels of complexity. Users have the option to make specific comparisons between models, though a more thorough comparison is made possible using all models by default. A customized model selection call is provided below.
 
-```{r fig.height = 5, fig.width = 7, fig.align = "center", message=FALSE}
-results <- discountingModelSelection(dat,
-                                     models <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin"),
-                                     detailed = TRUE,
-                                     figures = "ed50",
-                                     idCol = "ids",
-                                     A = 1)
+### Summarized Model Comparisons
 
-print(results)
-```
-
-###Summarized Model Comparisons
-
-Individual model probabilities can be summarized and presented with each fitting. This is often a more succinct method for comparing relative probabilities between different model types. The above example is repeated with the ```summarize``` parameter set to ```TRUE```.
-
-```{r fig.height = 5, fig.width = 7, fig.align = "center", message=TRUE}
-results <- discountingModelSelection(dat,
-                                     models <- c("noise", "hyperbolic", "exponential", "laibson", "greenmyerson", "rachlin"),
-                                     detailed = TRUE,
-                                     summarize = TRUE,
-                                     figures = "ed50",
-                                     idCol = "ids",
-                                     A = 1)
-
-print(results)
-```
+Individual model probabilities can be summarized and presented with each fitting. This is often a more succinct method for comparing relative probabilities between different model types. The above example is repeated with the `summarize` parameter set to `TRUE`.
