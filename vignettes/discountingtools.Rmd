@@ -4,7 +4,7 @@ author: "Shawn Gilroy <shawn.gilroy@lsu.edu>"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{discountingtools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -51,50 +51,441 @@ The range of conceptual models used to examine discounting are listed below:
 
 ## Conducting Delay Discounting Analyses
 
-### Loading Data
+The *discountingtools* package was designed to use a functional-style approach to loading, mapping, analyzing, and visualizing delay discounting processes. Each of these ordered steps are outlined below in greater detail.
+
+### Prototypical Data
+
+Most R users are accustomed to using data in long form (i.e., fewer columns, many rows). However, users that have typically used spreadsheet and commercial software are accustomed to wide form (i.e., fewer rows, many column). Consistent with R conventions, all data must be in long-form to work with discounting tools. Examples for each organization of data are illustrated below:
+
+```{r dataFormatsLongWide, echo=FALSE, message=FALSE, cache=TRUE}
+
+library(discountingtools)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(tidyr)
+
+set.seed(65535)
+
+dataFrame = data.frame(
+  ids = 1:3,
+  ks  = NA
+)
+
+dataFrame$ks  = rnorm(length(dataFrame$ids), 0.35, 0.125)
+dataFrame$ks  = log(dataFrame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+for (row in 1:nrow(dataFrame)) {
+  ys = hyperbolicDiscountFunc(delays, dataFrame[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.025)
+
+  dataFrame[row, as.character(delays)] = ys
+}
+
+dataFrame %>%
+  select(-ks) %>%
+  kable(., caption = "Wide Data Frame") %>%
+  kable_styling(full_width = TRUE)
+
+dataFrame.long = dataFrame %>%
+  select(-ks) %>%
+  gather(Delay, Value, -ids) %>%
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value)) %>%
+  arrange(ids)
+
+kable(dataFrame.long, caption = "Long Data Frame") %>%
+  kable_styling(full_width = TRUE)
+
+```
+
+### Loading Data and Specifying Mappings
+
+Data for *discountingtools* is imported using the entry point for the package: *fitDDCurves*. This method takes a data frame (*data* argument), a named list that maps the columns of the data frame to the internal representation of the *discountingtools* object (*settings* argument), and the maximum value for the commodity in the data set (*maxValue* argument). All three of these arguments must be specified for the *discountingtools* object to be constructed. Optionally, the program can communicate the underlying behavior of the regression by specifying TRUE to the *verbose* argument.
+
+```{r loadData, echo=TRUE, cache=TRUE}
+
+                      # Data argument takes long data frame
+results = fitDDCurves(data = dataFrame.long, 
+                      # Settings argument takes a named list
+                      # Delays is linked the Delay column in data frame
+                      # Values is linked the Value column in data frame
+                      # Individual is linked the ids column in data frame
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      # The max value of the commodity (A) is listed here
+                      maxValue = 1,
+                      # Modeling output can be enabled/disable with Verbose
+                      verbose  = TRUE)
+
+```
+
+### Selecting Analytical Strategy (Single Model)
+
+Once data are loaded and mapped, the model(s) to be regressed upon must be specified. *discountingtools* can be used to explore a single model (no model selection necessary) or explore a range of competing models (model selection necessary). For this particular section, a single model approach is described.
+
+As shown in the example below, the *dd_modelOptions* method must be supplied with a plan. The *plan* argument takes a vector of modeling options (up to nine) but only a single model is supplied because a single model approach is the strategy selected. Once a plan is specified, the analysis will be performed once the core object is piped to the *dd_analyze* method. The *dd_analyze* method is the workhorse of the program and all regression is performed within this routine. This method takes a *modelSelection* argument that must be flagged to FALSE in a single model analytical strategy. Otherwise, the program will add a null (Noise) model in by default to facilitate comparison with at least one other conceptual model.
+
+```{r analyticalStrategySingle, message=FALSE, eval=FALSE, cache=TRUE}
+
+results = fitDDCurves(data = dataFrame.long,
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+  # A single model is listed below
+  dd_modelOptions(plan = c("mazur")) %>%
+  # model selection procedures are switched off
+  dd_analyze(modelSelection = FALSE)
+
+summary(results)
+
+```
+
+### Selecting Analytical Strategy (Multiple Model)
+
+The previous section outlined a single model approach to analyzing delay discounting data. In contrast, the current section outlines a multiple model approach to evaluating delay discounting data.
+
+As shown in the example below, *dd_modelOptions* must be supplied with a plan. The *plan* argument in this approach takes a vector of various modeling options (nine are specified below). This *discountingtools* object is then piped to the *dd_analyze* and regression is performed within this routine. As a note, model selection is the default behavior for *dd_analyze* and *modelSelection* argument must be flagged to TRUE or left blank in this strategy.
+
+```{r analyticalStrategyMultiple, message=FALSE, eval=FALSE, cache=TRUE}
+
+results = fitDDCurves(data = dataFrame.long,
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+  # a wide range of models are specified
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  # dd_analyze() proceeds with defaults (model selection is enabled)
+  dd_analyze()
+
+summary(results)
+
+```
+
+### Deriving Cross-model Metrics
+
+Models included in analyses are compared using the Bayesian Information Criterion (BIC). Model comparisons are performed with all model candidates to determine a probable model, given the observed data. Once a probable model has been determined, a single model is unlikely to best characterize all of the participants in the data set. To facilitate comparisons, general indices of discounting can be derived from probable models.
+
+#### General Indices of Discounting
+
+Individual discounting phenomena have traditionally been interpreted using fitted parameters to specific, conceptual models (i.e., *k*). However, the use of a single model across widely differing types of data can present challenges. Specifically, individual data series can and will be better characterized by different models. General (cross-model) indices of discounting have been used to address the need to directly compare individual discounting phenomena when discounting is characterized by a different model. A range of indices and their execution in *discountingtools* are illustrated below.
+
+#### Effective Delay 50
+
+The Effective Delay 50 (ED50) refers to the point at which the value of some commodity decays to 50% of its initial value (100%). Steep rates of discounting would produce a shorter ED50 (i.e., rapidly lost value) while gradual and shallow discounting would produce a larger ED50 (i.e., slowly lost value). The natural logarithm of ED50 is often taken to provide a cross-model discounting metric with a more normal distribution of values (e.g., ln[ED50]).
+
+An example of discounting model selection with the ED50 metric is provided below. It is trivial to add ED50 and other metrics by calling the *dd_metricOptions* method and specifying the designed metric.
+
+```{r ed50Example, message=FALSE, eval=FALSE, cache=TRUE}
+results = fitDDCurves(data = dataFrame.long,
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  # dd_metricOptions is supplied and the desired metric is specified
+  dd_metricOptions(metrics = c("lned50")) %>%
+  dd_analyze()
+
+summary(results)
+```
+
+#### Numerical Integration Area (Normal Scaling)
+
+As an alternative to the ED50, probable discounting models can be indexed using the area under the fitted discounting function (i.e., area under *modeled* discounting). This is preferable to ED50 in situations where the point of reference (50%) is either impossible (i.e., intercept \< 50%) or not applicable (i.e., flat/no discounting). This type of calculation entails the fitting of a discounting function and the application of numerical integration along the full domain of the data included (e.g., between first and last delay). This information reflects the changes in valuation as a function of time, as reflected by the differential changes in slope along the range of the domain.
+
+An example of discounting model selection with the MBAUC metric is provided below. It is trivial to add MBAUC and other metrics by calling the *dd_metricOptions* method and specifying the designed metric.
+
+```{r mbaucExample, message=FALSE, eval=FALSE, cache=TRUE}
+results = fitDDCurves(data = dataFrame.long,
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  # dd_metricOptions is supplied and the desired metric is specified
+  dd_metricOptions(metrics = c("mbauc")) %>%
+  dd_analyze()
+
+summary(results)
+```
+
+#### Numerical Integration Area (Log base 10 Delay Scaling)
+
+In efforts to minimize the effects of differential representation of delays (i.e., more shorter, fewer further), area-based approximations of discounting have scaled delay increments to account for increasingly large distances between delays. This takes the form of a log-transformed x-axis and numerical integration is performed upon this function in these augmented dimensions. All other operations (i.e., numerical integration) remain the same as with normal scaling.
+
+An example of discounting model selection with the Log10-Scaled MBAUC metric is provided below. It is trivial to add this and other metrics by calling the *dd_metricOptions* method and specifying the designed metric.
+
+```{r log10MbaucExample, message=FALSE, eval=FALSE, cache=TRUE}
+results = fitDDCurves(data = dataFrame.long,
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  # dd_metricOptions is supplied and the desired metric is specified
+  dd_metricOptions(metrics = c("logmbauc")) %>%
+  dd_analyze()
+
+summary(results)
+```
+
+## Screening Delay Discounting Data
+
+### Applying Screening Criteria
+
+Methods are included in *discountingtools* to allow users to easily screen their data for individual patterns of responding flagged as "nonsystematic." Nonsystematic data is a term applied to series of data that do not appear to conform with the expected patterns of decision-making as the delays between prospects grow. That is, data are expected to follow a monotonically decreasing trend without (substantial) increases in subjective value as delays increase.
+
+The Johnson & Bickel (2008) screening criteria are applied using the *dd_screenOption* method. Information on the systematicity of observed data is retained in the *discountingtools* object (*data* member of class) if the *screen* flag is set to TRUE. An example of this application is provided in the code block below.
+
+```{r screeningMethods, message=FALSE, eval=FALSE, cache=TRUE}
+
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids),
+            maxValue = 1,
+            verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  # flag to enable screening is set to TRUE in dd_screenOption
+  dd_screenOption(screen   = TRUE) %>%
+  dd_analyze()
+
+```
+
+### Filtering based on Screening Criteria
+
+Debate continues regarding how to handle data determined to be nonsystematic. Regardless of stance, it is recommended to analyze data with and without these data to inform the analytical strategy. The *discountingtools* package makes it easy to run analyses with and without these data using functionality included in the *dd_screenOption* method.
+
+Data may be screened AND filtered by setting the *screen* flag to TRUE and specifying criteria for inclusion to *filterPassing*. The *filterPassing* argument accepts a character vector of criteria that govern which data are carried forward into the final analysis. For example, a vector including both JB1 and JB2 would mean that both criteria must be met for that data series to be included in the analysis. An example of this application is provided in the code block below.
+
+```{r screeningAndFilteringMethods, message=FALSE, eval=FALSE, cache=TRUE}
+
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids),
+            maxValue = 1,
+            verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  # filterPassing is set to require JB1 and JB2 to pass to include in analysis
+  dd_screenOption(screen        = TRUE,
+                  filterPassing = c("JB1", "JB2")) %>%
+  dd_analyze()
+
+```
+
+## Visualizing Delay Discounting Results
+
+```{r visualizationData, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE}
+
+library(dplyr)
+library(discountingtools)
+library(tidyr)
+
+set.seed(65535)
+
+dataFrame = data.frame(
+  ids = 1:50,
+  ks  = NA,
+  grp = "Group A"
+)
+
+dataFrame$ks  = rnorm(length(dataFrame$ids), 0.35, 0.125)
+dataFrame$ks  = log(dataFrame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+for (row in 1:nrow(dataFrame)) {
+  ys = hyperbolicDiscountFunc(delays, dataFrame[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  dataFrame[row, as.character(delays)] = ys
+}
+
+dataFrame2 = data.frame(
+  ids = 51:100,
+  ks  = NA,
+  grp = "Group B"
+)
+
+dataFrame2$ks  = rnorm(length(dataFrame2$ids), 0.225, 0.035)
+dataFrame2$ks  = log(dataFrame2$ks)
+
+for (row in 1:nrow(dataFrame2)) {
+  ys = hyperbolicDiscountFunc(delays, dataFrame2[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  dataFrame2[row, as.character(delays)] = ys
+}
+
+dataFrame = rbind(dataFrame,
+                  dataFrame2)
+
+dataFrame.long = dataFrame %>%
+  gather(Delay, Value, -ids, -ks, -grp) %>%
+  mutate(Delay = as.numeric(Delay))
+
+dataFrame.long[,"Value"] = ifelse(dataFrame.long[,"Value"] > 1, 1, dataFrame.long[,"Value"])
+dataFrame.long[,"Value"] = ifelse(dataFrame.long[,"Value"] < 0, 0, dataFrame.long[,"Value"])
+
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1,
+            verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                              "mbauc",
+                              "logmbauc")) %>%
+  dd_analyze()
+
+```
+
+### Single-Group (Individual-level) Visualization
 
 TODO:
 
-### Specifying Mappings
+```{r visInd, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
+
+plot(results, which    = "ind",
+              logAxis  = "x",
+              position = "topright")
+
+```
+
+### Multi-group (individual-level) Visualization
 
 TODO:
 
-### Selecting Analytical Strategy
+```{r visGrp, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
+
+plot(results, which    = "group",
+              logAxis  = "x",
+              position = "topright")
+
+```
+
+#### Cross-Model Visualizations (ED50)
 
 TODO:
 
-# OLD STUFF
+```{r visGrpED50, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
-## Discounting Model Selection
+plot(results, which    = "ED50",
+              logAxis  = "x",
+              position = "topright")
 
-Models included in analyses are compared using the Bayesian Information Criterion and subsequent Bayesian Model Averaging. Model averaging is performed with all (specified) models candidates to determine a probable, true model for a given data series. Once a true model has been determined, additional analyses are performed upon the specific, probable model. A general index of discounting is derived from the most probable, true model for each series.
+```
 
-\#\#General Indices of Discounting
+#### Cross-Model Visualizations (MBAUC)
 
-Individual discounting phenomena have traditionally been interpreted using fitted parameters to specific, conceptual models (i.e., Exponential k, Hyperbolic k). However, the use of a single model across widely differing types of data can present challenges. Specifically, individidual data series can and will be better characterized by different models. General (cross-model) indices of discounting have been used to address the need to directly compare individual discounting phenomena when discounting is characterized by a different model.
+TODO:
 
-\#\#\#Effective Delay 50
+```{r visGrpMBAUC, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
-The Effective Delay 50 (ED50) refers to the point at which the value of some commodity reaches 50% of its initial, starting value. Steep discounting would produce a shorter ED50 (i.e., took less time to lose value) while more gradual and shallow discounting would produce a larger ED50 (i.e., much more time until 50% of value is lost). The natural logarithm of ED50 is often taken to provide a cross-model discounting metric with a stable distribution of values (e.g., ln[ED50]).
+plot(results, which    = "MBAUC",
+              logAxis  = "x",
+              position = "topright")
 
-### Numerical Integration Area (Normal Scaling)
+```
 
-As an alternative to the ED50, probable discounting models can be systematically compared using the area under the fitted discounting function. This type of calculation entails the fitting of a discounting function and the application of numerical integration along the full domain of the data included (e.g., between first and last delay). This information reflects the changes in valuation as a function of time, as reflected by the differential changes in slope along the range of the domain.
+#### Cross-Model Visualizations (Log10 MBAUC)
 
-### Numerical Integration Area (Log base 10 Delay Scaling)
+TODO:
 
-As a means to address the differential representation of delays (i.e., more shorter, fewer further), area-based approximations of discounting have scaled delays to account for increasing large distances between delay densities. As such, this takes the form of a log-transformed x-axis and numerical integration is performed upon this function in these augmented dimensions. All other operations (i.e., numerical integration) remain the same as with normal scaling.
+```{r visGrpLog10MBAUC, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
-## Optional Methods
+plot(results, which    = "Log10MBAUC",
+              logAxis  = "x",
+              position = "topright")
 
-### Detailed Fitting Summaries
+```
 
-In addition to fitted model parameters, additional information can be collected related to the model fitting procedures and other relevant details. This can be achieved by setting the `detailed` parameter to `TRUE` in the main function call. This will include additional information in the results related to the fittings, Bayes Factors, and other factors related to model probability.
+## Other Helper Methods
 
-### Customized Model Comparisons
+### summary
 
-Model selection procedures are performed with all models considered in the selection process by default. This setting is suggested as a default to ensure that models are compared to a range of other, competing models at ranging levels of complexity. Users have the option to make specific comparisons between models, though a more thorough comparison is made possible using all models by default. A customized model selection call is provided below.
+TODO:
 
-### Summarized Model Comparisons
+### plot
 
-Individual model probabilities can be summarized and presented with each fitting. This is often a more succinct method for comparing relative probabilities between different model types. The above example is repeated with the `summarize` parameter set to `TRUE`.
+TODO:
