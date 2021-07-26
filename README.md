@@ -4,7 +4,13 @@ The *discountingtools* R package was designed to support researchers in conducti
 
 ## Version
 
-0.0.2.1 (beta)
+Current Version: 0.0.3.0 (beta)
+
+0.0.3.0 - Documentation and README overhaul, visualizations and simulations improved
+
+0.0.2.1 - Updates to core examples, readme, visualizations
+
+0.0.2.0 - Rebase, now workflow and figures added
 
 ## Installation (pre-CRAN state)
 
@@ -49,11 +55,13 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-                      settings = list(Delays     = Delay,
-                                      Values     = Value,
-                                      Individual = ids),
-                      maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur")) %>%
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids),
+            maxValue = 1,
+            verbose  = TRUE) %>%
+  dd_modelOptions(plan   = c("mazur")) %>%
+  dd_screenOption(screen = FALSE) %>%
   dd_analyze(modelSelection = FALSE)
 
 summary(results)
@@ -72,7 +80,8 @@ results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
-            maxValue = 1) %>%
+            maxValue = 1,
+            verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -85,6 +94,7 @@ results = fitDDCurves(data = dataFrame.long,
   dd_metricOptions(metrics = c("lned50",
                                "mbauc",
                                "logmbauc")) %>%
+  dd_screenOption(screen = FALSE) %>%
   dd_analyze()
   
 summary(results)
@@ -103,7 +113,8 @@ results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
-            maxValue = 1) %>%
+            maxValue = 1,
+            verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -114,6 +125,7 @@ results = fitDDCurves(data = dataFrame.long,
                            "rachlin",
                            "rodriguezlogue")) %>%
   dd_metricOptions(metrics = c("lned50")) %>%
+  dd_screenOption(screen = FALSE) %>%
   dd_analyze()
 
 plot(results, which = "ED50")
@@ -132,6 +144,134 @@ results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
+            maxValue = 1,
+            verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("mbauc")) %>%
+  dd_screenOption(screen = FALSE) %>%
+  dd_analyze()
+
+plot(results, which = "MBAUC")
+```
+
+![Figure of Model-based AUC](figures/MultiModelEvaluationMBAUC.png "Model-based AUC")
+
+#### Log10-Scaled Numerical Integration Area (Log10 MB-AUC)
+
+Researchers using area is a metric of discounting have suggested re-scaling delays. The multi-model evaluation provided above is re-evaluated in terms of log10-scaled MB-AUC below.
+
+The full code necessary to re-create this result is provided in demo/testIndividualLog10MBAUC.R.
+
+``` r
+results = fitDDCurves(data = dataFrame.long,
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("logmbauc")) %>%
+  dd_screenOption(screen = FALSE) %>%
+  dd_analyze()
+
+plot(results, which = "Log10MBAUC")
+```
+
+![Figure of Log10 Scaled MBAUC](figures/MultiModelEvaluationLog10MBAUC.png "Log10 Scaled MBAUC")
+
+### Multi-Model Evaluation (Grouped)
+
+More realistic investigations likely seek to evaluate differences that might exist between groups or populations. The *discountingtools* package can be extended to include a Group parameter in the initial settings (assuming such data is present in the data frame).
+
+A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
+
+``` r
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1,
+            verbose  = TRUE) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_screenOption(screen = FALSE) %>%
+  dd_analyze()
+
+plot(results, logAxis = "x", position = "topright", which = "group")
+```
+
+A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
+
+![Figure of Multi Model (Group) Method](figures/MultiModelEvaluationGroup.png "Multi Model (Group) Method")
+
+#### ED50 (Grouped)
+
+As an extension of multi-model inference, the *discountingtools* package has methods that can visualize how these metrics vary across one or more groups. The multi-model evaluation provided above is re-evaluated in terms of ED50 across groups below.
+
+The full code necessary to re-create this result is provided in demo/testGroupED50.R.
+
+``` r
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50")) %>%
+  dd_analyze()
+
+plot(results, which = "ED50")
+```
+
+The full code necessary to re-create this result is provided in demo/testGroupED50.R.
+
+![Figure of Multi Model ED50 (Group)](figures/MultiModelEvaluationGroupED50.png "Multi Model ED50 (Group)")
+
+#### MB-AUC (Grouped)
+
+In addition to the ED50 metric, area-based interpretations of discounting are also provided with group-level visualizations. The multi-model evaluation provided above is re-evaluated in terms of MBAUC across groups below.
+
+The full code necessary to re-create this result is provided in demo/testGroupMBAUC.R.
+
+``` r
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
             maxValue = 1) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
@@ -148,19 +288,20 @@ results = fitDDCurves(data = dataFrame.long,
 plot(results, which = "MBAUC")
 ```
 
-![Figure of Model-based AUC](figures/MultiModelEvaluationMBAUC.png "Model-based AUC")
+![Figure of Multi Model MBAUC (Group)](figures/MultiModelEvaluationGroupMBAUC.png "Multi Model MBAUC (Group)")
 
-#### Log10-Scaled Numerical Integration Area (Log10 MB-AUC)
+#### Log10 MB-AUC (Grouped)
 
-Researchers using area is a metric of discounting have suggested re-scaling delays. The multi-model evaluation provided above is re-evaluated in terms of log10-scaled MB-AUC below.
+As a normalization to the MBAUC metric, delays can be scaled in terms of logarithmic difference to minimize the skewed nature of increments between adjacent delay points. The multi-model evaluation provided above is re-evaluated in terms of Log10-scaled MBAUC across groups below.
 
-The full code necessary to re-create this result is provided in demo/testIndividualLog10MBAUC.R.
+The full code necessary to re-create this result is provided in demo/testGroupLog10MBAUC.R.
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
-                            Individual = ids),
+                            Individual = ids,
+                            Group      = grp),
             maxValue = 1) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
@@ -176,126 +317,6 @@ results = fitDDCurves(data = dataFrame.long,
 
 plot(results, which = "Log10MBAUC")
 ```
-
-![Figure of Log10 Scaled MBAUC](figures/MultiModelEvaluationLog10MBAUC.png "Log10 Scaled MBAUC")
-
-### Multi-Model Evaluation (Grouped)
-
-``` r
-results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
-  dd_analyze()
-
-plot(results, logAxis = "x", position = "topright", which = "group")
-```
-
-A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
-
-![Figure of Multi Model (Group) Method](figures/MultiModelEvaluationGroup.png "Multi Model (Group) Method")
-
-#### ED50 (Grouped)
-
-``` r
-results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
-  dd_analyze()
-
-plot(results, which = "ED50")
-```
-
-The full code necessary to re-create this result is provided in demo/testGroupED50.R.
-
-![Figure of Multi Model ED50 (Group)](figures/MultiModelEvaluationGroupED50.png "Multi Model ED50 (Group)")
-
-#### MB-AUC (Grouped)
-
-``` r
-results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
-  dd_analyze()
-
-plot(results, which = "MBAUC")
-```
-
-The full code necessary to re-create this result is provided in demo/testGroupMBAUC.R.
-
-![Figure of Multi Model MBAUC (Group)](figures/MultiModelEvaluationGroupMBAUC.png "Multi Model MBAUC (Group)")
-
-#### Log10 MB-AUC (Grouped)
-
-``` r
-results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
-  dd_analyze()
-
-plot(results, which = "Log10MBAUC")
-```
-
-The full code necessary to re-create this result is provided in demo/testGroupLog10MBAUC.R.
 
 ![Figure of Multi-Model Log10 MBAUC (Group)](figures/MultiModelEvaluationGroupLog10MBAUC.png "Multi-Model Log10 MBAUC (Group)")
 

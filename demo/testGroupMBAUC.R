@@ -7,12 +7,12 @@ library(tidyr)
 set.seed(65535)
 
 dataFrame = data.frame(
-  ids = 1:30,
+  ids = 1:50,
   ks  = NA,
   grp = "Group A"
 )
 
-dataFrame$ks  = rnorm(length(dataFrame$ids), 0.125, 0.08)
+dataFrame$ks  = rnorm(length(dataFrame$ids), 0.35, 0.125)
 dataFrame$ks  = log(dataFrame$ks)
 
 delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
@@ -26,7 +26,7 @@ for (row in 1:nrow(dataFrame)) {
 }
 
 dataFrame2 = data.frame(
-  ids = 31:60,
+  ids = 51:100,
   ks  = NA,
   grp = "Group B"
 )
@@ -47,17 +47,17 @@ dataFrame = rbind(dataFrame,
 
 dataFrame.long = dataFrame %>%
   gather(Delay, Value, -ids, -ks, -grp) %>%
-  mutate(Delay = as.numeric(Delay))
-
-dataFrame.long[,"Value"] = ifelse(dataFrame.long[,"Value"] > 1, 1, dataFrame.long[,"Value"])
-dataFrame.long[,"Value"] = ifelse(dataFrame.long[,"Value"] < 0, 0, dataFrame.long[,"Value"])
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
 
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids,
+                                      Group      = grp),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -67,12 +67,9 @@ results = fitDDCurves(data = dataFrame.long,
                            "noise",
                            "rachlin",
                            "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
+  dd_metricOptions(metrics = c("mbauc")) %>%
+  dd_screenOption(screen = FALSE) %>%
   dd_analyze()
-
-vecGroups = unique(results$data[,as.character(results$settings['Group'])])
 
 png(filename = "MultiModelEvaluationGroupMBAUC.png", width = 6, height = 6, res = 300, units = "in")
 
