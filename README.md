@@ -98,7 +98,7 @@ The multi-model approach is frustrated by the presence of distinct parameters. A
 
 The full code necessary to re-create this result is provided in demo/testIndividualED50.R.
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
@@ -127,7 +127,7 @@ As an alternative to ED50, researchers have suggested a metric based on the mode
 
 The full code necessary to re-create this result is provided in demo/testIndividualMBAUC.R.
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
@@ -156,7 +156,7 @@ Researchers using area is a metric of discounting have suggested re-scaling dela
 
 The full code necessary to re-create this result is provided in demo/testIndividualLog10MBAUC.R.
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
@@ -181,7 +181,7 @@ plot(results, which = "Log10MBAUC")
 
 ### Multi-Model Evaluation (Grouped)
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
@@ -211,7 +211,7 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 #### ED50
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
@@ -241,7 +241,7 @@ The full code necessary to re-create this result is provided in demo/testGroupED
 
 #### MB-AUC
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
@@ -271,7 +271,7 @@ The full code necessary to re-create this result is provided in demo/testGroupMB
 
 #### Log10 MB-AUC
 
-``` R
+``` r
 results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
