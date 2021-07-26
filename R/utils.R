@@ -462,24 +462,38 @@ plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yM
 #' @return
 plotRainbowCross <- function(fittingObject, metric) {
 
-  vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
-  vecColors = rainbow(length(vecGroups), alpha = 1)
+  if (!("Group" %in% names(fittingObject$settings))) {
+    vecGroups = "sample"
 
-  resultFrame = summary(fittingObject)
+    vecColors = rainbow(length(vecGroups), alpha = 1)
 
-  print(histogram(as.formula(paste("~", metric)),
-            data   = resultFrame,
-            type   = "p",
-            groups = Group,
-            panel  = function(...)
-              panel.superpose(...,
-                              panel.groups = panel.histogram,
-                              col          = vecColors,
-                              alpha        = 0.5),
-                              auto.key     = list(columns    = length(vecColors),
-                                                  rectangles = FALSE,
-                                                  col        = vecColors))
-  )
+    resultFrame = summary(fittingObject)
+
+    print(histogram(as.formula(paste("~", metric)),
+                    data   = resultFrame,
+                    type   = "p")
+    )
+  } else {
+    vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
+
+    vecColors = rainbow(length(vecGroups), alpha = 1)
+
+    resultFrame = summary(fittingObject)
+
+    print(histogram(as.formula(paste("~", metric)),
+                    data   = resultFrame,
+                    type   = "p",
+                    groups = Group,
+                    panel  = function(...)
+                      panel.superpose(...,
+                                      panel.groups = panel.histogram,
+                                      col          = vecColors,
+                                      alpha        = 0.5),
+                    auto.key     = list(columns    = length(vecColors),
+                                        rectangles = FALSE,
+                                        col        = vecColors))
+    )
+  }
 }
 
 #' messageDebug

@@ -94,21 +94,90 @@ summary(results)
 
 #### Effective Delay 50 (ED50)
 
-...
+The multi-model approach is frustrated by the presence of distinct parameters. As an alternative, researchers have suggested a metric based on the rate of decay (i.e., time until decay to 50%). The multi-model evaluation provided above is re-evaluated in terms of ED50 below.
 
-![Figure of LnED50](figures/ED50.png "ED50")
+The full code necessary to re-create this result is provided in demo/testIndividualED50.R.
+
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50")) %>%
+  dd_analyze()
+
+plot(results, which = "ED50")
+```
+
+![Figure of Multi Model ED50](figures/MultiModelEvaluationED50.png "Multi Model ED50")
 
 #### Numerical Integration Area (MB-AUC)
 
-...
+As an alternative to ED50, researchers have suggested a metric based on the model area. The multi-model evaluation provided above is re-evaluated in terms of MB-AUC below.
 
-![Figure of Model-based AUC](figures/MBAUC.png "Model-based AUC")
+The full code necessary to re-create this result is provided in demo/testIndividualMBAUC.R.
+
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("mbauc")) %>%
+  dd_analyze()
+
+plot(results, which = "MBAUC")
+```
+
+![Figure of Model-based AUC](figures/MultiModelEvaluationMBAUC.png "Model-based AUC")
 
 #### Log10-Scaled Numerical Integration Area (Log10 MB-AUC)
 
-...
+Researchers using area is a metric of discounting have suggested re-scaling delays. The multi-model evaluation provided above is re-evaluated in terms of log10-scaled MB-AUC below.
 
-![Figure of Log10 MBAUC](figures/Log10MBAUC.png "Log10 MBAUC")
+The full code necessary to re-create this result is provided in demo/testIndividualLog10MBAUC.R.
+
+``` R
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids),
+            maxValue = 1) %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("logmbauc")) %>%
+  dd_analyze()
+
+plot(results, which = "Log10MBAUC")
+```
+
+![Figure of Log10 Scaled MBAUC](figures/MultiModelEvaluationLog10MBAUC.png "Log10 Scaled MBAUC")
 
 ## Referenced Works (academic works)
 
