@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_noise <- function(fittingObject, id) {
 
   modelResults = list(
@@ -51,6 +52,7 @@ dd_fit_noise <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_noise <- function(fittingObject, id) {
 
   fittingObject$ed50[[as.character(id)]] = NA
@@ -64,6 +66,7 @@ dd_ed50_noise <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_noise <- function(fittingObject, id) {
 
   intercept = fittingObject$results[[as.character(id)]][["noise"]][["Intercept"]]
@@ -79,6 +82,7 @@ dd_mbauc_noise <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_noise <- function(fittingObject, id) {
 
   intercept = fittingObject$results[[as.character(id)]][["noise"]][["Intercept"]]

@@ -21,4 +21,6 @@ Rodriguez & Logue Helper for Nonlinear Fitting
 }
 \author{
 Shawn Gilroy <sgilroy1@lsu.edu>
+
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

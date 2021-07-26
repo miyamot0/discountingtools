@@ -17,3 +17,6 @@ dd_mbauc_log10_ebertprelec(fittingObject, id)
 \description{
 dd_mbauc_log10_ebertprelec
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

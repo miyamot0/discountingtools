@@ -17,3 +17,6 @@ dd_mbauc_rodriguezlogue(fittingObject, id)
 \description{
 dd_mbauc_rodriguezlogue
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

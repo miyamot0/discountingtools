@@ -17,3 +17,6 @@ dd_mbauc_noise(fittingObject, id)
 \description{
 dd_mbauc_noise
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

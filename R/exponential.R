@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_exponential <- function(fittingObject, id) {
 
   modelResults = list(
@@ -63,6 +64,7 @@ dd_fit_exponential <- function(fittingObject, id) {
 #' @param increment step size for span
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_exponential <- function(currentData, increment = 1) {
 
   startlnK  <- seq(-15,  15, increment)
@@ -93,6 +95,7 @@ dd_start_exponential <- function(currentData, increment = 1) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_exponential <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["exponential"]][["Lnk"]]
@@ -108,6 +111,7 @@ dd_ed50_exponential <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_exponential <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -136,6 +140,7 @@ dd_mbauc_exponential <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_exponential <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -162,8 +167,9 @@ dd_mbauc_log10_exponential <- function(fittingObject, id) {
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 exponentialDiscountFunc <- function(x, lnk)
 {
@@ -175,8 +181,9 @@ exponentialDiscountFunc <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 exponentialDiscountGradient <- function(x, lnk)
 {
   func <- expression(exp(-exp(lnk)*x))
@@ -189,8 +196,9 @@ exponentialDiscountGradient <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
 
 #' Exponential Integrand helper (log10)
@@ -199,6 +207,7 @@ integrandExp <- function(x, lnK) { exp(-exp(lnK)*x) }
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandExpLog <- function(x, lnK) { exp(-exp(lnK)*(10^x)) }

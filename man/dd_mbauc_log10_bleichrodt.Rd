@@ -17,3 +17,6 @@ dd_mbauc_log10_bleichrodt(fittingObject, id)
 \description{
 dd_mbauc_log10_bleichrodt
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

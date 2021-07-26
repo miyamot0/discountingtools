@@ -17,3 +17,6 @@ dd_ed50_exponential(fittingObject, id)
 \description{
 dd_ed50_exponential
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

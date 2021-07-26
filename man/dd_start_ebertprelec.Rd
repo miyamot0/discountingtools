@@ -15,3 +15,6 @@ dd_start_ebertprelec(currentData)
 \description{
 Extract starting parameters
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

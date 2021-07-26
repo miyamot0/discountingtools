@@ -17,3 +17,6 @@ dd_start_exponential(currentData, increment = 1)
 \description{
 Extract starting parameters
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

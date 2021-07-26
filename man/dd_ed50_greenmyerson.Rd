@@ -17,3 +17,6 @@ dd_ed50_greenmyerson(fittingObject, id)
 \description{
 dd_ed50_greenmyerson
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_laibson <- function(fittingObject, id) {
 
   modelResults = list(
@@ -66,6 +67,7 @@ dd_fit_laibson <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_laibson <- function(currentData) {
 
   startbeta   <- seq(0, 1, 0.1)
@@ -107,12 +109,13 @@ dd_start_laibson <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_laibson <- function(fittingObject, id) {
 
   b = fittingObject$results[[as.character(id)]][["laibson"]][["Beta"]]
   d = fittingObject$results[[as.character(id)]][["laibson"]][["Delta"]]
 
-  fittingObject$ed50[[as.character(id)]] = log(log( (1/(2*b)),base=d))
+  fittingObject$ed50[[as.character(id)]] = log(log( (1/(2*b)),base = d))
 
   fittingObject
 }
@@ -123,6 +126,7 @@ dd_ed50_laibson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_laibson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -153,6 +157,7 @@ dd_mbauc_laibson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_laibson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -182,8 +187,9 @@ dd_mbauc_log10_laibson <- function(fittingObject, id) {
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 betaDeltaDiscountFunc <- function(x, beta, delta)
 {
@@ -196,8 +202,9 @@ betaDeltaDiscountFunc <- function(x, beta, delta)
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 betaDeltaDiscountGradient <- function(x, beta, delta)
 {
   func <- expression(beta*delta^x)
@@ -212,8 +219,9 @@ betaDeltaDiscountGradient <- function(x, beta, delta)
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 
 #' Beta Delta Integrand helper (log10)
@@ -223,6 +231,7 @@ integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 #' @param x observation at point n (X)
 #' @param beta fitted parameter
 #' @param delta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandBetaDeltaLog <- function(x, beta, delta) { beta*delta^(10^x) }

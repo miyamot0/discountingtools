@@ -17,3 +17,6 @@ dd_ed50_laibson(fittingObject, id)
 \description{
 dd_ed50_laibson
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

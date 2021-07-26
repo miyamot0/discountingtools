@@ -17,3 +17,6 @@ dd_mbauc_log10_exponential(fittingObject, id)
 \description{
 dd_mbauc_log10_exponential
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

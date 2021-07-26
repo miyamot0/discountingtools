@@ -17,3 +17,6 @@ dd_fit_laibson(fittingObject, id)
 \description{
 This fits a hyperbolic model to the data.
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

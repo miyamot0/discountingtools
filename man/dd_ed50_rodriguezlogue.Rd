@@ -17,3 +17,6 @@ dd_ed50_rodriguezlogue(fittingObject, id)
 \description{
 dd_ed50_rodriguezlogue
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

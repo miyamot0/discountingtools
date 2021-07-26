@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_mazur <- function(fittingObject, id) {
 
   modelResults = list(
@@ -62,6 +63,7 @@ dd_fit_mazur <- function(fittingObject, id) {
 #' @param currentData current data set
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_mazur <- function(currentData) {
 
   startlnK   = seq(-12,  12, 1)
@@ -91,6 +93,7 @@ dd_start_mazur <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_mazur <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
@@ -106,6 +109,7 @@ dd_ed50_mazur <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_mazur <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -134,6 +138,7 @@ dd_mbauc_mazur <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_mazur <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -160,8 +165,9 @@ dd_mbauc_log10_mazur <- function(fittingObject, id) {
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 hyperbolicDiscountFunc <- function(x, lnk)
 {
@@ -173,8 +179,9 @@ hyperbolicDiscountFunc <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 hyperbolicDiscountGradient <- function(x, lnk)
 {
   func <- expression((1 + exp(lnk)*x)^(-1))
@@ -187,8 +194,9 @@ hyperbolicDiscountGradient <- function(x, lnk)
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandHyp <- function(x, lnK) { (1 + exp(lnK)*x)^(-1) }
 
 #' Hyperbolic Integrand helper (log10)
@@ -197,6 +205,7 @@ integrandHyp <- function(x, lnK) { (1 + exp(lnK)*x)^(-1) }
 #'
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandHypLog <- function(x, lnK) { (1 + exp(lnK)*(10^x))^(-1) }

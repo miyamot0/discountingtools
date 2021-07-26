@@ -17,3 +17,6 @@ dd_mbauc_mazur(fittingObject, id)
 \description{
 dd_mbauc_mazur
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

@@ -17,3 +17,6 @@ dd_ed50_bleichrodt(fittingObject, id)
 \description{
 dd_ed50_bleichrodt
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

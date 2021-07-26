@@ -17,3 +17,6 @@ dd_ed50_ebertprelec(fittingObject, id)
 \description{
 dd_ed50_ebertprelec
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

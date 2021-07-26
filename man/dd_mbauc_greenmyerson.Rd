@@ -17,3 +17,6 @@ dd_mbauc_greenmyerson(fittingObject, id)
 \description{
 dd_mbauc_greenmyerson
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

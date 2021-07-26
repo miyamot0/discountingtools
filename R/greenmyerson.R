@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_greenmyerson <- function(fittingObject, id) {
 
   modelResults = list(
@@ -64,6 +65,7 @@ dd_fit_greenmyerson <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_greenmyerson <- function(currentData) {
 
   startlnK <- seq(-12, 12, 1)
@@ -102,6 +104,7 @@ dd_start_greenmyerson <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_greenmyerson <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
@@ -118,6 +121,7 @@ dd_ed50_greenmyerson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_greenmyerson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -148,6 +152,7 @@ dd_mbauc_greenmyerson <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -177,8 +182,9 @@ dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 {
@@ -191,8 +197,9 @@ myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 {
   func <- expression((1 + exp(lnk)*x)^(-s))
@@ -207,8 +214,9 @@ myersonHyperboloidDiscountGradient <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandMyerson <- function(x, lnK, s) { (1 + exp(lnK)*x)^(-s) }
 
 #' Green & Myerson Integrand helper (log10)
@@ -218,6 +226,7 @@ integrandMyerson <- function(x, lnK, s) { (1 + exp(lnK)*x)^(-s) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandMyersonLog <- function(x, lnK, s) { (1 + exp(lnK)*(10^x))^(-s) }

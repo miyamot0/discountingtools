@@ -17,3 +17,6 @@ dd_mbauc_laibson(fittingObject, id)
 \description{
 dd_mbauc_laibson
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

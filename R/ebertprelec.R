@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_ebertprelec <- function(fittingObject, id) {
 
   modelResults = list(
@@ -64,6 +65,7 @@ dd_fit_ebertprelec <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_ebertprelec <- function(currentData) {
 
   startlnK <- seq(-12, 12, 0.1)
@@ -102,6 +104,7 @@ dd_start_ebertprelec <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_ebertprelec <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["ebertprelec"]][["Lnk"]]
@@ -143,6 +146,7 @@ dd_ed50_ebertprelec <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_ebertprelec <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -173,6 +177,7 @@ dd_mbauc_ebertprelec <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -202,8 +207,9 @@ dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 ebertPrelecDiscountFunc <- function(x, lnk, s)
 {
@@ -216,8 +222,9 @@ ebertPrelecDiscountFunc <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 ebertPrelecDiscountGradient <- function(x, lnk, s)
 {
   func <- expression(exp(-(exp(lnk)*x)^s))
@@ -232,8 +239,9 @@ ebertPrelecDiscountGradient <- function(x, lnk, s)
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 
 #' Ebert & Prelec's ep Integrand helper (log10)
@@ -243,6 +251,7 @@ integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 #' @param x observation at point n (X)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }

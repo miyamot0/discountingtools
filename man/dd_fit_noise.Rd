@@ -17,3 +17,6 @@ dd_fit_noise(fittingObject, id)
 \description{
 This fits an intercept only model to the data. Its trash, but its a testable alternative that inferring usefulness from an R2 value
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

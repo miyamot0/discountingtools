@@ -17,3 +17,6 @@ dd_mbauc_rachlin(fittingObject, id)
 \description{
 dd_mbauc_rachlin
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

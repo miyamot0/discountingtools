@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_rodriguezlogue <- function(fittingObject, id) {
 
   modelResults = list(
@@ -64,6 +65,7 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_rodriguezlogue <- function(currentData) {
 
   startlnK <- seq(-12, 12, 1)
@@ -97,6 +99,7 @@ dd_start_rodriguezlogue <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_rodriguezlogue <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Lnk"]]
@@ -138,6 +141,7 @@ dd_ed50_rodriguezlogue <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -168,6 +172,7 @@ dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -199,6 +204,7 @@ dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 RodriguezLogueDiscountFunc <- function(x, lnk, beta)
 {
@@ -213,6 +219,7 @@ RodriguezLogueDiscountFunc <- function(x, lnk, beta)
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 RodriguezLogueDiscountGradient <- function(x, lnk, beta)
 {
   func <- expression((1 + x * exp(lnk))^(-exp(beta) / exp(lnk)))
@@ -229,6 +236,7 @@ RodriguezLogueDiscountGradient <- function(x, lnk, beta)
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-exp(beta) / exp(lnK)) }
 
 #' Rodriguez & Logue Integrand helper
@@ -240,4 +248,5 @@ integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-exp(bet
 #' @param beta fitted parameter
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-exp(beta) / exp(lnK)) }

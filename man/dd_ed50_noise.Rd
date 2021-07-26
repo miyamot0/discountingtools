@@ -17,3 +17,6 @@ dd_ed50_noise(fittingObject, id)
 \description{
 dd_ed50_noise
 }
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
+}

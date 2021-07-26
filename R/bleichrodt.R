@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_bleichrodt <- function(fittingObject, id) {
 
   modelResults = list(
@@ -72,6 +73,7 @@ dd_fit_bleichrodt <- function(fittingObject, id) {
 #' @param currentData  current data set
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_bleichrodt <- function(currentData) {
 
   startlnK  <- seq(-12,  12, 1)
@@ -111,6 +113,7 @@ dd_start_bleichrodt <- function(currentData) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_bleichrodt <- function(fittingObject, id) {
 
   lnk = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Lnk"]]
@@ -153,6 +156,7 @@ dd_ed50_bleichrodt <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_bleichrodt <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -185,6 +189,7 @@ dd_mbauc_bleichrodt <- function(fittingObject, id) {
 #' @param id id tag
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_bleichrodt <- function(fittingObject, id) {
 
   currentData = fittingObject$data[
@@ -217,8 +222,9 @@ dd_mbauc_log10_bleichrodt <- function(fittingObject, id) {
 #' @param lnk fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
 {
@@ -232,8 +238,9 @@ BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
 #' @param lnk fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return projected, subjective value
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
 {
   func <- beta * exp(-exp(lnk)*x^s)
@@ -250,8 +257,9 @@ BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
 #' @param lnK fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s) }
 
 #' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Integrand helper (log10)
@@ -262,6 +270,7 @@ integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s
 #' @param lnK fitted parameter
 #' @param s fitted parameter
 #' @param beta fitted parameter
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#'
 #' @return Numerical Integration Projection
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 integrandBleichrodtCRDILog <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*(10^x)^s) }
