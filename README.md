@@ -327,10 +327,9 @@ Questions? Suggestions for features? [sgilroy1\@lsu.edu](mailto:sgilroy1@lsu.edu
 
 -   ~~Modeling options: individual (default)~~
 -   Modeling options: pooled (fit to group)
--   Restore Screening Procedures
+-   ~~Restore Screening Procedures~~
 -   ~~Plotting tools (corresponding with modeling options)~~
 
 ## License
 
 GPL Version \>= 2
-
