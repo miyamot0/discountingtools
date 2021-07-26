@@ -28,9 +28,9 @@ dataFrame.long = dataFrame %>%
   gather(Delay, Value, -ids, -ks) %>%
   mutate(Delay = as.numeric(Delay)) %>%
   mutate(Value = ifelse(Value < 0, 0, Value)) %>%
-  mutate(Value = ifelse(Value > 1, 0, Value)) %>%
-  filter(ids < 6)
+  mutate(Value = ifelse(Value > 1, 0, Value))
 
+# Manually create a series that does not pass
 dataFrame.long[dataFrame.long$Delay == 540 &
                dataFrame.long$ids == 1, "Value"] = 0.21
 
@@ -38,8 +38,7 @@ results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
-            maxValue = 1,
-            verbose  = TRUE) %>%
+            maxValue = 1) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -52,15 +51,6 @@ results = fitDDCurves(data = dataFrame.long,
   dd_metricOptions(metrics = c("lned50",
                                "mbauc",
                                "logmbauc")) %>%
-  dd_screenOption(screen = TRUE, filter = FALSE) %>%
+  dd_screenOption(screen        = TRUE,
+                  filterPassing = c("JB1", "JB2")) %>%
   dd_analyze()
-
-screen = results$data
-
-# png(filename = "MultiModelEvaluation.png", width = 6, height = 6, res = 300, units = "in")
-#
-# plot(results,
-#      logAxis = "x",
-#      position = "topright")
-#
-# dev.off()
