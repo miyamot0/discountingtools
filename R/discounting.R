@@ -83,6 +83,20 @@ dd_metricOptions <- function(fittingObject, metrics) {
   fittingObject
 }
 
+#' dd_screenOption
+#'
+#' @param fittingObject
+#'
+#' @return
+#' @export
+dd_screenOption <- function(fittingObject, screen, filter) {
+  messageDebug(fittingObject, "Setting Screening Options")
+  fittingObject[[ "screen" ]] = screen
+  fittingObject[[ "filter" ]] = filter
+
+  fittingObject
+}
+
 #' dd_analyze
 #'
 #' this is the business end of the analytical process
