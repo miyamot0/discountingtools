@@ -76,8 +76,8 @@ results = fitDDCurves(data = dataFrame.long,
 
 vecGroups = unique(results$data[,as.character(results$settings['Group'])])
 
-png(filename = "MultiModelEvaluationGroup.png", width = 6, height = 6, res = 300, units = "in")
+png(filename = "MultiModelEvaluationGroupLog10MBAUC.png", width = 6, height = 6, res = 300, units = "in")
 
-plot(results, logAxis = "x", position = "topright", which = "group")
+plot(results, which = "Log10MBAUC")
 
 dev.off()

@@ -179,6 +179,38 @@ plot(results, which = "Log10MBAUC")
 
 ![Figure of Log10 Scaled MBAUC](figures/MultiModelEvaluationLog10MBAUC.png "Log10 Scaled MBAUC")
 
+### Multi-Model Evaluation (Grouped)
+
+...
+
+A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
+
+![Figure of Multi Model (Group) Method](figures/MultiModelEvaluationGroup.png "Multi Model (Group) Method")
+
+#### ED50
+
+...
+
+The full code necessary to re-create this result is provided in demo/testGroupED50.R.
+
+![Figure of Multi Model ED50 (Group)](figures/MultiModelEvaluationGroupED50.png "Multi Model ED50 (Group)")
+
+#### MB-AUC
+
+...
+
+The full code necessary to re-create this result is provided in demo/testGroupMBAUC.R.
+
+![Figure of Multi Model MBAUC (Group)](figures/MultiModelEvaluationGroupMBAUC.png "Multi Model MBAUC (Group)")
+
+#### Log10 MB-AUC
+
+...
+
+The full code necessary to re-create this result is provided in demo/testGroupLog10MBAUC.R.
+
+![Figure of Multi-Model Log10 MBAUC (Group)](figures/MultiModelEvaluationGroupLog10MBAUC.png "Multi-Model Log10 MBAUC (Group)")
+
 ## Referenced Works (academic works)
 
 The Small N Stats Discounting Model Selector is based on the following academic works:
