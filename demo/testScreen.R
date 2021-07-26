@@ -38,7 +38,8 @@ results = fitDDCurves(data = dataFrame.long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids),
-            maxValue = 1) %>%
+            maxValue = 1,
+            verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -54,3 +55,6 @@ results = fitDDCurves(data = dataFrame.long,
   dd_screenOption(screen        = TRUE,
                   filterPassing = c("JB1", "JB2")) %>%
   dd_analyze()
+
+# Note: failing series not carried forward
+summary(results)

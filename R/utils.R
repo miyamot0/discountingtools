@@ -5,6 +5,7 @@
 #' @param fit nls.lm fitted model
 #' @param REML determine whether or not to use ML (FALSE by default)
 #' @param ... inherit other args as necessary
+#'
 #' @author Katharine Mullen <kate@@few.vu.nl>
 #' @return provide a logLik class for AIC/BIC
 logLik.nls.lm <- function(fit, REML = FALSE, ...)
@@ -19,16 +20,15 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
   logLikelihood
 }
 
-
 #' Perform Johnson & Bickel Screen
 #'
-#' This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria. These are included by default in all model selection calls.
+#' This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria.
 #'
-#' @param fittingObject ...
+#' @param fittingObject core fitting object
 #'
 #' @return A data frame of model screenings
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-#' @return data frame of Screening Criteria
+#' @return
 #' @export
 johnsonBickelScreen <- function(fittingObject) {
 
@@ -59,7 +59,7 @@ johnsonBickelScreen <- function(fittingObject) {
       prev = currentData[index - 1, "ddY"]
       curr = currentData[index,     "ddY"]
 
-      if ((curr - prev) > 0.2) {
+      if ((curr - prev) > as.numeric(fittingObject[[ "JB1Flag" ]])) {
         messageDebug(fittingObject, paste("JB Screen: ", id, "[Fail JB1]"))
 
         fittingObject$data[
@@ -71,7 +71,7 @@ johnsonBickelScreen <- function(fittingObject) {
     prev <- currentData[1,                       "ddY"]
     curr <- currentData[length(currentData$ddX), "ddY"]
 
-    if ((prev - curr) < 0.1) {
+    if ((prev - curr) < as.numeric(fittingObject[[ "JB2Flag" ]])) {
       messageDebug(fittingObject, paste("JB Screen: ", id, "[Fail JB2]"))
 
       fittingObject$data[
@@ -85,11 +85,12 @@ johnsonBickelScreen <- function(fittingObject) {
 
 #' summary.discountingtools
 #'
-#' Override summary output
+#' Override summary output. Rather than display the core fitting object, a data frame block of results is provided to the user for easy interpretation and further analysis
 #'
-#' @param fittingObject
+#' @param fittingObject core fitting object
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export summary.discountingtools
 #' @export
 summary.discountingtools <- function(fittingObject) {
@@ -329,17 +330,18 @@ summary.discountingtools <- function(fittingObject) {
 
 #' plot.discountingtools
 #'
-#' Override plot output
+#' This method overrides the base plot function to provide various plots relevant to the user.
 #'
-#' @param fittingObject core frame
-#' @param which plottype
-#' @param position0 position legend
-#' @param ylab0 y axis label
-#' @param xlab0 x axis label
-#' @param logAxis axis designation
-#' @param yMin y axis lower limit
+#' @param fittingObject core fitting object
+#' @param which (char) type of plot to show, based on fits
+#' @param position0 (char) position of legend
+#' @param ylab0 (char) y axis label
+#' @param xlab0 (char) x axis label
+#' @param logAxis (char) axis designation
+#' @param yMin (num) y axis lower limit
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export plot.discountingtools
 #' @export
 plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bottomleft", ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01) {
@@ -353,14 +355,17 @@ plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bot
 
 #' plotIndividualRainbow
 #'
-#' @param fittingObject core frame
-#' @param position0 position legend
-#' @param ylab0 y axis label
-#' @param xlab0 x axis label
-#' @param logAxis axis designation
-#' @param yMin y axis lower limit
+#' This specific implementation shows cross-model fits, with series characterized by different models illustrated with different colors. A legend is also provided for convenience of interpretation.
+#'
+#' @param fittingObject core fitting object
+#' @param position0 (char) position of legend
+#' @param ylab0 (char) y axis label
+#' @param xlab0 (char) x axis label
+#' @param logAxis (char) axis designation
+#' @param yMin (num) y axis lower limit
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin) {
 
   preDraw = TRUE
@@ -447,14 +452,17 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
 
 #' plotGroupRainbow
 #'
-#' @param fittingObject core frame
-#' @param position0 position legend
-#' @param ylab0 y axis label
-#' @param xlab0 x axis label
-#' @param logAxis axis designation
-#' @param yMin y axis lower limit
+#' Convenience method for illustrating individual fits when characterized by some a priori grouping.
+#'
+#' @param fittingObject core fitting object
+#' @param position0 (char) position of legend
+#' @param ylab0 (char) y axis label
+#' @param xlab0 (char) x axis label
+#' @param logAxis (char) axis designation
+#' @param yMin (num) y axis lower limit
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin) {
 
   if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
@@ -464,8 +472,6 @@ plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yM
 
   vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
   vecColors = rainbow(length(vecGroups), alpha = 1)
-
-  #unique(results$data[,as.character(results$settings['Group'])])
 
   for (id in names(fittingObject$results)) {
 
@@ -521,9 +527,10 @@ plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yM
 #' plotRainbowCross
 #'
 #' @param fittingObject core fitting object
-#' @param metric ...
+#' @param metric (char) the cross model metric to be displayed
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotRainbowCross <- function(fittingObject, metric) {
 
   if (!("Group" %in% names(fittingObject$settings))) {
@@ -535,8 +542,7 @@ plotRainbowCross <- function(fittingObject, metric) {
 
     print(histogram(as.formula(paste("~", metric)),
                     data   = resultFrame,
-                    type   = "p")
-    )
+                    type   = "p"))
   } else {
     vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
 
@@ -555,17 +561,19 @@ plotRainbowCross <- function(fittingObject, metric) {
                                       alpha        = 0.5),
                     auto.key     = list(columns    = length(vecColors),
                                         rectangles = FALSE,
-                                        col        = vecColors))
-    )
+                                        col        = vecColors)))
   }
 }
 
 #' messageDebug
 #'
+#' Extension of message method, instead yolked to a flag defining level of verbosity.
+#'
 #' @param fittingObject core fitting object
-#' @param msg message
+#' @param msg (char) message
 #'
 #' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
 messageDebug <- function(fittingObject, msg) {
   if (fittingObject[[ "verbose"  ]] == TRUE) message(msg)
 }

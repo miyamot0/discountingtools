@@ -7,15 +7,15 @@
 johnsonBickelScreen(fittingObject)
 }
 \arguments{
-\item{fittingObject}{...}
+\item{fittingObject}{core fitting object}
 }
 \value{
 A data frame of model screenings
 
-data frame of Screening Criteria
+
 }
 \description{
-This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria. These are included by default in all model selection calls.
+This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria.
 }
 \author{
 Shawn Gilroy <sgilroy1@lsu.edu>

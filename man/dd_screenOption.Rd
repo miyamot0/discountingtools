@@ -4,10 +4,24 @@
 \alias{dd_screenOption}
 \title{dd_screenOption}
 \usage{
-dd_screenOption(fittingObject, screen, filterPassing = NULL)
+dd_screenOption(
+  fittingObject,
+  screen,
+  JB1Flag = 0.2,
+  JB2Flag = 0.1,
+  filterPassing = NULL
+)
 }
 \arguments{
-\item{fittingObject}{}
+\item{fittingObject}{core fitting object}
+
+\item{screen}{(bool) set screen TRUE or FALSE (i.e. NULL)}
+
+\item{JB1Flag}{(num) bounce constant per authors (set at initial defaults)}
+
+\item{JB2Flag}{(num) extremity change constant per authors (set at initial defaults)}
+
+\item{filterPassing}{(char vector) which JB criteria to retain in dataset, e.g. c("JB1", "JB2")}
 }
 \value{
 

@@ -7,11 +7,14 @@
 \method{summary}{discountingtools}(fittingObject)
 }
 \arguments{
-\item{fittingObject}{}
+\item{fittingObject}{core fitting object}
 }
 \value{
 
 }
 \description{
-Override summary output
+Override summary output. Rather than display the core fitting object, a data frame block of results is provided to the user for easy interpretation and further analysis
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

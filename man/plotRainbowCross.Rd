@@ -9,11 +9,14 @@ plotRainbowCross(fittingObject, metric)
 \arguments{
 \item{fittingObject}{core fitting object}
 
-\item{metric}{...}
+\item{metric}{(char) the cross model metric to be displayed}
 }
 \value{
 
 }
 \description{
 plotRainbowCross
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

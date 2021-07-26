@@ -9,11 +9,14 @@ messageDebug(fittingObject, msg)
 \arguments{
 \item{fittingObject}{core fitting object}
 
-\item{msg}{message}
+\item{msg}{(char) message}
 }
 \value{
 
 }
 \description{
-messageDebug
+Extension of message method, instead yolked to a flag defining level of verbosity.
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }

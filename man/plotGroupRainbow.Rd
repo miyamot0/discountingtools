@@ -7,21 +7,24 @@
 plotGroupRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
 }
 \arguments{
-\item{fittingObject}{core frame}
+\item{fittingObject}{core fitting object}
 
-\item{position0}{position legend}
+\item{position0}{(char) position of legend}
 
-\item{ylab0}{y axis label}
+\item{ylab0}{(char) y axis label}
 
-\item{xlab0}{x axis label}
+\item{xlab0}{(char) x axis label}
 
-\item{logAxis}{axis designation}
+\item{logAxis}{(char) axis designation}
 
-\item{yMin}{y axis lower limit}
+\item{yMin}{(num) y axis lower limit}
 }
 \value{
 
 }
 \description{
-plotGroupRainbow
+Convenience method for illustrating individual fits when characterized by some a priori grouping.
+}
+\author{
+Shawn Gilroy <sgilroy1@lsu.edu>
 }
