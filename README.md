@@ -59,6 +59,8 @@ results = fitDDCurves(data = dataFrame.long,
 summary(results)
 ```
 
+![Figure of Single Model Evaluation](figures/SingleModelEvaluation.png "Single Model Evaluation")
+
 ### Multi-Model Evaluation
 
 More recent discussions on delay discounting patterns and processes have questioned whether *any* a priori assumptions regarding discounting models are tenable. As such, it is now more common for investigators to explore competing models before conducting terminal analyses. The *discountingtools* package can be used to load delay discounting data and specify a range of modeling options (e.g., hyperbolic, exponential). Specifically, a range of modeling options can be specified using *dd_modelOptions* and *dd_analyze* (with model selection *enabled*) and approximate Bayesian model selection will be perform to identify the best-performing candidate (at the individual level).

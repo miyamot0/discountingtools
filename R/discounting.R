@@ -97,7 +97,7 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
   fittingObject[[ "ModelSelection" ]] = modelSelection
 
   # Add in noise model as a comparator
-  if (!("noise" %in% fittingObject[["models"]]))
+  if (!("noise" %in% fittingObject[["models"]]) & modelSelection == TRUE)
     fittingObject[["models"]] = c("noise", fittingObject[["models"]])
 
   # loop through individual id's
