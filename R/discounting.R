@@ -25,19 +25,21 @@ library(dplyr)
 #' @param data assigned data
 #' @param settings mappings
 #' @param maxValue A parameter
+#' @param verbose output level (default FALSE)
 #'
 #' @return
 #' @export
-fitDDCurves <- function(data, settings, maxValue) {
+fitDDCurves <- function(data, settings, maxValue, verbose = FALSE) {
 
   fittingObject = list()                             # Primary object
-  fittingObject[[ "settings" ]] = enexpr(settings)   #
+  fittingObject[[ "settings" ]] = enexpr(settings)   # Aesthetics
   fittingObject[[ "data"     ]] = data               # Stored data
-  fittingObject[[ "models"   ]] = character(0)       #
-  fittingObject[[ "strategy" ]] = "ind"              #
-  fittingObject[[ "metrics"  ]] = character(0)       #
-  fittingObject[[ "results"  ]] = list()             #
-  fittingObject[[ "maxValue" ]] = maxValue           #
+  fittingObject[[ "models"   ]] = character(0)       # Model selections
+  fittingObject[[ "strategy" ]] = "ind"              # Analytical strategy
+  fittingObject[[ "metrics"  ]] = character(0)       # Cross-model Metrics
+  fittingObject[[ "results"  ]] = list()             # Result frame
+  fittingObject[[ "maxValue" ]] = maxValue           # Max level (A)
+  fittingObject[[ "verbose"  ]] = verbose            # Output level
 
   class(fittingObject) <- c("discountingtools")
 
@@ -58,6 +60,8 @@ fitDDCurves <- function(data, settings, maxValue) {
 #' @return
 #' @export
 dd_modelOptions <- function(fittingObject, plan) {
+  messageDebug(fittingObject, "Setting Model Options")
+
   fittingObject[[ "models" ]] = plan
 
   fittingObject
@@ -73,6 +77,7 @@ dd_modelOptions <- function(fittingObject, plan) {
 #' @return
 #' @export
 dd_metricOptions <- function(fittingObject, metrics) {
+  messageDebug(fittingObject, "Setting Cross Model Metrics")
   fittingObject[[ "metrics" ]] = metrics
 
   fittingObject
@@ -87,6 +92,7 @@ dd_metricOptions <- function(fittingObject, metrics) {
 #' @return
 #' @export
 dd_analyze <- function(fittingObject, modelSelection = TRUE) {
+  messageDebug(fittingObject, "Beginning Model Fitting(s)")
 
   fittingObject[[ "ModelSelection" ]] = modelSelection
 
@@ -96,10 +102,12 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
   # loop through individual id's
   for (id in unique(fittingObject$data[[as.character(fittingObject$settings['Individual'])]])) {
+    messageDebug(fittingObject, paste("Fitting:", id))
 
     fittingObject$results[[as.character(id)]] = list()
 
     for (model in fittingObject[["models"]]) {
+      messageDebug(fittingObject, paste("Fitting:", id, "Rotation:", model))
 
       if (model == "noise")          fittingObject = dd_fit_noise(          fittingObject, id)
       if (model == "mazur")          fittingObject = dd_fit_mazur(          fittingObject, id)
@@ -195,6 +203,8 @@ dd_probableModel <- function(fittingObject, id) {
 getED50 <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
+  messageDebug(fittingObject, paste0("Cross Model Metric (ED50)[", probableModel, "]: ", id))
+
   if (probableModel == "noise")          fittingObject = dd_ed50_noise(fittingObject, id)
   if (probableModel == "mazur")          fittingObject = dd_ed50_mazur(fittingObject, id)
   if (probableModel == "exponential")    fittingObject = dd_ed50_exponential(fittingObject, id)
@@ -220,6 +230,8 @@ getED50 <- function(fittingObject, id) {
 getMBAUC <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
 
+  messageDebug(fittingObject, paste0("Cross Model Metric (MBAUC)[", probableModel, "]: ", id))
+
   if (probableModel == "noise")          fittingObject = dd_mbauc_noise(fittingObject, id)
   if (probableModel == "mazur")          fittingObject = dd_mbauc_mazur(fittingObject, id)
   if (probableModel == "exponential")    fittingObject = dd_mbauc_exponential(fittingObject, id)
@@ -244,6 +256,8 @@ getMBAUC <- function(fittingObject, id) {
 #' @return area beneath the fitted model, in log10 space
 getMBAUCLog10 <- function(fittingObject, id) {
   probableModel = fittingObject$rotation[[as.character(id)]][["ProbableModel"]]
+
+  messageDebug(fittingObject, paste0("Cross Model Metric (Log10 MBAUC)[", probableModel, "]: ", id))
 
   if (probableModel == "noise")          fittingObject = dd_mbauc_log10_noise(fittingObject, id)
   if (probableModel == "mazur")          fittingObject = dd_mbauc_log10_mazur(fittingObject, id)

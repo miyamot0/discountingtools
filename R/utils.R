@@ -471,3 +471,12 @@ plotRainbowCross <- function(fittingObject, metric) {
   )
 }
 
+#' messageDebug
+#'
+#' @param fittingObject core fitting object
+#' @param msg message
+#'
+#' @return
+messageDebug <- function(fittingObject, msg) {
+  if (fittingObject[[ "verbose"  ]] == TRUE) message(msg)
+}

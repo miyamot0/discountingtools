@@ -4,7 +4,7 @@
 \alias{fitDDCurves}
 \title{fitDDCurves}
 \usage{
-fitDDCurves(data, settings, maxValue)
+fitDDCurves(data, settings, maxValue, verbose = FALSE)
 }
 \arguments{
 \item{data}{assigned data}
@@ -12,6 +12,8 @@ fitDDCurves(data, settings, maxValue)
 \item{settings}{mappings}
 
 \item{maxValue}{A parameter}
+
+\item{verbose}{output level (default FALSE)}
 }
 \value{
 

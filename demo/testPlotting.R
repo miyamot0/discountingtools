@@ -12,7 +12,7 @@ dataFrame = data.frame(
   grp = "A"
 )
 
-dataFrame$ks  = rnorm(length(dataFrame$ids), 0.125, 0.05)
+dataFrame$ks  = rnorm(length(dataFrame$ids), 0.125, 0.08)
 dataFrame$ks  = log(dataFrame$ks)
 
 delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
@@ -31,7 +31,7 @@ dataFrame2 = data.frame(
   grp = "B"
 )
 
-dataFrame2$ks  = rnorm(length(dataFrame2$ids), 0.225, 0.025)
+dataFrame2$ks  = rnorm(length(dataFrame2$ids), 0.225, 0.035)
 dataFrame2$ks  = log(dataFrame2$ks)
 
 for (row in 1:nrow(dataFrame2)) {
@@ -57,7 +57,8 @@ results = fitDDCurves(data = dataFrame.long,
                             Values     = Value,
                             Individual = ids,
                             Group      = grp),
-            maxValue = 1) %>%
+            maxValue = 1,
+            verbose  = TRUE) %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
