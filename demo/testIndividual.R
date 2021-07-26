@@ -52,6 +52,10 @@ results = fitDDCurves(data = dataFrame.long,
                                "logmbauc")) %>%
   dd_analyze()
 
+png(filename = "MultiModelEvaluation.png", width = 6, height = 6, res = 300, units = "in")
+
 plot(results,
      logAxis = "x",
      position = "topright")
+
+dev.off()

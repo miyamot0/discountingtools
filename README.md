@@ -90,6 +90,8 @@ results = fitDDCurves(data = dataFrame.long,
 summary(results)
 ```
 
+![Figure of Multi Model Evaluation](figures/MultiModelEvaluation.png "Multi Model Evaluation")
+
 #### Effective Delay 50 (ED50)
 
 ...

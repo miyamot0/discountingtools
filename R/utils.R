@@ -312,7 +312,14 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
 
     ogData = subset(fittingObject$data, ids == id)
 
-    model  = fittingObject$rotation[[id]]$ProbableModel
+    # Hack: Check if even multiple models
+
+    if (is.null(fittingObject$rotation)) {
+      model = names(results$results[[id]])
+    } else {
+      model  = fittingObject$rotation[[id]]$ProbableModel
+    }
+
     result = fittingObject$results[[id]][[model]]
 
     xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
@@ -329,7 +336,11 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
     if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
     if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
 
-    col = vecColors[match(model, vecModels)]
+    if (length(vecColors) == 1) {
+      col = vecColors
+    } else {
+      col = vecColors[match(model, vecModels)]
+    }
 
     if (!(model %in% legendBuildModel)) {
       if (is.na(legendBuildModel)) {
