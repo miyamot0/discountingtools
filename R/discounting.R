@@ -303,3 +303,4 @@ jacobianMatrix <- function(params, x, value, valueFunction, jacobianFunction)
 {
   -do.call("jacobianFunction", c(list(x = x), as.list(params)))
 }
+
