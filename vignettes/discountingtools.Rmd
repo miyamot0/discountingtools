@@ -85,7 +85,10 @@ for (row in 1:nrow(dataFrame)) {
   dataFrame[row, as.character(delays)] = ys
 }
 
-dataFrame %>%
+dataFrameShow = dataFrame
+dataFrameShow[dataFrameShow < 0] = 0
+
+dataFrameShow %>%
   select(-ks) %>%
   kable(., caption = "Wide Data Frame") %>%
   kable_styling(full_width = TRUE)
@@ -422,7 +425,9 @@ results = fitDDCurves(data = dataFrame.long,
 
 ### Single-Group (Individual-level) Visualization
 
-TODO:
+The default behavior of the plot method is to illustrate the various underlying discounting processes as they relate to the conceptual outlined in the regression. That is, without any *Group* mapping supplied to the mappings the emphasis is instead placed on between-individual differences in underlying data-generate processes.
+
+An example of this call and associated figure are provided below.
 
 ```{r visInd, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
@@ -434,7 +439,9 @@ plot(results, which    = "ind",
 
 ### Multi-group (individual-level) Visualization
 
-TODO:
+More typically, the goal of the analyst is to investigate and evaluate differences between groups. This behavior is enabled by including a *Group* mapping to the *settings* argument in the *fitDDCurves* method. By default, the plot method will focus on between-group differences when a *Group* mapping is present in the settings.
+
+An example of this call and associated figure are provided below.
 
 ```{r visGrp, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
@@ -446,7 +453,9 @@ plot(results, which    = "group",
 
 #### Cross-Model Visualizations (ED50)
 
-TODO:
+Between group differences are most easily visualized when using a cross-model metric of discounting. Similar to the call above, this is easily visualized by adjusting the *which* argument included in the plotting call.
+
+An example of this call for ED50 differences and the associated figure are provided below.
 
 ```{r visGrpED50, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
@@ -458,7 +467,9 @@ plot(results, which    = "ED50",
 
 #### Cross-Model Visualizations (MBAUC)
 
-TODO:
+Between group differences are most easily visualized when using a cross-model metric of discounting. Similar to the call above, this is easily visualized by adjusting the *which* argument included in the plotting call.
+
+An example of this call for MBAUC differences and the associated figure are provided below.
 
 ```{r visGrpMBAUC, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
@@ -470,7 +481,9 @@ plot(results, which    = "MBAUC",
 
 #### Cross-Model Visualizations (Log10 MBAUC)
 
-TODO:
+Between group differences are most easily visualized when using a cross-model metric of discounting. Similar to the call above, this is easily visualized by adjusting the *which* argument included in the plotting call.
+
+An example of this call for Log10-scaled MBAUC differences and the associated figure are provided below.
 
 ```{r visGrpLog10MBAUC, fig.width=6, fig.height=6, warning=FALSE, message=FALSE}
 
@@ -484,8 +497,8 @@ plot(results, which    = "Log10MBAUC",
 
 ### summary
 
-TODO:
+The *summary* method has been overridden by the *discountingtools* class to provide a data frame that is more easily inspected and used in subsequent analysis than a named list. By default, users are recommended to provided the object resulting from *dd_analyze* to this method*.*
 
 ### plot
 
-TODO:
+The *plot* method has been overridden by the *discountingtools* class to provide several visualizations that quickly and easily orient the analysts to results. By default, users are recommended to provided the object resulting from *dd_analyze* to this method*.*
