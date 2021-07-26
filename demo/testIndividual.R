@@ -7,7 +7,7 @@ library(tidyr)
 set.seed(65535)
 
 dataFrame = data.frame(
-  ids = 1:10,
+  ids = 1:30,
   ks  = NA
 )
 
