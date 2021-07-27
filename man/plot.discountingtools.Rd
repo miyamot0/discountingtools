@@ -11,7 +11,8 @@
   ylab0 = "Subjective Value",
   xlab0 = "Delay",
   logAxis = "x",
-  yMin = 0.01
+  yMin = 0.01,
+  id = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@
 \item{logAxis}{(char) axis designation}
 
 \item{yMin}{(num) y axis lower limit}
+
+\item{id}{(num) participant number to focus}
 }
 \value{
 
