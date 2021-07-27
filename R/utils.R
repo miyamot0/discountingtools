@@ -386,6 +386,7 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
   vecModels = fittingObject$models
   vecColors = rainbow(length(vecModels), alpha = 1)
 
+  preBuiltLegend   = FALSE
   legendBuildModel = NA
   legendBuildColor = NA
 
@@ -423,12 +424,20 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
       col = vecColors[match(model, vecModels)]
     }
 
-    if (!(model %in% legendBuildModel)) {
-      if (is.na(legendBuildModel)) {
-        legendBuildModel = c(model)
+    modelP = gsub("ebertprelec",    "ebert prelec",    model)
+    modelP = gsub("greenmyerson",   "green myerson",   modelP)
+    modelP = gsub("rodriguezlogue", "rodriguez logue", modelP)
+
+    modelC = tools::toTitleCase(modelP)
+
+    if (!(modelC %in% legendBuildModel)) {
+      if (!preBuiltLegend) {
+        legendBuildModel = c(modelC)
         legendBuildColor = c(col)
+
+        preBuiltLegend   = TRUE
       } else {
-        legendBuildModel = c(legendBuildModel, model)
+        legendBuildModel = c(legendBuildModel, modelC)
         legendBuildColor = c(legendBuildColor, col)
       }
     }
@@ -458,7 +467,8 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
   legend(position0,
          legend = legendBuildModel,
          col    = legendBuildColor,
-         lty    = 1)
+         lty    = 1,
+         bty    = "n")
 
 }
 

@@ -349,8 +349,8 @@ Questions? Suggestions for features? [sgilroy1\@lsu.edu](mailto:sgilroy1@lsu.edu
 -   Modeling: Estimates for group [pooled]
 -   Visuals: Barplot for underlying models [Group, Individual]
 -   Visuals: plotit capability for rolling own graphics
--   Visuals: Illustrate individual fits [detailed]
--   Utilities: Abbreviated/extended summary output
+-   ~~Visuals: Illustrate individual fits [detailed]~~
+-   ~~Utilities: Abbreviated/extended summary output~~
 
 ## License
 
