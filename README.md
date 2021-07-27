@@ -346,11 +346,11 @@ Questions? Suggestions for features? [sgilroy1\@lsu.edu](mailto:sgilroy1@lsu.edu
 
 ## To Do
 
--   ~~Modeling options: individual (default)~~
--   Modeling options: pooled (fit to group)
--   ~~Restore Screening Procedures~~
--   ~~Plotting tools (corresponding with modeling options)~~
--   ~~Update vignettes~~
+-   Modeling: Estimates for group [pooled]
+-   Visuals: Barplot for underlying models [Group, Individual]
+-   Visuals: plotit capability for rolling own graphics
+-   Visuals: Illustrate individual fits [detailed]
+-   Utilities: Abbreviated/extended summary output
 
 ## License
 
