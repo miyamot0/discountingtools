@@ -4,10 +4,12 @@
 \alias{summary.discountingtools}
 \title{summary.discountingtools}
 \usage{
-\method{summary}{discountingtools}(fittingObject)
+\method{summary}{discountingtools}(fittingObject, detailed = TRUE)
 }
 \arguments{
 \item{fittingObject}{core fitting object}
+
+\item{detailed}{enable additional model metrics (default TRUE)}
 }
 \value{
 

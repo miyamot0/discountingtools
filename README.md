@@ -55,14 +55,14 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids),
-            maxValue = 1,
-            verbose  = TRUE) %>%
-  dd_modelOptions(plan   = c("mazur")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze(modelSelection = FALSE)
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+          dd_modelOptions(plan   = c("mazur")) %>%
+          dd_screenOption(screen = FALSE) %>%
+          dd_analyze(modelSelection = FALSE)
 
 summary(results)
 ```
@@ -77,25 +77,25 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids),
-            maxValue = 1,
-            verbose  = TRUE) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("lned50",
+                                       "mbauc",
+                                       "logmbauc")) %>%
+          dd_screenOption(screen = FALSE) %>%
+          dd_analyze()
   
 summary(results)
 ```
@@ -110,23 +110,23 @@ The full code necessary to re-create this result is provided in demo/testIndivid
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids),
-            maxValue = 1,
-            verbose  = TRUE) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("lned50")) %>%
+          dd_screenOption(screen = FALSE) %>%
+          dd_analyze()
 
 plot(results, which = "ED50")
 ```
@@ -141,23 +141,23 @@ The full code necessary to re-create this result is provided in demo/testIndivid
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids),
-            maxValue = 1,
-            verbose  = TRUE) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("mbauc")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("mbauc")) %>%
+          dd_screenOption(screen = FALSE) %>%
+          dd_analyze()
 
 plot(results, which = "MBAUC")
 ```
@@ -177,18 +177,18 @@ results = fitDDCurves(data = dataFrame.long,
                                       Individual = ids),
                       maxValue = 1,
                       verbose  = TRUE) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("logmbauc")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze()
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("logmbauc")) %>%
+          dd_screenOption(screen = FALSE) %>%
+          dd_analyze()
 
 plot(results, which = "Log10MBAUC")
 ```
@@ -203,23 +203,23 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1,
-            verbose  = TRUE) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids,
+                                      Group      = grp),
+                      maxValue = 1,
+                      verbose  = TRUE) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_screenOption(screen = FALSE) %>%
+          dd_analyze()
 
 plot(results, logAxis = "x", position = "topright", which = "group")
 ```
@@ -236,22 +236,22 @@ The full code necessary to re-create this result is provided in demo/testGroupED
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50")) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids,
+                                      Group      = grp),
+                      maxValue = 1) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("lned50")) %>%
+          dd_analyze()
 
 plot(results, which = "ED50")
 ```
@@ -268,22 +268,22 @@ The full code necessary to re-create this result is provided in demo/testGroupMB
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("mbauc")) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids,
+                                      Group      = grp),
+                      maxValue = 1) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("mbauc")) %>%
+          dd_analyze()
 
 plot(results, which = "MBAUC")
 ```
@@ -298,22 +298,22 @@ The full code necessary to re-create this result is provided in demo/testGroupLo
 
 ``` r
 results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1) %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("logmbauc")) %>%
-  dd_analyze()
+                      settings = list(Delays     = Delay,
+                                      Values     = Value,
+                                      Individual = ids,
+                                      Group      = grp),
+                      maxValue = 1) %>%
+          dd_modelOptions(plan = c("mazur",
+                                   "bleichrodt",
+                                   "ebertprelec",
+                                   "exponential",
+                                   "greenmyerson",
+                                   "laibson",
+                                   "noise",
+                                   "rachlin",
+                                   "rodriguezlogue")) %>%
+          dd_metricOptions(metrics = c("logmbauc")) %>%
+          dd_analyze()
 
 plot(results, which = "Log10MBAUC")
 ```

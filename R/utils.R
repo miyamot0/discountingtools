@@ -88,12 +88,13 @@ johnsonBickelScreen <- function(fittingObject) {
 #' Override summary output. Rather than display the core fitting object, a data frame block of results is provided to the user for easy interpretation and further analysis
 #'
 #' @param fittingObject core fitting object
+#' @param detailed enable additional model metrics (default TRUE)
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export summary.discountingtools
 #' @export
-summary.discountingtools <- function(fittingObject) {
+summary.discountingtools <- function(fittingObject, detailed = TRUE) {
 
   localCopy <- fittingObject$results
 
@@ -177,9 +178,10 @@ summary.discountingtools <- function(fittingObject) {
     }
   }
 
-  if (fittingObject$ModelSelection == TRUE) buildColNames = append(buildColNames, c("ProbableModel",
-                                                                                    "ProbableModel.BF",
-                                                                                    "ProbableModel.Prob"))
+  if (fittingObject$ModelSelection == TRUE)
+    buildColNames = append(buildColNames, c("ProbableModel",
+                                            "ProbableModel.BF",
+                                            "ProbableModel.Prob"))
 
   for (metric in fittingObject[["metrics"]]) {
     if (metric == "lned50")   buildColNames = append(buildColNames, c("LnED50"))
@@ -323,6 +325,14 @@ summary.discountingtools <- function(fittingObject) {
           which(results$data[,as.character(results$settings['Individual'])] == name),
           as.character(results$settings['Group'])])
     }
+  }
+
+  if (detailed == FALSE) {
+    resFrame = resFrame[,!grepl(".RMSE",   colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".AIC",    colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".Status", colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".BF",     colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".Prob",   colnames(resFrame))]
   }
 
   resFrame
