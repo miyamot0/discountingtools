@@ -88,16 +88,17 @@ johnsonBickelScreen <- function(fittingObject) {
 #' Override summary output. Rather than display the core fitting object, a data frame block of results is provided to the user for easy interpretation and further analysis
 #'
 #' @param fittingObject core fitting object
+#' @param detailed enable additional model metrics (default TRUE)
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export summary.discountingtools
 #' @export
-summary.discountingtools <- function(fittingObject) {
+summary.discountingtools <- function(fittingObject, detailed = TRUE) {
 
   localCopy <- fittingObject$results
 
-  buildColNames = c("ID")
+  buildColNames = c("ID", "Strategy")
 
   if (!is.null(fittingObject$settings[["Group"]])) {
     buildColNames = c(buildColNames, "Group")
@@ -177,9 +178,10 @@ summary.discountingtools <- function(fittingObject) {
     }
   }
 
-  if (fittingObject$ModelSelection == TRUE) buildColNames = append(buildColNames, c("ProbableModel",
-                                                                                    "ProbableModel.BF",
-                                                                                    "ProbableModel.Prob"))
+  if (fittingObject$ModelSelection == TRUE)
+    buildColNames = append(buildColNames, c("ProbableModel",
+                                            "ProbableModel.BF",
+                                            "ProbableModel.Prob"))
 
   for (metric in fittingObject[["metrics"]]) {
     if (metric == "lned50")   buildColNames = append(buildColNames, c("LnED50"))
@@ -197,6 +199,8 @@ summary.discountingtools <- function(fittingObject) {
 
   for (name in names(localCopy)) {
     index = which(names(localCopy) == name)
+
+    resFrame[index, "Strategy"] = fittingObject[[ "strategy" ]]
 
     for (res in localCopy[[name]]) {
 
@@ -325,6 +329,14 @@ summary.discountingtools <- function(fittingObject) {
     }
   }
 
+  if (detailed == FALSE) {
+    resFrame = resFrame[,!grepl(".RMSE",   colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".AIC",    colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".Status", colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".BF",     colnames(resFrame))]
+    resFrame = resFrame[,!grepl(".Prob",   colnames(resFrame))]
+  }
+
   resFrame
 }
 
@@ -339,18 +351,36 @@ summary.discountingtools <- function(fittingObject) {
 #' @param xlab0 (char) x axis label
 #' @param logAxis (char) axis designation
 #' @param yMin (num) y axis lower limit
+#' @param id (num) participant number to focus
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export plot.discountingtools
 #' @export
-plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bottomleft", ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01) {
+plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bottomleft", ylab0 = "Subjective Value", xlab0 = "Delay", logAxis = "x", yMin = 0.01, id = NULL, plotit = TRUE) {
 
-  if (which == "ind")        plotIndividualRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
-  if (which == "group")      plotGroupRainbow(fittingObject,      position0, ylab0, xlab0, logAxis, yMin)
-  if (which == "ED50")       plotRainbowCross(fittingObject, metric = "LnED50")
-  if (which == "MBAUC")      plotRainbowCross(fittingObject, metric = "MBAUC")
-  if (which == "Log10MBAUC") plotRainbowCross(fittingObject, metric = "Log10MBAUC")
+  if (plotit) {
+    if (which == "ind" & is.null(id))        plotIndividualRainbow(fittingObject,     position0, ylab0, xlab0, logAxis, yMin, plotit)
+    if (which == "ind" & !is.null(id))       plotIndividualDetailed(fittingObject,    position0, ylab0, xlab0, logAxis, yMin, id, plotit)
+    if (which == "group")                    plotGroupRainbow(fittingObject,          position0, ylab0, xlab0, logAxis, yMin, plotit)
+    if (which == "model")                    plotModelCharacterization(fittingObject, position0, ylab0, xlab0, plotit)
+
+    if (which == "ED50")                     plotRainbowCross(fittingObject, metric = "LnED50",     plotit)
+    if (which == "MBAUC")                    plotRainbowCross(fittingObject, metric = "MBAUC",      plotit)
+    if (which == "Log10MBAUC")               plotRainbowCross(fittingObject, metric = "Log10MBAUC", plotit)
+  } else {
+    if (which == "ind" & is.null(id))        out = plotIndividualRainbow(fittingObject,     position0, ylab0, xlab0, logAxis, yMin, plotit)
+    if (which == "ind" & !is.null(id))       out = plotIndividualDetailed(fittingObject,    position0, ylab0, xlab0, logAxis, yMin, id, plotit)
+    if (which == "group")                    out = plotGroupRainbow(fittingObject,          position0, ylab0, xlab0, logAxis, yMin, plotit)
+    if (which == "model")                    out = plotModelCharacterization(fittingObject, position0, ylab0, xlab0, plotit)
+
+    if (which == "ED50")                     out = plotRainbowCross(fittingObject, metric = "LnED50",     plotit)
+    if (which == "MBAUC")                    out = plotRainbowCross(fittingObject, metric = "MBAUC",      plotit)
+    if (which == "Log10MBAUC")               out = plotRainbowCross(fittingObject, metric = "Log10MBAUC", plotit)
+
+    return(out)
+  }
 }
 
 #' plotIndividualRainbow
@@ -363,91 +393,355 @@ plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bot
 #' @param xlab0 (char) x axis label
 #' @param logAxis (char) axis designation
 #' @param yMin (num) y axis lower limit
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin) {
+plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
 
-  preDraw = TRUE
-  yLimits = c(0, fittingObject$maxValue)
+  if (plotit) {
+    preDraw = TRUE
+    yLimits = c(0, fittingObject$maxValue)
 
-  vecModels = fittingObject$models
-  vecColors = rainbow(length(vecModels), alpha = 1)
+    vecModels = fittingObject$models
+    vecColors = rainbow(length(vecModels), alpha = 1)
 
-  legendBuildModel = NA
-  legendBuildColor = NA
+    preBuiltLegend   = FALSE
+    legendBuildModel = NA
+    legendBuildColor = NA
 
-  for (id in names(fittingObject$results)) {
+    for (id in names(fittingObject$results)) {
 
-    ogData = subset(fittingObject$data, ids == id)
+      ogData = subset(fittingObject$data, ids == id)
 
-    # Hack: Check if even multiple models
+      # Hack: Check if even multiple models
 
-    if (is.null(fittingObject$rotation)) {
-      model = names(results$results[[id]])
-    } else {
-      model  = fittingObject$rotation[[id]]$ProbableModel
-    }
-
-    result = fittingObject$results[[id]][[model]]
-
-    xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
-             max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
-
-    if (model == "noise")          yhat = rep(result$Intercept, length(xs))
-
-    if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
-    if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
-    if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
-    if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-    if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
-    if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
-    if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-    if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
-
-    if (length(vecColors) == 1) {
-      col = vecColors
-    } else {
-      col = vecColors[match(model, vecModels)]
-    }
-
-    if (!(model %in% legendBuildModel)) {
-      if (is.na(legendBuildModel)) {
-        legendBuildModel = c(model)
-        legendBuildColor = c(col)
+      if (is.null(fittingObject$rotation)) {
+        model = names(fittingObject$results[[id]])
       } else {
-        legendBuildModel = c(legendBuildModel, model)
-        legendBuildColor = c(legendBuildColor, col)
+        model  = fittingObject$rotation[[id]]$ProbableModel
+      }
+
+      result = fittingObject$results[[id]][[model]]
+
+      xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+               max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+
+      if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+
+      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+
+      if (length(vecColors) == 1) {
+        col = vecColors
+      } else {
+        col = vecColors[match(model, vecModels)]
+      }
+
+      modelP = gsub("ebertprelec",    "ebert prelec",    model)
+      modelP = gsub("greenmyerson",   "green myerson",   modelP)
+      modelP = gsub("rodriguezlogue", "rodriguez logue", modelP)
+
+      modelC = tools::toTitleCase(modelP)
+
+      if (!(modelC %in% legendBuildModel)) {
+        if (!preBuiltLegend) {
+          legendBuildModel = c(modelC)
+          legendBuildColor = c(col)
+
+          preBuiltLegend   = TRUE
+        } else {
+          legendBuildModel = c(legendBuildModel, modelC)
+          legendBuildColor = c(legendBuildColor, col)
+        }
+      }
+
+      if (grepl("y", logAxis) == TRUE) {
+        yhat    = yhat[yhat >= 0]
+        yLimits = c(yMin, fittingObject$maxValue)
+      }
+
+      if (preDraw) {
+        plot(xs, yhat * fittingObject$maxValue,
+             type = "l",
+             ylim = yLimits,
+             log  = logAxis,
+             main = "Summary Fits",
+             col  = col,
+             ylab = ylab0,
+             xlab = xlab0)
+
+        preDraw = FALSE
+      } else {
+        lines(xs, yhat * fittingObject$maxValue,
+              col  = col)
       }
     }
 
-    if (grepl("y", logAxis) == TRUE) {
-      yhat    = yhat[yhat >= 0]
-      yLimits = c(yMin, fittingObject$maxValue)
-    }
+    legend(position0,
+           legend = legendBuildModel,
+           col    = legendBuildColor,
+           lty    = 1,
+           bty    = "n")
 
-    if (preDraw) {
-      plot(xs, yhat * fittingObject$maxValue,
-           type = "l",
-           ylim = yLimits,
-           log  = logAxis,
-           main = "Summary Fits",
-           col  = col,
-           ylab = ylab0,
-           xlab = xlab0)
+  } else {
+    outputframe = NULL
 
-      preDraw = FALSE
-    } else {
-      lines(xs, yhat * fittingObject$maxValue,
-            col  = col)
+    for (id in names(fittingObject$results)) {
+
+      ogData = subset(fittingObject$data, ids == id)
+
+      # Hack: Check if even multiple models
+
+      if (is.null(fittingObject$rotation)) {
+        model = names(fittingObject$results[[id]])
+      } else {
+        model  = fittingObject$rotation[[id]]$ProbableModel
+      }
+
+      result = fittingObject$results[[id]][[model]]
+
+      xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+               max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+
+      if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+
+      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+
+      if (length(vecColors) == 1) {
+        col = vecColors
+      } else {
+        col = vecColors[match(model, vecModels)]
+      }
+
+      modelP = gsub("ebertprelec",    "ebert prelec",    model)
+      modelP = gsub("greenmyerson",   "green myerson",   modelP)
+      modelP = gsub("rodriguezlogue", "rodriguez logue", modelP)
+
+      modelC = tools::toTitleCase(modelP)
+
+      if (!(modelC %in% legendBuildModel)) {
+        if (!preBuiltLegend) {
+          legendBuildModel = c(modelC)
+          legendBuildColor = c(col)
+
+          preBuiltLegend   = TRUE
+        } else {
+          legendBuildModel = c(legendBuildModel, modelC)
+          legendBuildColor = c(legendBuildColor, col)
+        }
+      }
+
+      if (grepl("y", logAxis) == TRUE) {
+        yhat    = yhat[yhat >= 0]
+        yLimits = c(yMin, fittingObject$maxValue)
+      }
+
+      tempFrame = data.frame(
+        ID    = rep(id, length(xs)),
+        X     = xs,
+        Y     = yhat * fittingObject$maxValue,
+        Model = rep(modelC, length(xs))
+      )
+
+      if (is.null(outputframe)) {
+        outputframe = tempFrame
+      } else {
+        outputframe = rbind(outputframe,
+                            tempFrame)
+      }
     }
   }
 
-  legend(position0,
-         legend = legendBuildModel,
-         col    = legendBuildColor,
-         lty    = 1)
+  if (!plotit) outputframe
+}
 
+#' plotIndividualDetailed
+#'
+#' This implementation of plot singles out a particular responder, providing the fits to the observed data as well as the probability that the "probable" model characterizes the data
+#'
+#' @param fittingObject core fitting object
+#' @param position0 (char) position of legend
+#' @param ylab0 (char) y axis label
+#' @param xlab0 (char) x axis label
+#' @param logAxis (char) axis designation
+#' @param yMin (num) y axis lower limit
+#' @param id (num) participant id
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
+#'
+#' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+plotIndividualDetailed <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, id, plotit) {
+  if (!(id %in% names(fittingObject$results))) stop('id not found in results')
+
+  if (plotit) {
+    if (grepl("y", logAxis) == TRUE) {
+      yLimits = c(yMin, fittingObject$maxValue)
+    } else {
+      yLimits = c(0,    fittingObject$maxValue)
+    }
+
+    vecModels = fittingObject$models
+    vecColors = rainbow(length(vecModels), alpha = 1)
+
+    preBuiltLegend   = FALSE
+    legendBuildModel = NA
+    legendBuildColor = NA
+
+    ogData = subset(fittingObject$data, ids == id)
+
+    plot(ogData[,as.character(fittingObject$settings['Delays'])],
+         ogData[,as.character(fittingObject$settings['Values'])],
+         type = "p",
+         ylim = yLimits,
+         log  = logAxis,
+         main = "Summary Fits",
+         col  = "black",
+         pch  = 19,
+         ylab = ylab0,
+         xlab = xlab0)
+
+    for (model in names(fittingObject$results[[id]])) {
+      result = fittingObject$results[[id]][[model]]
+
+      xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+               max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+
+      if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+
+      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+
+      if (length(vecColors) == 1) {
+        col = vecColors
+      } else {
+        col = vecColors[match(model, vecModels)]
+      }
+
+      if (!(model %in% legendBuildModel)) {
+        probString = ""
+
+        modelP = gsub("ebertprelec",    "ebert prelec",    model)
+        modelP = gsub("greenmyerson",   "green myerson",   modelP)
+        modelP = gsub("rodriguezlogue", "rodriguez logue", modelP)
+
+        modelC = tools::toTitleCase(modelP)
+        modelC = gsub(" ", "~", modelC)
+
+        if (grepl(model, fittingObject$rotation[[id]]$ProbableModel) == TRUE) {
+          probString = paste0("~(",
+                              as.character(round(fittingObject$rotation[[id]]$ProbableModel.Prob, 3)),
+                              ")")
+
+          modelP = parse(text = paste0("bold(",modelC, probString,")"))
+        } else {
+          modelP = parse(text = paste0(modelC, probString))
+        }
+
+        if (!preBuiltLegend) {
+          legendBuildModel = c(modelP)
+          legendBuildColor = c(col)
+
+          preBuiltLegend   = TRUE
+        } else {
+          legendBuildModel = c(legendBuildModel, modelP)
+          legendBuildColor = c(legendBuildColor, col)
+        }
+      }
+
+      if (grepl("y", logAxis) == TRUE) {
+        yhat    = yhat[yhat >= 0]
+      }
+
+      lines(xs, yhat * fittingObject$maxValue,
+            col  = col)
+    }
+
+    legend(position0,
+           legend = legendBuildModel,
+           col    = legendBuildColor,
+           lty    = 1,
+           bty    = "n")
+  } else {
+    outputframe = NULL
+    legendBuildModel = NA
+
+    ogData = subset(fittingObject$data, ids == id)
+
+    for (model in names(fittingObject$results[[id]])) {
+      result = fittingObject$results[[id]][[model]]
+
+      xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+               max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+
+      if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+
+      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+
+      if (!(model %in% legendBuildModel)) {
+        probString = ""
+
+        modelP = gsub("ebertprelec",    "ebert prelec",    model)
+        modelP = gsub("greenmyerson",   "green myerson",   modelP)
+        modelP = gsub("rodriguezlogue", "rodriguez logue", modelP)
+
+        modelC = tools::toTitleCase(modelP)
+        modelC = gsub(" ", "~", modelC)
+
+        if (grepl(model, fittingObject$rotation[[id]]$ProbableModel) == TRUE) {
+          probString = paste0("~(",
+                              as.character(round(fittingObject$rotation[[id]]$ProbableModel.Prob, 3)),
+                              ")")
+
+          modelP = parse(text = paste0("bold(",modelC, probString,")"))
+        } else {
+          modelP = parse(text = paste0(modelC, probString))
+        }
+      }
+
+      tempFrame = data.frame(
+        ID    = rep(id, length(xs)),
+        X     = xs,
+        Y     = yhat * fittingObject$maxValue,
+        Model = rep(modelC, length(xs))
+      )
+
+      if (is.null(outputframe)) {
+        outputframe = tempFrame
+      } else {
+        outputframe = rbind(outputframe,
+                            tempFrame)
+      }
+    }
+  }
+
+  if (!plotit) outputframe
 }
 
 #' plotGroupRainbow
@@ -460,78 +754,123 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
 #' @param xlab0 (char) x axis label
 #' @param logAxis (char) axis designation
 #' @param yMin (num) y axis lower limit
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin) {
+plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
 
   if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
 
-  preDraw = TRUE
-  yLimits = c(0, fittingObject$maxValue)
+  if (plotit) {
+    preDraw = TRUE
+    yLimits = c(0, fittingObject$maxValue)
 
-  vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
-  vecColors = rainbow(length(vecGroups), alpha = 1)
+    vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
+    vecColors = rainbow(length(vecGroups), alpha = 1)
 
-  for (id in names(fittingObject$results)) {
+    for (id in names(fittingObject$results)) {
 
-    ogData = subset(fittingObject$data, ids == id)
+      ogData = subset(fittingObject$data, ids == id)
 
-    model  = fittingObject$rotation[[id]]$ProbableModel
-    result = fittingObject$results[[id]][[model]]
+      model  = fittingObject$rotation[[id]]$ProbableModel
+      result = fittingObject$results[[id]][[model]]
 
-    xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
-             max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+      xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+               max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
 
-    if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+      if (model == "noise")          yhat = rep(result$Intercept, length(xs))
 
-    if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
-    if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
-    if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
-    if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-    if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
-    if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
-    if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-    if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
 
-    col = vecColors[match(ogData[1, as.character(fittingObject$settings['Group'])], vecGroups)]
+      col = vecColors[match(ogData[1, as.character(fittingObject$settings['Group'])], vecGroups)]
 
-    if (grepl("y", logAxis) == TRUE) {
-      yhat    = yhat[yhat >= 0]
-      yLimits = c(yMin, fittingObject$maxValue)
+      if (grepl("y", logAxis) == TRUE) {
+        yhat    = yhat[yhat >= 0]
+        yLimits = c(yMin, fittingObject$maxValue)
+      }
+
+      if (preDraw) {
+        plot(xs, yhat * fittingObject$maxValue,
+             type = "l",
+             ylim = yLimits,
+             log  = logAxis,
+             main = "Summary Fits",
+             col  = col,
+             ylab = ylab0,
+             xlab = xlab0)
+
+        preDraw = FALSE
+      } else {
+        lines(xs, yhat * fittingObject$maxValue,
+              col  = col)
+      }
     }
 
-    if (preDraw) {
-      plot(xs, yhat * fittingObject$maxValue,
-           type = "l",
-           ylim = yLimits,
-           log  = logAxis,
-           main = "Summary Fits",
-           col  = col,
-           ylab = ylab0,
-           xlab = xlab0)
+    legend(position0,
+           legend = vecGroups,
+           col    = vecColors,
+           lty    = 1)
+  } else {
+    outputframe = NULL
 
-      preDraw = FALSE
-    } else {
-      lines(xs, yhat * fittingObject$maxValue,
-            col  = col)
+    for (id in names(fittingObject$results)) {
+
+      ogData = subset(fittingObject$data, ids == id)
+
+      model  = fittingObject$rotation[[id]]$ProbableModel
+      result = fittingObject$results[[id]][[model]]
+
+      xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
+               max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
+
+      if (model == "noise")          yhat = rep(result$Intercept, length(xs))
+
+      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
+      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
+      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
+      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
+      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+
+      tempFrame = data.frame(
+        ID    = rep(id, length(xs)),
+        Group = rep(ogData[1, as.character(fittingObject$settings['Group'])], length(xs)),
+        X     = xs,
+        Y     = yhat * fittingObject$maxValue,
+        Model = rep(model, length(xs))
+      )
+
+      if (is.null(outputframe)) {
+        outputframe = tempFrame
+      } else {
+        outputframe = rbind(outputframe,
+                            tempFrame)
+      }
     }
   }
 
-  legend(position0,
-         legend = vecGroups,
-         col    = vecColors,
-         lty    = 1)
+  if (!plotit) outputframe
 }
 
 #' plotRainbowCross
 #'
 #' @param fittingObject core fitting object
 #' @param metric (char) the cross model metric to be displayed
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotRainbowCross <- function(fittingObject, metric) {
+plotRainbowCross <- function(fittingObject, metric, plotit) {
 
   if (!("Group" %in% names(fittingObject$settings))) {
     vecGroups = "sample"
@@ -540,9 +879,11 @@ plotRainbowCross <- function(fittingObject, metric) {
 
     resultFrame = summary(fittingObject)
 
-    print(histogram(as.formula(paste("~", metric)),
-                    data   = resultFrame,
-                    type   = "p"))
+    if (plotit) {
+      print(histogram(as.formula(paste("~", metric)),
+                      data   = resultFrame,
+                      type   = "p"))
+    }
   } else {
     vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
 
@@ -550,19 +891,89 @@ plotRainbowCross <- function(fittingObject, metric) {
 
     resultFrame = summary(fittingObject)
 
-    print(histogram(as.formula(paste("~", metric)),
-                    data   = resultFrame,
-                    type   = "p",
-                    groups = Group,
-                    panel  = function(...)
-                      panel.superpose(...,
-                                      panel.groups = panel.histogram,
-                                      col          = vecColors,
-                                      alpha        = 0.5),
-                    auto.key     = list(columns    = length(vecColors),
-                                        rectangles = FALSE,
-                                        col        = vecColors)))
+    if (plotit) {
+      print(histogram(as.formula(paste("~", metric)),
+                      data   = resultFrame,
+                      type   = "p",
+                      groups = Group,
+                      panel  = function(...)
+                        panel.superpose(...,
+                                        panel.groups = panel.histogram,
+                                        col          = vecColors,
+                                        alpha        = 0.5),
+                      auto.key     = list(columns    = length(vecColors),
+                                          rectangles = FALSE,
+                                          col        = vecColors)))
+    }
   }
+
+  if (!plotit) resultFrame
+}
+
+#' plotModelCharacterization
+#'
+#' @param fittingObject core fitting object
+#' @param position0 (char) position of legend
+#' @param ylab0 (char) y axis label
+#' @param xlab0 (char) x axis label
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
+#'
+#' @return
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, plotit) {
+
+  if (!("Group" %in% names(fittingObject$settings))) {
+    resultFrame = summary(fittingObject)
+
+    prePlot = table(resultFrame$ProbableModel)
+    prePlotDf = data.frame(
+      Counts = as.numeric(prePlot),
+      Model  = attr(prePlot, "dimnames")[[1]]
+    )
+
+    prePlotDfFinal = prePlotDf
+
+    if (plotit) {
+      print(barchart(Counts ~ Model,
+               data = prePlotDfFinal,
+               main = "Model Characterization",
+               scales = list(x = list(rot = 45))))
+    }
+  } else {
+    resultFrame = summary(fittingObject)
+
+    prePlotDfFinal = NULL
+
+    for (grp in unique(resultFrame$Group)) {
+      subsetFrame = subset(resultFrame, Group == grp)
+
+      prePlot = table(subsetFrame$ProbableModel)
+
+      prePlotDf = data.frame(
+        Counts = as.numeric(prePlot),
+        Model  = attr(prePlot, "dimnames")[[1]],
+        Group  = rep(grp, length(as.numeric(prePlot)))
+      )
+
+      if (is.null(prePlotDfFinal)) {
+        prePlotDfFinal = prePlotDf
+      } else {
+        prePlotDfFinal = rbind(prePlotDfFinal,
+                               prePlotDf)
+      }
+    }
+
+    if (plotit) {
+      print(barchart(Counts ~ Model | Group,
+               data = prePlotDfFinal,
+               groups = Group,
+               main = "Model Characterization",
+               stack = TRUE,
+               scales = list(x = list(rot = 45))))
+    }
+  }
+
+  if (!plotit) prePlotDfFinal
 }
 
 #' messageDebug

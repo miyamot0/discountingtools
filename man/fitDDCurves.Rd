@@ -4,7 +4,7 @@
 \alias{fitDDCurves}
 \title{fitDDCurves}
 \usage{
-fitDDCurves(data, settings, maxValue, verbose = FALSE)
+fitDDCurves(data, settings, maxValue, strategy = "ind", verbose = FALSE)
 }
 \arguments{
 \item{data}{(dataframe) assigned data}
@@ -12,6 +12,8 @@ fitDDCurves(data, settings, maxValue, verbose = FALSE)
 \item{settings}{(named list) mappings}
 
 \item{maxValue}{(num) A parameter}
+
+\item{strategy}{(char) fit to individual ids (default) or group}
 
 \item{verbose}{(bool) output level (default FALSE)}
 }

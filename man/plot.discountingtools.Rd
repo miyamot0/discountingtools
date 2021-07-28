@@ -11,7 +11,9 @@
   ylab0 = "Subjective Value",
   xlab0 = "Delay",
   logAxis = "x",
-  yMin = 0.01
+  yMin = 0.01,
+  id = NULL,
+  plotit = TRUE
 )
 }
 \arguments{
@@ -28,6 +30,10 @@
 \item{logAxis}{(char) axis designation}
 
 \item{yMin}{(num) y axis lower limit}
+
+\item{id}{(num) participant number to focus}
+
+\item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
 \value{
 
