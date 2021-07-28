@@ -12,7 +12,8 @@
   xlab0 = "Delay",
   logAxis = "x",
   yMin = 0.01,
-  id = NULL
+  id = NULL,
+  plotit = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@
 \item{yMin}{(num) y axis lower limit}
 
 \item{id}{(num) participant number to focus}
+
+\item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
 \value{
 
