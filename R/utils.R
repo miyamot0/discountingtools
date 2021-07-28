@@ -363,17 +363,17 @@ plot.discountingtools <- function(fittingObject, which = "ind", position0 = "bot
     if (which == "ind" & !is.null(id))       plotIndividualDetailed(fittingObject, position0, ylab0, xlab0, logAxis, yMin, id, plotit)
     if (which == "group")                    plotGroupRainbow(fittingObject,       position0, ylab0, xlab0, logAxis, yMin, plotit)
 
-    if (which == "ED50")                     plotRainbowCross(fittingObject, metric = "LnED50")
-    if (which == "MBAUC")                    plotRainbowCross(fittingObject, metric = "MBAUC")
-    if (which == "Log10MBAUC")               plotRainbowCross(fittingObject, metric = "Log10MBAUC")
+    if (which == "ED50")                     plotRainbowCross(fittingObject, metric = "LnED50",     plotit)
+    if (which == "MBAUC")                    plotRainbowCross(fittingObject, metric = "MBAUC",      plotit)
+    if (which == "Log10MBAUC")               plotRainbowCross(fittingObject, metric = "Log10MBAUC", plotit)
   } else {
     if (which == "ind" & is.null(id))        out = plotIndividualRainbow(fittingObject,  position0, ylab0, xlab0, logAxis, yMin, plotit)
     if (which == "ind" & !is.null(id))       out = plotIndividualDetailed(fittingObject, position0, ylab0, xlab0, logAxis, yMin, id, plotit)
     if (which == "group")                    out = plotGroupRainbow(fittingObject,       position0, ylab0, xlab0, logAxis, yMin, plotit)
 
-    if (which == "ED50")                     plotRainbowCross(fittingObject, metric = "LnED50")
-    if (which == "MBAUC")                    plotRainbowCross(fittingObject, metric = "MBAUC")
-    if (which == "Log10MBAUC")               plotRainbowCross(fittingObject, metric = "Log10MBAUC")
+    if (which == "ED50")                     out = plotRainbowCross(fittingObject, metric = "LnED50",     plotit)
+    if (which == "MBAUC")                    out = plotRainbowCross(fittingObject, metric = "MBAUC",      plotit)
+    if (which == "Log10MBAUC")               out = plotRainbowCross(fittingObject, metric = "Log10MBAUC", plotit)
 
     return(out)
   }
@@ -862,10 +862,11 @@ plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yM
 #'
 #' @param fittingObject core fitting object
 #' @param metric (char) the cross model metric to be displayed
+#' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotRainbowCross <- function(fittingObject, metric) {
+plotRainbowCross <- function(fittingObject, metric, plotit) {
 
   if (!("Group" %in% names(fittingObject$settings))) {
     vecGroups = "sample"
@@ -874,9 +875,11 @@ plotRainbowCross <- function(fittingObject, metric) {
 
     resultFrame = summary(fittingObject)
 
-    print(histogram(as.formula(paste("~", metric)),
-                    data   = resultFrame,
-                    type   = "p"))
+    if (plotit) {
+      print(histogram(as.formula(paste("~", metric)),
+                      data   = resultFrame,
+                      type   = "p"))
+    }
   } else {
     vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
 
@@ -884,19 +887,23 @@ plotRainbowCross <- function(fittingObject, metric) {
 
     resultFrame = summary(fittingObject)
 
-    print(histogram(as.formula(paste("~", metric)),
-                    data   = resultFrame,
-                    type   = "p",
-                    groups = Group,
-                    panel  = function(...)
-                      panel.superpose(...,
-                                      panel.groups = panel.histogram,
-                                      col          = vecColors,
-                                      alpha        = 0.5),
-                    auto.key     = list(columns    = length(vecColors),
-                                        rectangles = FALSE,
-                                        col        = vecColors)))
+    if (plotit) {
+      print(histogram(as.formula(paste("~", metric)),
+                      data   = resultFrame,
+                      type   = "p",
+                      groups = Group,
+                      panel  = function(...)
+                        panel.superpose(...,
+                                        panel.groups = panel.histogram,
+                                        col          = vecColors,
+                                        alpha        = 0.5),
+                      auto.key     = list(columns    = length(vecColors),
+                                          rectangles = FALSE,
+                                          col        = vecColors)))
+    }
   }
+
+  if (!plotit) resultFrame
 }
 
 #' messageDebug

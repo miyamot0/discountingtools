@@ -4,12 +4,14 @@
 \alias{plotRainbowCross}
 \title{plotRainbowCross}
 \usage{
-plotRainbowCross(fittingObject, metric)
+plotRainbowCross(fittingObject, metric, plotit)
 }
 \arguments{
 \item{fittingObject}{core fitting object}
 
 \item{metric}{(char) the cross model metric to be displayed}
+
+\item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
 \value{
 
