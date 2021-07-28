@@ -11,7 +11,8 @@ plotIndividualDetailed(
   xlab0,
   logAxis,
   yMin,
-  id
+  id,
+  plotit
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ plotIndividualDetailed(
 \item{yMin}{(num) y axis lower limit}
 
 \item{id}{(num) participant id}
+
+\item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
 \value{
 
