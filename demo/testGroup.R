@@ -78,3 +78,10 @@ png(filename = "MultiModelEvaluationGroup.png", width = 6, height = 6, res = 300
 plot(results, logAxis = "x", position = "topright", which = "group")
 
 dev.off()
+
+png(filename = "MultiModelEvaluationGroupModels.png", width = 6, height = 6, res = 300, units = "in")
+
+plot(results,
+     which = "model")
+
+dev.off()

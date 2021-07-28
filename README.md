@@ -106,6 +106,8 @@ summary(results)
 
 ![Figure of Multi Model Evaluation](figures/MultiModelEvaluation.png "Multi Model Evaluation")
 
+![Figure of Models Represented in Fitting](figures/MultiModelEvaluationModels.png "Model Representation Figure")
+
 #### Effective Delay 50 (ED50)
 
 The multi-model approach is frustrated by the presence of distinct parameters. As an alternative, researchers have suggested a metric based on the rate of decay (i.e., time until decay to 50%). The multi-model evaluation provided above is re-evaluated in terms of ED50 below.
