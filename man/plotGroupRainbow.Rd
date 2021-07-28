@@ -4,7 +4,7 @@
 \alias{plotGroupRainbow}
 \title{plotGroupRainbow}
 \usage{
-plotGroupRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
+plotGroupRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit)
 }
 \arguments{
 \item{fittingObject}{core fitting object}
@@ -18,6 +18,8 @@ plotGroupRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin)
 \item{logAxis}{(char) axis designation}
 
 \item{yMin}{(num) y axis lower limit}
+
+\item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
 \value{
 
