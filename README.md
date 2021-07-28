@@ -4,7 +4,9 @@ The *discountingtools* R package was designed to support researchers in conducti
 
 ## Version
 
-Current Version: 0.0.3.1 (beta)
+Current Version: 0.0.3.2 (beta)
+
+0.0.3.2 - Add in group-pooled analytical strategy
 
 0.0.3.1 - Expanded plotting functionality, helper methods
 
@@ -348,7 +350,7 @@ Questions? Suggestions for features? [sgilroy1\@lsu.edu](mailto:sgilroy1@lsu.edu
 
 ## To Do
 
--   Modeling: Estimates for group [pooled]
+-   ~~Modeling: Estimates for group [pooled]~~
 -   ~~Visuals: Barplot for underlying models [Group, Individual]~~
 -   ~~Visuals: plotit capability for rolling own graphics~~
 -   ~~Visuals: Illustrate individual fits [detailed]~~

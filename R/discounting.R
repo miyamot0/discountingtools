@@ -26,17 +26,18 @@ library(dplyr)
 #' @param settings (named list) mappings
 #' @param maxValue (num) A parameter
 #' @param verbose (bool) output level (default FALSE)
+#' @param strategy (char) fit to individual ids (default) or group
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-fitDDCurves <- function(data, settings, maxValue, verbose = FALSE) {
+fitDDCurves <- function(data, settings, maxValue, strategy = "ind", verbose = FALSE) {
 
   fittingObject = list()                             # Primary object
   fittingObject[[ "settings" ]] = enexpr(settings)   # Aesthetics
   fittingObject[[ "data"     ]] = data               # Stored data
   fittingObject[[ "models"   ]] = character(0)       # Model selections
-  fittingObject[[ "strategy" ]] = "ind"              # Analytical strategy
+  fittingObject[[ "strategy" ]] = strategy           # Analytical strategy
   fittingObject[[ "metrics"  ]] = character(0)       # Cross-model Metrics
   fittingObject[[ "results"  ]] = list()             # Result frame
   fittingObject[[ "maxValue" ]] = maxValue           # Max level (A)
@@ -137,6 +138,16 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
 
     if ("JB2" %in% fittingObject[[ "filterPassing" ]])
       fittingObject$data = fittingObject$data[fittingObject$data$JB2 == TRUE, ]
+  }
+
+  if (fittingObject[[ "strategy" ]] == "group") {
+    if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
+
+    messageDebug(fittingObject, "Casting Individual Ids to Group Ids")
+
+    vecGroups = unique(fittingObject$data[,as.character(fittingObject$settings['Group'])])
+    newGrpIds = match(fittingObject$data[,as.character(fittingObject$settings['Group'])], vecGroups)
+    fittingObject$data[,as.character(fittingObject$settings['Individual'])] <- newGrpIds
   }
 
   messageDebug(fittingObject, "Beginning Model Fitting(s)")

@@ -98,7 +98,7 @@ summary.discountingtools <- function(fittingObject, detailed = TRUE) {
 
   localCopy <- fittingObject$results
 
-  buildColNames = c("ID")
+  buildColNames = c("ID", "Strategy")
 
   if (!is.null(fittingObject$settings[["Group"]])) {
     buildColNames = c(buildColNames, "Group")
@@ -199,6 +199,8 @@ summary.discountingtools <- function(fittingObject, detailed = TRUE) {
 
   for (name in names(localCopy)) {
     index = which(names(localCopy) == name)
+
+    resFrame[index, "Strategy"] = fittingObject[[ "strategy" ]]
 
     for (res in localCopy[[name]]) {
 
