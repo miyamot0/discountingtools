@@ -934,11 +934,7 @@ plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, pl
     if (plotit) {
       print(barchart(Counts ~ Model,
                data = prePlotDfFinal,
-               #groups = year,
                main = "Model Characterization",
-               #xlab = "Yield Value",
-               #stack = TRUE,
-               #auto.key = list(space = "right"),
                scales = list(x = list(rot = 45))))
     }
   } else {
@@ -970,9 +966,7 @@ plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, pl
                data = prePlotDfFinal,
                groups = Group,
                main = "Model Characterization",
-               #xlab = "Yield Value",
                stack = TRUE,
-               #auto.key = list(space = "right"),
                scales = list(x = list(rot = 45))))
     }
   }
