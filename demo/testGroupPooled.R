@@ -57,7 +57,8 @@ results = fitDDCurves(data = dataFrame.long,
                             Individual = ids,
                             Group      = grp),
             maxValue = 1,
-            verbose  = TRUE) %>%
+            verbose  = TRUE,
+            strategy = "group") %>%
   dd_modelOptions(plan = c("mazur",
                            "bleichrodt",
                            "ebertprelec",
@@ -73,15 +74,8 @@ results = fitDDCurves(data = dataFrame.long,
   dd_screenOption(screen = FALSE) %>%
   dd_analyze()
 
-png(filename = "MultiModelEvaluationGroup.png", width = 6, height = 6, res = 300, units = "in")
+png(filename = "MultiModelEvaluationGroupPooled.png", width = 6, height = 6, res = 300, units = "in")
 
 plot(results, logAxis = "x", position = "topright", which = "group")
-
-dev.off()
-
-png(filename = "MultiModelEvaluationGroupModels.png", width = 6, height = 6, res = 300, units = "in")
-
-plot(results,
-     which = "model")
 
 dev.off()

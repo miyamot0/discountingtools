@@ -58,3 +58,10 @@ plot(results,
      position = "topright")
 
 dev.off()
+
+png(filename = "MultiModelEvaluationModels.png", width = 6, height = 6, res = 300, units = "in")
+
+plot(results,
+     which = "model")
+
+dev.off()
