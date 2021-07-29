@@ -234,6 +234,8 @@ A short snippet is illustrated below and a complete example of this approach is 
 
 ![Figure of Multi Model (Group) Method](figures/MultiModelEvaluationGroup.png "Multi Model (Group) Method")
 
+![Figure of Model Characterization Across Groups](figures/MultiModelEvaluationGroupModels.png "Model Characterization Across Groups")
+
 #### ED50 (Grouped)
 
 As an extension of multi-model inference, the *discountingtools* package has methods that can visualize how these metrics vary across one or more groups. The multi-model evaluation provided above is re-evaluated in terms of ED50 across groups below.
@@ -325,6 +327,40 @@ plot(results, which = "Log10MBAUC")
 ```
 
 ![Figure of Multi-Model Log10 MBAUC (Group)](figures/MultiModelEvaluationGroupLog10MBAUC.png "Multi-Model Log10 MBAUC (Group)")
+
+### Multi-Model Evaluation (Pooled Fits)
+
+Evaluations of discounting have occasionally pooled data between groups (i.e., data treated as independent). This is unwise for several reasons; however, there is utility for the estimates from this type of strategy. For example, this approach is often useful for deriving reasonable starting values for more robust methods (e.g., multi-level modeling). This is easily enabled by setting the *strategy* argument to "group" in the *fitDDCurves* call.
+
+A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroupPooled.R.
+
+```{r}
+results = fitDDCurves(data = dataFrame.long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            maxValue = 1,
+            verbose  = TRUE,
+            strategy = "group") %>%
+  dd_modelOptions(plan = c("mazur",
+                           "bleichrodt",
+                           "ebertprelec",
+                           "exponential",
+                           "greenmyerson",
+                           "laibson",
+                           "noise",
+                           "rachlin",
+                           "rodriguezlogue")) %>%
+  dd_metricOptions(metrics = c("lned50",
+                               "mbauc",
+                               "logmbauc")) %>%
+  dd_screenOption(screen = FALSE) %>%
+  dd_analyze()
+
+```
+
+![Figure of Results of Pooled Analysis](figures/MultiModelEvaluationGroupPooled.png "Results of Pooled Analysis")
 
 ## Referenced Works (academic works)
 
