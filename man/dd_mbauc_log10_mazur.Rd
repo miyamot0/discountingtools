@@ -4,12 +4,16 @@
 \alias{dd_mbauc_log10_mazur}
 \title{dd_mbauc_log10_mazur}
 \usage{
-dd_mbauc_log10_mazur(fittingObject, id)
+dd_mbauc_log10_mazur(A, Lnk, startDelay, endDelay)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{A}{maximum value of good}
 
-\item{id}{id tag}
+\item{Lnk}{log transformed rate parameter}
+
+\item{startDelay}{start delay}
+
+\item{endDelay}{end delay}
 }
 \value{
 

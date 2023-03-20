@@ -68,11 +68,11 @@ results = fit_dd_curves(data = data_frame_long,
             maxValue = 1,
             verbose  = TRUE) |>
   dd_model_options(plan = c("mazur", "exponential"))  |>
-  #dd_metric_options(metrics = c("mbauc"))  |>
+  dd_metric_options(metrics = c("mbauc"))  |>
   dd_screen_options(screen = FALSE)  |>
   dd_analyze(modelSelection = FALSE)
 
-summary(results)
+#summary(results)
 
 # data_frame_results <- summary(results)
 #

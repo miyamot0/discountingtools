@@ -4,12 +4,10 @@
 \alias{dd_ed50_mazur}
 \title{dd_ed50_mazur}
 \usage{
-dd_ed50_mazur(fittingObject, id)
+dd_ed50_mazur(Lnk)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
-
-\item{id}{id tag}
+\item{Lnk}{log transformed rate parameter}
 }
 \value{
 

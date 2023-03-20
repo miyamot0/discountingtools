@@ -15,7 +15,10 @@ dd_fit_mazur <- function(fittingObject, id) {
     Lnk        = NA,
     RMSE       = NA,
     BIC        = NA,
-    AIC        = NA
+    AIC        = NA,
+    ED50       = NA,
+    MBAUC      = NA,
+    Log10MBAUC = NA
   )
 
   currentData = fittingObject$data[
@@ -33,8 +36,8 @@ dd_fit_mazur <- function(fittingObject, id) {
   try(modelFitHyperbolic <- nls.lm(par              = startParams,
                                    fn               = residualFunction,
                                    jac              = jacobianMatrix,
-                                   valueFunction    = hyperbolicDiscountFunc,
-                                   jacobianFunction = hyperbolicDiscountGradient,
+                                   valueFunction    = dd_discount_func_mazur,
+                                   jacobianFunction = dd_discount_grad_mazur,
                                    x                = currentData$ddX,
                                    value            = currentData$ddY,
                                    control          = nls.lm.control(maxiter = 1000)),
@@ -42,11 +45,24 @@ dd_fit_mazur <- function(fittingObject, id) {
 
   if (!is.null(modelFitHyperbolic)) {
 
-    modelResults[[ "Lnk"    ]] = modelFitHyperbolic$par[["lnk"]]
-    modelResults[[ "RMSE"   ]] = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec))
-    modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitHyperbolic))
-    modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitHyperbolic))
-    modelResults[[ "Status" ]] = paste("Code:", modelFitHyperbolic$info,
+    modelResults[[ "Lnk"         ]] = modelFitHyperbolic$par[["lnk"]]
+    modelResults[[ "RMSE"        ]] = sqrt(modelFitHyperbolic$deviance/length(modelFitHyperbolic$fvec))
+    modelResults[[ "BIC"         ]] = stats::BIC(logLik.nls.lm(modelFitHyperbolic))
+    modelResults[[ "AIC"         ]] = stats::AIC(logLik.nls.lm(modelFitHyperbolic))
+    modelResults[[ "ED50"        ]] = dd_ed50_mazur(modelFitHyperbolic$par[["lnk"]])
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_mazur(
+      A = 1,
+      Lnk = modelFitHyperbolic$par[["lnk"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_mazur(
+      A = 1,
+      Lnk = modelFitHyperbolic$par[["lnk"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Status"      ]] = paste("Code:", modelFitHyperbolic$info,
                                           "- Message:", modelFitHyperbolic$message,
                                           sep = " ")
   }
@@ -89,98 +105,52 @@ dd_start_mazur <- function(currentData) {
 
 #' dd_ed50_mazur
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param Lnk log transformed rate parameter
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_mazur <- function(fittingObject, id) {
-
-  lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
-
-  fittingObject$ed50[[as.character(id)]] = log(1/(exp(lnk)))
-
-  fittingObject
+#' @export
+dd_ed50_mazur <- function(Lnk) {
+  return(log(1/(exp(Lnk))))
 }
 
 #' dd_mbauc_mazur
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
-#'
-#' @return
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_mazur <- function(fittingObject, id) {
-
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandHyp,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             lnK = lnk)$value/maximumArea
-
-  fittingObject
-}
-
-#' dd_mbauc_mazur_exact
-#'
 #' @param A maximum value
-#' @param hypLnk logged parameter value
+#' @param Lnk logged parameter value
 #' @param startDelay time point
 #' @param endDelay time point
 #'
 #' @return
 #' @export
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_mazur_exact <- function(A, hypLnk, startDelay, endDelay) {
-  hypFinal = (A * log((exp(hypLnk) * endDelay) + 1)) / exp(hypLnk)
-  hypInitial = (A * log((exp(hypLnk) * startDelay) + 1)) / exp(hypLnk)
+#' @export
+dd_mbauc_mazur <- function(A, Lnk, startDelay, endDelay) {
+  hypFinal = (A * log((exp(Lnk) * endDelay) + 1)) / exp(Lnk)
+  hypInitial = (A * log((exp(Lnk) * startDelay) + 1)) / exp(Lnk)
 
   return((hypFinal - hypInitial) / ((endDelay - startDelay) * A))
 }
 
-
-
-
-
-
 #' dd_mbauc_log10_mazur
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value of good
+#' @param Lnk log transformed rate parameter
+#' @param startDelay start delay
+#' @param endDelay end delay
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_mazur <- function(fittingObject, id) {
+dd_mbauc_log10_mazur <- function(A, Lnk, startDelay, endDelay) {
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
+  maximumArea = (endDelay - startDelay) * A
 
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
+  area = stats::integrate(dd_integrand_mazur_log10,
+                          lower = startDelay,
+                          upper = endDelay,
+                          lnK = Lnk)$value/maximumArea
 
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["mazur"]][["Lnk"]]
-
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandHypLog,
-                                                                  lower = minX,
-                                                                  upper = maxX,
-                                                                  lnK = lnk)$value/maximumArea
-
-  fittingObject
+  return(area)
 }
 
 #' Hyperbolic Value Function
@@ -191,7 +161,7 @@ dd_mbauc_log10_mazur <- function(fittingObject, id) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-hyperbolicDiscountFunc <- function(x, lnk)
+dd_discount_func_mazur <- function(x, lnk)
 {
   func <- (1 + exp(lnk)*x)^(-1)
   eval(func)
@@ -204,22 +174,11 @@ hyperbolicDiscountFunc <- function(x, lnk)
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-hyperbolicDiscountGradient <- function(x, lnk)
+dd_discount_grad_mazur <- function(x, lnk)
 {
   func <- expression((1 + exp(lnk)*x)^(-1))
   c(eval(stats::D(func, "lnk")))
 }
-
-#' Hyperbolic Integrand helper
-#'
-#' This integrand helper is a projection of the integrand with delays represented as normal
-#'
-#' @param x observation at point n (X)
-#' @param lnK fitted parameter
-#'
-#' @return Numerical Integration Projection
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandHyp <- function(x, lnK) { (1 + exp(lnK)*x)^(-1) }
 
 #' Hyperbolic Integrand helper (log10)
 #'
@@ -230,4 +189,4 @@ integrandHyp <- function(x, lnK) { (1 + exp(lnK)*x)^(-1) }
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandHypLog <- function(x, lnK) { (1 + exp(lnK)*(10^x))^(-1) }
+dd_integrand_mazur_log10 <- function(x, lnK) { (1 + exp(lnK)*(10^x))^(-1) }

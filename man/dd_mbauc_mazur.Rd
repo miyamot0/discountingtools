@@ -4,12 +4,16 @@
 \alias{dd_mbauc_mazur}
 \title{dd_mbauc_mazur}
 \usage{
-dd_mbauc_mazur(fittingObject, id)
+dd_mbauc_mazur(A, Lnk, startDelay, endDelay)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{A}{maximum value}
 
-\item{id}{id tag}
+\item{Lnk}{logged parameter value}
+
+\item{startDelay}{time point}
+
+\item{endDelay}{time point}
 }
 \value{
 
