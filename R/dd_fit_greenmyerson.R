@@ -139,8 +139,8 @@ dd_ed50_greenmyerson <- function(Lnk, s) {
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_mbauc_greenmyerson <- function(A, Lnk, s, startDelay, endDelay) {
-  mgFinal = (A * ((exp(mgLnk) * endDelay + 1)^(1 - s))) / (exp(Lnk) * (1 - s))
-  mgInitial = (A * ((exp(mgLnk) * startDelay + 1)^(1 - s))) / (exp(Lnk) * (1 - s))
+  mgFinal = (A * ((exp(Lnk) * endDelay + 1)^(1 - s))) / (exp(Lnk) * (1 - s))
+  mgInitial = (A * ((exp(Lnk) * startDelay + 1)^(1 - s))) / (exp(Lnk) * (1 - s))
 
   return((mgFinal - mgInitial) / ((endDelay - startDelay) * A))
 }
@@ -157,13 +157,10 @@ dd_mbauc_log10_greenmyerson <- function(A, Lnk, s, startDelay, endDelay) {
   minX        = log10(startDelay)
   maximumArea = maxX - minX
 
-  lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
-
   area = stats::integrate(dd_integrand_myersongreen_log10,
                           lower = minX,
                           upper = maxX,
-                          lnK   = lnk,
+                          lnK   = Lnk,
                           s     = s)$value/maximumArea
 
   return(area)

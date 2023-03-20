@@ -8,14 +8,20 @@
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-dd_analyze <- function(fittingObject, modelSelection = TRUE) {
+dd_analyze <- function(fittingObject, modelSelection = FALSE) {
 
+  if (length(fittingObject[["models"]]) < 1) {
+    stop("No model options were selected")
+  }
+
+  ## TODO: checks for screening call
   if ("screen" %in% names(fittingObject) | "filterPassing" %in% names(fittingObject)) {
     message_debug(fittingObject, "Beginning JB Screening")
 
     fittingObject = johnsonBickelScreen(fittingObject)
   }
 
+  ## TODO: Check for filter passing
   if ("filterPassing" %in% names(fittingObject)) {
     message_debug(fittingObject, "Filtering based on JB Screen")
 
@@ -26,6 +32,7 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
       fittingObject$data = fittingObject$data[fittingObject$data$JB2 == TRUE, ]
   }
 
+  ## TODO: Check for analytical strategy
   if (fittingObject[[ "strategy" ]] == "group") {
     if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
 
@@ -64,9 +71,7 @@ dd_analyze <- function(fittingObject, modelSelection = TRUE) {
       if (model == "rodriguezlogue") fittingObject = dd_fit_rodriguezlogue( fittingObject, id)
     }
 
-    print(fittingObject[["models"]])
-
-    if (modelSelection) {
+    if (modelSelection == TRUE) {
       fittingObject = dd_probable_model(fittingObject, id)
 
       for (metric in fittingObject[["metrics"]]) {

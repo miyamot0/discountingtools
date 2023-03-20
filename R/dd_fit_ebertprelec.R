@@ -52,7 +52,8 @@ dd_fit_ebertprelec <- function(fittingObject, id) {
     modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitEbertPrelec))
     modelResults[[ "ED50"        ]] = dd_ed50_ebertprelec(
       Lnk = modelFitEbertPrelec$par[["lnk"]],
-      s   = modelFitEbertPrelec$par[["s"]]
+      s   = modelFitEbertPrelec$par[["s"]],
+      currentData
     )
     modelResults[[ "MBAUC"       ]] = dd_mbauc_ebertprelec(
       A = 1,
@@ -121,6 +122,7 @@ dd_start_ebertprelec <- function(currentData) {
 #'
 #' @param Lnk parameter
 #' @param s parameter
+#' @param currentData currentData
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_ebertprelec <- function(Lnk, s, currentData) {

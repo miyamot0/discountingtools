@@ -4,12 +4,12 @@
 \alias{summary.discountingtools}
 \title{summary.discountingtools}
 \usage{
-\method{summary}{discountingtools}(fittingObject, detailed = TRUE)
+\method{summary}{discountingtools}(fittingObject, detailed = FALSE)
 }
 \arguments{
 \item{fittingObject}{core fitting object}
 
-\item{detailed}{enable additional model metrics (default TRUE)}
+\item{detailed}{enable additional model metrics (default FALSE)}
 }
 \description{
 Override summary output. Rather than display the core fitting object, a data frame block of results is provided to the user for easy interpretation and further analysis

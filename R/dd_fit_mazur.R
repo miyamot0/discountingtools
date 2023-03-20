@@ -137,11 +137,11 @@ dd_mbauc_mazur <- function(A, Lnk, startDelay, endDelay) {
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_mazur <- function(A, Lnk, startDelay, endDelay) {
 
-  maximumArea = (endDelay - startDelay) * A
+  maximumArea = (log10(endDelay) - log10(startDelay)) * A
 
   area = stats::integrate(dd_integrand_mazur_log10,
-                          lower = startDelay,
-                          upper = endDelay,
+                          lower = log10(startDelay),
+                          upper = log10(endDelay),
                           lnK = Lnk)$value/maximumArea
 
   return(area)

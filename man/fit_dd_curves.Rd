@@ -4,7 +4,15 @@
 \alias{fit_dd_curves}
 \title{fit_dd_curves}
 \usage{
-fit_dd_curves(data, settings, maxValue, strategy = "ind", verbose = FALSE)
+fit_dd_curves(
+  data,
+  settings,
+  maxValue,
+  strategy = "ind",
+  verbose = FALSE,
+  plan = NULL,
+  metrics = c("lned50", "mbauc", "logmbauc")
+)
 }
 \arguments{
 \item{data}{(dataframe) assigned data}
@@ -16,6 +24,10 @@ fit_dd_curves(data, settings, maxValue, strategy = "ind", verbose = FALSE)
 \item{strategy}{(char) fit to individual ids (default) or group}
 
 \item{verbose}{(bool) output level (default FALSE)}
+
+\item{plan}{(char vector) This vector contains a list of possible model candidates.}
+
+\item{metrics}{(char vector) This vector contains a list of possible cross-model metrics.}
 }
 \description{
 This is the entry point for users. It constructs a core fitting object that is passed through the program, with branching options based on those specified by the user.

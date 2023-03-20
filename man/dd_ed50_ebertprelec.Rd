@@ -10,6 +10,8 @@ dd_ed50_ebertprelec(Lnk, s, currentData)
 \item{Lnk}{parameter}
 
 \item{s}{parameter}
+
+\item{currentData}{currentData}
 }
 \description{
 dd_ed50_ebertprelec

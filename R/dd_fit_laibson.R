@@ -159,9 +159,10 @@ dd_mbauc_laibson <- function(A, b, d, startDelay, endDelay) {
 dd_mbauc_log10_laibson <- function(A, b, d, startDelay, endDelay) {
   maxX        = log10(endDelay)
   minX        = log10(startDelay)
+
   maximumArea = (maxX - minX) * A
 
-  area = stats::integrate(integrandBetaDeltaLog,
+  area = stats::integrate(dd_integrand_laibson_log10,
                           lower = minX,
                           upper = maxX,
                           beta  = b,

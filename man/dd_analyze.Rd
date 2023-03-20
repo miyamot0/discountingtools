@@ -4,7 +4,7 @@
 \alias{dd_analyze}
 \title{dd_analyze}
 \usage{
-dd_analyze(fittingObject, modelSelection = TRUE)
+dd_analyze(fittingObject, modelSelection = FALSE)
 }
 \arguments{
 \item{fittingObject}{core dd fitting object}

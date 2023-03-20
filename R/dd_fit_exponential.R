@@ -32,15 +32,15 @@ dd_fit_exponential <- function(fittingObject, id) {
 
   modelFitExponential <- NULL
 
-  try(modelFitExponential <- nls.lm(par              = startParams,
-                                   fn               = residualFunction,
-                                   jac              = jacobianMatrix,
-                                   valueFunction    = dd_discount_func_exponential,
-                                   jacobianFunction = dd_discount_grad_exponential,
-                                   x                = currentData$ddX,
-                                   value            = currentData$ddY,
-                                   control          = nls.lm.control(maxiter = 1000)),
-      silent = TRUE)
+  try(modelFitExponential <- nls.lm(par               = startParams,
+                                    fn                = residualFunction,
+                                    jac               = jacobianMatrix,
+                                    valueFunction     = dd_discount_func_exponential,
+                                    jacobianFunction  = dd_discount_grad_exponential,
+                                    x                 = currentData$ddX,
+                                    value             = currentData$ddY,
+                                    control           = nls.lm.control(maxiter = 1000)),
+      silent = FALSE)
 
   if (!is.null(modelFitExponential)) {
 
@@ -61,10 +61,11 @@ dd_fit_exponential <- function(fittingObject, id) {
       startDelay = min(currentData$ddX),
       endDelay = max(currentData$ddX)
     )
-    modelResults[[ "Status"      ]] = paste("Code:", modelFitExponential$info,
-                                               "- Message:", modelFitExponential$message,
-                                               sep = " ")
   }
+
+  modelResults[[ "Status"      ]] = paste("Code:", modelFitExponential$info,
+                                          "- Message:", modelFitExponential$message,
+                                          sep = " ")
 
   fittingObject$results[[as.character(id)]][["exponential"]] = modelResults
 
@@ -139,11 +140,11 @@ dd_mbauc_exponential <- function(A, Lnk, startDelay, endDelay) {
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_exponential <- function(A, Lnk, startDelay, endDelay) {
 
-  maximumArea = (endDelay - startDelay) * A
+  maximumArea = (log10(endDelay) - log10(startDelay)) * A
 
   area = stats::integrate(dd_integrand_exponential_log10,
-                          lower = startDelay,
-                          upper = endDelay,
+                          lower = log10(startDelay),
+                          upper = log10(endDelay),
                           lnK = Lnk)$value/maximumArea
 
   return(area)
@@ -157,9 +158,9 @@ dd_mbauc_log10_exponential <- function(A, Lnk, startDelay, endDelay) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-dd_discount_func_exponential <- function(x, Lnk)
+dd_discount_func_exponential <- function(x, lnk)
 {
-  func <- exp(-exp(Lnk)*x)
+  func <- exp(-exp(lnk)*x)
   eval(func)
 }
 

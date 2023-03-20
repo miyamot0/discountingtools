@@ -61,7 +61,8 @@ dd_fit_bleichrodt <- function(fittingObject, id) {
     modelResults[[ "ED50"        ]] = dd_ed50_bleichrodt(
       Lnk = modelFitBleichrodt$par[["lnk"]],
       s   = modelFitBleichrodt$par[["s"]],
-      b   = modelFitBleichrodt$par[["beta"]]
+      b   = modelFitBleichrodt$par[["beta"]],
+      currentData
     )
     modelResults[[ "MBAUC"       ]] = dd_mbauc_bleichrodt(
       A = 1,
@@ -134,6 +135,7 @@ dd_start_bleichrodt <- function(currentData) {
 #' @param Lnk parameter
 #' @param s parameter
 #' @param b parameter
+#' @param currentData currentData
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_bleichrodt <- function(Lnk, s, b, currentData) {

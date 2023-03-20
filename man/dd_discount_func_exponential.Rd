@@ -4,7 +4,7 @@
 \alias{dd_discount_func_exponential}
 \title{Exponential discounting function}
 \usage{
-dd_discount_func_exponential(x, Lnk)
+dd_discount_func_exponential(x, lnk)
 }
 \arguments{
 \item{x}{observation at point n (X)}
