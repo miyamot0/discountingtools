@@ -37,7 +37,8 @@ results = fit_dd_curves(
                   Values     = Value,
                   Individual = ids),
   maxValue = 1,
-  plan = c('mazur', 'exponential', 'noise', 'laibson', 'greenmyerson', 'rachlin', 'ebertprelec', 'bleichrodt', 'rodriguezlogue'),
+  #plan = c('mazur', 'exponential', 'noise', 'laibson', 'greenmyerson', 'rachlin', 'ebertprelec', 'bleichrodt', 'rodriguezlogue'),
+  plan = c('laibson'),
   verbose  = TRUE) |>
 dd_analyze(modelSelection = FALSE)
 
