@@ -326,164 +326,432 @@ plot(results, which = "Log10MBAUC")
 
 ### Multi-Model Evaluation (Grouped)
 
-More realistic investigations likely seek to evaluate differences that might exist between groups or populations. The *discountingtools* package can be extended to include a Group parameter in the initial settings (assuming such data is present in the data frame).
+More commonplaces investigations seek to evaluate differences that might exist between groups or populations. The *discountingtools* package can be extended to include a Group parameter in the initial settings (assuming such data is present in the data frame).
 
-A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
+A short snippet is illustrated below and a complete example of this approach is illustrated in [demo/test_single_fits_grouped.R](demo/test_single_fits_grouped.R).
 
 ``` r
-results = fitDDCurves(data = dataFrame.long,
-                      settings = list(Delays     = Delay,
-                                      Values     = Value,
-                                      Individual = ids,
-                                      Group      = grp),
-                      maxValue = 1,
-                      verbose  = TRUE) %>%
-          dd_modelOptions(plan = c("mazur",
-                                   "bleichrodt",
-                                   "ebertprelec",
-                                   "exponential",
-                                   "greenmyerson",
-                                   "laibson",
-                                   "noise",
-                                   "rachlin",
-                                   "rodriguezlogue")) %>%
-          dd_screenOption(screen = FALSE) %>%
-          dd_analyze()
+# Example: Simulated group fits and parameter recovery
+
+# Note: Will take a minute to run
+
+rm(list = ls())
+
+library(tidyverse)
+library(discountingtools)
+
+set.seed(65535)
+
+n_per_group <- 50
+
+data_frame = data.frame(
+  ids = seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group A"
+)
+
+data_frame$ks  = rnorm(length(data_frame$ids), 0.35, 0.125)
+data_frame$ks  = log(data_frame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+data_frame$auc = dd_mbauc_mazur(1, data_frame$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame)) {
+  ys = dd_discount_func_mazur(delays, data_frame[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  data_frame[row, as.character(delays)] = ys
+}
+
+data_frame2 = data.frame(
+  ids = 50 + seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group B"
+)
+
+data_frame2$ks  = rnorm(length(data_frame2$ids), 0.075, 0.035)
+data_frame2$ks  = log(data_frame2$ks)
+
+data_frame2$auc = dd_mbauc_mazur(1, data_frame2$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame2)) {
+  ys = dd_discount_func_mazur(delays, data_frame2[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.025)
+
+  data_frame2[row, as.character(delays)] = ys
+}
+
+data_frame = rbind(data_frame,
+                  data_frame2)
+
+data_frame_long = data_frame %>%
+  gather(Delay, Value, -ids, -ks, -grp, -auc) %>%
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
+
+results = fit_dd_curves(data = data_frame_long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            plan = c("mazur", "exponential"),
+            maxValue = 1,
+            verbose  = TRUE) |>
+  dd_analyze(modelSelection = TRUE)
+
+data_frame_results = summary(results)
 
 plot(results, logAxis = "x", position = "topright", which = "group")
 ```
 
-A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroup.R.
-
-![Figure of Multi Model (Group) Method](figures/MultiModelEvaluationGroup.png "Multi Model (Group) Method")
-
-![Figure of Model Characterization Across Groups](figures/MultiModelEvaluationGroupModels.png "Model Characterization Across Groups")
+![Figure of Multi Model (Group) Method](man/figures/single_fits_grouped.png "Multi Model (Group) Method")
 
 #### ED50 (Grouped)
 
 As an extension of multi-model inference, the *discountingtools* package has methods that can visualize how these metrics vary across one or more groups. The multi-model evaluation provided above is re-evaluated in terms of ED50 across groups below.
 
-The full code necessary to re-create this result is provided in demo/testGroupED50.R.
+The full code necessary to re-create this result is provided in [demo/test_single_fits_grouped_ed50.R](demo/test_single_fits_grouped_ed50.R).
 
 ``` r
-results = fitDDCurves(data = dataFrame.long,
-                      settings = list(Delays     = Delay,
-                                      Values     = Value,
-                                      Individual = ids,
-                                      Group      = grp),
-                      maxValue = 1) %>%
-          dd_modelOptions(plan = c("mazur",
-                                   "bleichrodt",
-                                   "ebertprelec",
-                                   "exponential",
-                                   "greenmyerson",
-                                   "laibson",
-                                   "noise",
-                                   "rachlin",
-                                   "rodriguezlogue")) %>%
-          dd_metricOptions(metrics = c("lned50")) %>%
-          dd_analyze()
+# Example: Simulated group fits and parameter recovery
 
-plot(results, which = "ED50")
+# Note: Will take a minute to run
+
+rm(list = ls())
+
+library(tidyverse)
+library(discountingtools)
+
+set.seed(65535)
+
+n_per_group <- 50
+
+data_frame = data.frame(
+  ids = seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group A"
+)
+
+data_frame$ks  = rnorm(length(data_frame$ids), 0.35, 0.125)
+data_frame$ks  = log(data_frame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+data_frame$auc = dd_mbauc_mazur(1, data_frame$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame)) {
+  ys = dd_discount_func_mazur(delays, data_frame[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  data_frame[row, as.character(delays)] = ys
+}
+
+data_frame2 = data.frame(
+  ids = 50 + seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group B"
+)
+
+data_frame2$ks  = rnorm(length(data_frame2$ids), 0.075, 0.035)
+data_frame2$ks  = log(data_frame2$ks)
+
+data_frame2$auc = dd_mbauc_mazur(1, data_frame2$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame2)) {
+  ys = dd_discount_func_mazur(delays, data_frame2[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.025)
+
+  data_frame2[row, as.character(delays)] = ys
+}
+
+data_frame = rbind(data_frame,
+                  data_frame2)
+
+data_frame_long = data_frame %>%
+  gather(Delay, Value, -ids, -ks, -grp, -auc) %>%
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
+
+results = fit_dd_curves(data = data_frame_long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            plan = c("mazur", "exponential"),
+            maxValue = 1,
+            verbose  = TRUE) |>
+  dd_analyze(modelSelection = TRUE)
+
+plot(results, logAxis = "x", position = "topright", which = "ED50")
 ```
 
-The full code necessary to re-create this result is provided in demo/testGroupED50.R.
-
-![Figure of Multi Model ED50 (Group)](figures/MultiModelEvaluationGroupED50.png "Multi Model ED50 (Group)")
+![Figure of Multi Model ED50 (Group)](man/figures/single_fits_grouped_ed50.png "Multi Model ED50 (Group)")
 
 #### MB-AUC (Grouped)
 
 In addition to the ED50 metric, area-based interpretations of discounting are also provided with group-level visualizations. The multi-model evaluation provided above is re-evaluated in terms of MBAUC across groups below.
 
-The full code necessary to re-create this result is provided in demo/testGroupMBAUC.R.
+The full code necessary to re-create this result is provided in [demo/test_single_fits_grouped_mbauc.R](demo/test_single_fits_grouped_mbauc.R).
 
 ``` r
-results = fitDDCurves(data = dataFrame.long,
-                      settings = list(Delays     = Delay,
-                                      Values     = Value,
-                                      Individual = ids,
-                                      Group      = grp),
-                      maxValue = 1) %>%
-          dd_modelOptions(plan = c("mazur",
-                                   "bleichrodt",
-                                   "ebertprelec",
-                                   "exponential",
-                                   "greenmyerson",
-                                   "laibson",
-                                   "noise",
-                                   "rachlin",
-                                   "rodriguezlogue")) %>%
-          dd_metricOptions(metrics = c("mbauc")) %>%
-          dd_analyze()
+# Example: Simulated group fits and parameter recovery
 
-plot(results, which = "MBAUC")
+# Note: Will take a minute to run
+
+rm(list = ls())
+
+library(tidyverse)
+library(discountingtools)
+
+set.seed(65535)
+
+n_per_group <- 50
+
+data_frame = data.frame(
+  ids = seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group A"
+)
+
+data_frame$ks  = rnorm(length(data_frame$ids), 0.35, 0.125)
+data_frame$ks  = log(data_frame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+data_frame$auc = dd_mbauc_mazur(1, data_frame$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame)) {
+  ys = dd_discount_func_mazur(delays, data_frame[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  data_frame[row, as.character(delays)] = ys
+}
+
+data_frame2 = data.frame(
+  ids = 50 + seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group B"
+)
+
+data_frame2$ks  = rnorm(length(data_frame2$ids), 0.075, 0.035)
+data_frame2$ks  = log(data_frame2$ks)
+
+data_frame2$auc = dd_mbauc_mazur(1, data_frame2$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame2)) {
+  ys = dd_discount_func_mazur(delays, data_frame2[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.025)
+
+  data_frame2[row, as.character(delays)] = ys
+}
+
+data_frame = rbind(data_frame,
+                  data_frame2)
+
+data_frame_long = data_frame %>%
+  gather(Delay, Value, -ids, -ks, -grp, -auc) %>%
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
+
+results = fit_dd_curves(data = data_frame_long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            plan = c("mazur", "exponential"),
+            maxValue = 1,
+            verbose  = TRUE) |>
+  dd_analyze(modelSelection = TRUE)
+
+plot(results, logAxis = "x", position = "topright", which = "MBAUC")
 ```
 
-![Figure of Multi Model MBAUC (Group)](figures/MultiModelEvaluationGroupMBAUC.png "Multi Model MBAUC (Group)")
+![Figure of Multi Model MBAUC (Group)](man/figures/single_fits_grouped_mbauc.png "Multi Model MBAUC (Group)")
 
 #### Log10 MB-AUC (Grouped)
 
 As a normalization to the MBAUC metric, delays can be scaled in terms of logarithmic difference to minimize the skewed nature of increments between adjacent delay points. The multi-model evaluation provided above is re-evaluated in terms of Log10-scaled MBAUC across groups below.
 
-The full code necessary to re-create this result is provided in demo/testGroupLog10MBAUC.R.
+The full code necessary to re-create this result is provided in [demo/test_single_fits_grouped_mbauc_log10.R](demo/test_single_fits_grouped_mbauc_log10.R).
 
 ``` r
-results = fitDDCurves(data = dataFrame.long,
-                      settings = list(Delays     = Delay,
-                                      Values     = Value,
-                                      Individual = ids,
-                                      Group      = grp),
-                      maxValue = 1) %>%
-          dd_modelOptions(plan = c("mazur",
-                                   "bleichrodt",
-                                   "ebertprelec",
-                                   "exponential",
-                                   "greenmyerson",
-                                   "laibson",
-                                   "noise",
-                                   "rachlin",
-                                   "rodriguezlogue")) %>%
-          dd_metricOptions(metrics = c("logmbauc")) %>%
-          dd_analyze()
+# Example: Simulated group fits and parameter recovery
 
-plot(results, which = "Log10MBAUC")
+# Note: Will take a minute to run
+
+rm(list = ls())
+
+library(tidyverse)
+library(discountingtools)
+
+set.seed(65535)
+
+n_per_group <- 50
+
+data_frame = data.frame(
+  ids = seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group A"
+)
+
+data_frame$ks  = rnorm(length(data_frame$ids), 0.35, 0.125)
+data_frame$ks  = log(data_frame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+data_frame$auc = dd_mbauc_mazur(1, data_frame$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame)) {
+  ys = dd_discount_func_mazur(delays, data_frame[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.05)
+
+  data_frame[row, as.character(delays)] = ys
+}
+
+data_frame2 = data.frame(
+  ids = 50 + seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group B"
+)
+
+data_frame2$ks  = rnorm(length(data_frame2$ids), 0.075, 0.035)
+data_frame2$ks  = log(data_frame2$ks)
+
+data_frame2$auc = dd_mbauc_mazur(1, data_frame2$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame2)) {
+  ys = dd_discount_func_mazur(delays, data_frame2[row, "ks"]) + rnorm(length(delays),
+                                                                    0,
+                                                                    0.025)
+
+  data_frame2[row, as.character(delays)] = ys
+}
+
+data_frame = rbind(data_frame,
+                  data_frame2)
+
+data_frame_long = data_frame %>%
+  gather(Delay, Value, -ids, -ks, -grp, -auc) %>%
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
+
+results = fit_dd_curves(data = data_frame_long,
+            settings = list(Delays     = Delay,
+                            Values     = Value,
+                            Individual = ids,
+                            Group      = grp),
+            plan = c("mazur", "exponential"),
+            maxValue = 1,
+            verbose  = TRUE) |>
+  dd_analyze(modelSelection = TRUE)
+
+plot(results, logAxis = "x", position = "topright", which = "Log10MBAUC")
 ```
 
-![Figure of Multi-Model Log10 MBAUC (Group)](figures/MultiModelEvaluationGroupLog10MBAUC.png "Multi-Model Log10 MBAUC (Group)")
+![Figure of Multi-Model Log10 MBAUC (Group)](man/figures/single_fits_grouped_mbauc_log10.png "Multi-Model Log10 MBAUC (Group)")
 
 ### Multi-Model Evaluation (Pooled Fits)
 
 Evaluations of discounting have occasionally pooled data between groups (i.e., data treated as independent). This is unwise for several reasons; however, there is utility for the estimates from this type of strategy. For example, this approach is often useful for deriving reasonable starting values for more robust methods (e.g., multi-level modeling). This is easily enabled by setting the *strategy* argument to "group" in the *fitDDCurves* call.
 
-A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testGroupPooled.R.
+A short snippet is illustrated below and a complete example of this approach is illustrated in [demo/test_grouped_fits.R](demo/test_grouped_fits.R).
 
 ```{r}
-results = fitDDCurves(data = dataFrame.long,
-            settings = list(Delays     = Delay,
-                            Values     = Value,
-                            Individual = ids,
-                            Group      = grp),
-            maxValue = 1,
-            verbose  = TRUE,
-            strategy = "group") %>%
-  dd_modelOptions(plan = c("mazur",
-                           "bleichrodt",
-                           "ebertprelec",
-                           "exponential",
-                           "greenmyerson",
-                           "laibson",
-                           "noise",
-                           "rachlin",
-                           "rodriguezlogue")) %>%
-  dd_metricOptions(metrics = c("lned50",
-                               "mbauc",
-                               "logmbauc")) %>%
-  dd_screenOption(screen = FALSE) %>%
-  dd_analyze()
+# Example: Simulated group fits and parameter recovery
+
+# Note: Will take a minute to run
+
+rm(list = ls())
+
+library(tidyverse)
+library(discountingtools)
+
+set.seed(65535)
+
+n_per_group <- 50
+
+data_frame = data.frame(
+  ids = seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group A"
+)
+
+data_frame$ks  = rnorm(length(data_frame$ids), 0.35, 0.125)
+data_frame$ks  = log(data_frame$ks)
+
+delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
+
+data_frame$auc = dd_mbauc_mazur(1, data_frame$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame)) {
+  ys = dd_discount_func_mazur(delays, data_frame[row, "ks"]) + rnorm(length(delays),
+                                                                     0,
+                                                                     0.05)
+
+  data_frame[row, as.character(delays)] = ys
+}
+
+data_frame2 = data.frame(
+  ids = 50 + seq_len(n_per_group),
+  ks  = NA,
+  grp = "Group B"
+)
+
+data_frame2$ks  = rnorm(length(data_frame2$ids), 0.075, 0.035)
+data_frame2$ks  = log(data_frame2$ks)
+
+data_frame2$auc = dd_mbauc_mazur(1, data_frame2$ks, min(delays), max(delays))
+
+for (row in 1:nrow(data_frame2)) {
+  ys = dd_discount_func_mazur(delays, data_frame2[row, "ks"]) + rnorm(length(delays),
+                                                                      0,
+                                                                      0.025)
+
+  data_frame2[row, as.character(delays)] = ys
+}
+
+data_frame = rbind(data_frame,
+                   data_frame2)
+
+data_frame_long = data_frame %>%
+  gather(Delay, Value, -ids, -ks, -grp, -auc) %>%
+  mutate(Delay = as.numeric(Delay)) %>%
+  mutate(Value = ifelse(Value < 0, 0, Value)) %>%
+  mutate(Value = ifelse(Value > 1, 0, Value))
+
+results = fit_dd_curves(
+  data = data_frame_long,
+  settings = list(Delays     = Delay,
+                  Values     = Value,
+                  Group      = grp,
+                  Individual = ids),
+  maxValue = 1,
+  strategy = 'group',
+  plan = c('mazur', 'rachlin'),
+  verbose  = TRUE) |>
+dd_analyze(modelSelection = TRUE)
+
+plot(results,
+     logAxis = "x",
+     which = 'group',
+     position = "topright")
+
 
 ```
 
-![Figure of Results of Pooled Analysis](figures/MultiModelEvaluationGroupPooled.png "Results of Pooled Analysis")
+![Figure of Results of Pooled Analysis](man/figures/grouped_fits.png "Results of Pooled Analysis")
 
 ## Referenced Works (academic works)
 

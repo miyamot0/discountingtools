@@ -15,6 +15,12 @@ plot_group_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, 
 
   if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
 
+  results = summary(fittingObject)
+
+  if (!("ProbableModel" %in% names(results)) & length(fittingObject$models) > 1) {
+    stop('Cannot plot individual fits without selecting a single model or using model selection')
+  }
+
   if (plotit) {
     preDraw = TRUE
     yLimits = c(0, fittingObject$maxValue)
@@ -23,10 +29,17 @@ plot_group_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, 
     vecColors = rainbow(length(vecGroups), alpha = 1)
 
     for (id in names(fittingObject$results)) {
+      ogData = fittingObject$data[
+        which(fittingObject$data[,as.character(fittingObject$settings['Individual'])] == id),]
 
-      ogData = subset(fittingObject$data, ids == id)
+      model = fittingObject$models[1]
 
-      model  = fittingObject$rotation[[id]]$ProbableModel
+      if (is.null(fittingObject$rotation)) {
+        model = names(fittingObject$results[[id]])
+      } else {
+        model  = fittingObject$rotation[[id]]$ProbableModel
+      }
+
       result = fittingObject$results[[id]][[model]]
 
       xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
@@ -34,14 +47,14 @@ plot_group_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, 
 
       if (model == "noise")          yhat = rep(result$Intercept, length(xs))
 
-      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
-      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
-      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
-      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
-      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
-      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+      if (model == "bleichrodt")     yhat = dd_discount_func_bleichrodt_crdi(xs, result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = dd_discount_func_ebertprelec(xs,     result$Lnk,  result$S)
+      if (model == "exponential")    yhat = dd_discount_func_exponential(xs,     result$Lnk)
+      if (model == "greenmyerson")   yhat = dd_discount_func_greenmyerson(xs,    result$Lnk,  result$S)
+      if (model == "laibson")        yhat = dd_discount_func_laibson(xs,         result$Beta, result$Delta)
+      if (model == "mazur")          yhat = dd_discount_func_mazur(xs,           result$Lnk)
+      if (model == "rachlin")        yhat = dd_discount_func_rachlin(xs,         result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = dd_discount_func_rodriguezlogue(xs,  result$Lnk,  result$Beta)
 
       col = vecColors[match(ogData[1, as.character(fittingObject$settings['Group'])], vecGroups)]
 
@@ -76,9 +89,17 @@ plot_group_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, 
 
     for (id in names(fittingObject$results)) {
 
-      ogData = subset(fittingObject$data, ids == id)
+      ogData = fittingObject$data[
+        which(fittingObject$data[,as.character(fittingObject$settings['Individual'])] == id),]
 
-      model  = fittingObject$rotation[[id]]$ProbableModel
+      model = fittingObject$models[1]
+
+      if (is.null(fittingObject$rotation)) {
+        model = names(fittingObject$results[[id]])
+      } else {
+        model  = fittingObject$rotation[[id]]$ProbableModel
+      }
+
       result = fittingObject$results[[id]][[model]]
 
       xs = seq(min(ogData[,as.character(fittingObject$settings['Delays'])]),
@@ -86,14 +107,14 @@ plot_group_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, 
 
       if (model == "noise")          yhat = rep(result$Intercept, length(xs))
 
-      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
-      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
-      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
-      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
-      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
-      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+      if (model == "bleichrodt")     yhat = dd_discount_func_bleichrodt_crdi(xs, result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = dd_discount_func_ebertprelec(xs,     result$Lnk,  result$S)
+      if (model == "exponential")    yhat = dd_discount_func_exponential(xs,     result$Lnk)
+      if (model == "greenmyerson")   yhat = dd_discount_func_greenmyerson(xs,    result$Lnk,  result$S)
+      if (model == "laibson")        yhat = dd_discount_func_laibson(xs,         result$Beta, result$Delta)
+      if (model == "mazur")          yhat = dd_discount_func_mazur(xs,           result$Lnk)
+      if (model == "rachlin")        yhat = dd_discount_func_rachlin(xs,         result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = dd_discount_func_rodriguezlogue(xs,  result$Lnk,  result$Beta)
 
       tempFrame = data.frame(
         ID    = rep(id, length(xs)),

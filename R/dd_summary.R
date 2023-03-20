@@ -170,6 +170,16 @@ summary.discountingtools <- function(fittingObject, detailed = FALSE) {
 
     resFrame[index, "Strategy"] = fittingObject[[ "strategy" ]]
 
+    if (!is.null(fittingObject$settings[["Group"]])) {
+      currentData = fittingObject$data[
+        which(fittingObject$data[,as.character(fittingObject$settings['Individual'])] == name),]
+
+      groupName = as.character(fittingObject$settings['Group'])
+      colIndex = which(colnames(currentData) == groupName)
+
+      resFrame[index, c("Group")] = currentData[1,colIndex]
+    }
+
     for (res in localCopy[[name]]) {
 
       if (res$Model == "noise") {

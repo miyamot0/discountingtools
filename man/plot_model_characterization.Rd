@@ -4,7 +4,13 @@
 \alias{plot_model_characterization}
 \title{plot_model_characterization}
 \usage{
-plot_model_characterization(fittingObject, position0, ylab0, xlab0, plotit)
+plot_model_characterization(
+  fittingObject,
+  position0,
+  ylab0,
+  xlab0,
+  plotit = TRUE
+)
 }
 \arguments{
 \item{fittingObject}{core fitting object}
