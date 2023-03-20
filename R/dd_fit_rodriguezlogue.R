@@ -52,7 +52,8 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
     modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitRodriguezLogue))
     modelResults[[ "ED50"        ]] = dd_ed50_rodriguezlogue(
       Lnk = modelFitRodriguezLogue$par[["lnk"]],
-      b   = modelFitRodriguezLogue$par[["beta"]]
+      b   = modelFitRodriguezLogue$par[["beta"]],
+      currentData
     )
     modelResults[[ "MBAUC"       ]] = dd_mbauc_rodriguezlogue(
       A = 1,
@@ -118,13 +119,7 @@ dd_start_rodriguezlogue <- function(currentData) {
 #' @param b parameter
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_rodriguezlogue <- function(Lnk, b) {
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
+dd_ed50_rodriguezlogue <- function(Lnk, b, currentData) {
   lowDelay <- 0
   highDelay <- max(currentData$ddX)*10
 
@@ -161,13 +156,13 @@ dd_mbauc_rodriguezlogue <- function(A, Lnk, b, startDelay, endDelay) {
   minX        = startDelay
   maximumArea = (maxX - minX) * A
 
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(dd_integrand_rodriguezlogue,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             lnK   = Lnk,
-                                                             beta  = b)$value/maximumArea
+  area = stats::integrate(dd_integrand_rodriguezlogue,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          beta  = b)$value/maximumArea
 
-  fittingObject
+  return(area)
 }
 
 #' dd_mbauc_log10_rodriguezlogue
@@ -184,13 +179,13 @@ dd_mbauc_log10_rodriguezlogue <- function(A, Lnk, b, startDelay, endDelay) {
   minX        = log10(startDelay)
   maximumArea = (maxX - minX) * A
 
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(dd_integrand_rodriguezlogue_log10,
-                                                                  lower = minX,
-                                                                  upper = maxX,
-                                                                  lnK   = Lnk,
-                                                                  beta  = b)$value/maximumArea
+  area = stats::integrate(dd_integrand_rodriguezlogue_log10,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          beta  = b)$value/maximumArea
 
-  fittingObject
+  return(area)
 }
 
 #' Rodriguez & Logue Value Function

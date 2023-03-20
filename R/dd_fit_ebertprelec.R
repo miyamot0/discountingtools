@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_ebertprelec <- function(fittingObject, id) {
 
@@ -37,8 +36,8 @@ dd_fit_ebertprelec <- function(fittingObject, id) {
   try(modelFitEbertPrelec <- nls.lm(par              = startParams,
                                     fn               = residualFunction,
                                     jac              = jacobianMatrix,
-                                    valueFunction    = ebertPrelecDiscountFunc,
-                                    jacobianFunction = ebertPrelecDiscountGradient,
+                                    valueFunction    = dd_discount_func_ebertprelec,
+                                    jacobianFunction = dd_grad_func_ebertprelec,
                                     x                = currentData$ddX,
                                     value            = currentData$ddY,
                                     control          = nls.lm.control(maxiter = 1000)),
@@ -51,6 +50,24 @@ dd_fit_ebertprelec <- function(fittingObject, id) {
     modelResults[[ "RMSE"   ]] = sqrt(modelFitEbertPrelec$deviance/length(modelFitEbertPrelec$fvec))
     modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitEbertPrelec))
     modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitEbertPrelec))
+    modelResults[[ "ED50"        ]] = dd_ed50_ebertprelec(
+      Lnk = modelFitEbertPrelec$par[["lnk"]],
+      s   = modelFitEbertPrelec$par[["s"]]
+    )
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_ebertprelec(
+      A = 1,
+      Lnk = modelFitEbertPrelec$par[["lnk"]],
+      s   = modelFitEbertPrelec$par[["s"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_ebertprelec(
+      A = 1,
+      Lnk = modelFitEbertPrelec$par[["lnk"]],
+      s   = modelFitEbertPrelec$par[["s"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
     modelResults[[ "Status" ]] = paste("Code:", modelFitEbertPrelec$info,
                                        "- Message:", modelFitEbertPrelec$message,
                                        sep = " ")
@@ -67,7 +84,6 @@ dd_fit_ebertprelec <- function(fittingObject, id) {
 #'
 #' @param currentData  current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_ebertprelec <- function(currentData) {
 
@@ -103,106 +119,77 @@ dd_start_ebertprelec <- function(currentData) {
 
 #' dd_ed50_ebertprelec
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param Lnk parameter
+#' @param s parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_ebertprelec <- function(fittingObject, id) {
-
-  lnk = fittingObject$results[[as.character(id)]][["ebertprelec"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["ebertprelec"]][["S"]]
-
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
+dd_ed50_ebertprelec <- function(Lnk, s, currentData) {
   lowDelay <- 0
   highDelay <- max(currentData$ddX)*10
 
   while ((highDelay - lowDelay) > 0.001) {
-    lowEst  <- integrandEbertPrelec(  lowDelay, lnk, s)
-    midEst  <- integrandEbertPrelec( (lowDelay+highDelay)/2, lnk, s)
-    highEst <- integrandEbertPrelec(  highDelay, lnk, s)
+    lowEst  <- integrand_ebertprelec(  lowDelay, Lnk, s)
+    midEst  <- integrand_ebertprelec( (lowDelay + highDelay)/2, Lnk, s)
+    highEst <- integrand_ebertprelec(  highDelay, Lnk, s)
 
     if (lowEst > 0.5 && midEst > 0.5) {
-      lowDelay <- (lowDelay+highDelay)/2
+      lowDelay <- (lowDelay + highDelay)/2
       highDelay <- highDelay
 
     } else if (highEst < 0.5 && midEst < 0.5) {
       lowDelay <- lowDelay
-      highDelay <- (lowDelay+highDelay)/2
+      highDelay <- (lowDelay + highDelay)/2
 
     }
   }
 
-  fittingObject$ed50[[as.character(id)]] = log((lowDelay+highDelay)/2)
-
-  fittingObject
+  return(log((lowDelay + highDelay)/2))
 }
 
 #' dd_mbauc_ebertprelec
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_ebertprelec <- function(fittingObject, id) {
+dd_mbauc_ebertprelec <- function(A, Lnk, s, startDelay, endDelay) {
+  maxX        = endDelay
+  minX        = startDelay
+  maximumArea = (maxX - minX) * A
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
+  area = stats::integrate(integrand_ebertprelec,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          s     = s)$value/maximumArea
 
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["ebertprelec"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["ebertprelec"]][["S"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandEbertPrelec,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             lnK   = lnk,
-                                                             s     = s)$value/maximumArea
-
-  fittingObject
+  return(area)
 }
 
 #' dd_mbauc_log10_ebertprelec
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
+dd_mbauc_log10_ebertprelec <- function(A, Lnk, s, startDelay, endDelay) {
+  maxX        = log10(endDelay)
+  minX        = log10(startDelay)
+  maximumArea = (maxX - minX) * A
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
+  area = stats::integrate(integrand_ebertprelec_log10,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          s     = s)$value/maximumArea
 
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["ebertprelec"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["ebertprelec"]][["S"]]
-
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandEbertPrelecLog,
-                                                                  lower = minX,
-                                                                  upper = maxX,
-                                                                  lnK   = lnk,
-                                                                  s     = s)$value/maximumArea
-
-  fittingObject
+  return(area)
 }
 
 #' Ebert & Prelec Value Function
@@ -214,7 +201,7 @@ dd_mbauc_log10_ebertprelec <- function(fittingObject, id) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-ebertPrelecDiscountFunc <- function(x, lnk, s)
+dd_discount_func_ebertprelec <- function(x, lnk, s)
 {
   func <- exp(-(exp(lnk)*x)^s)
   eval(func)
@@ -228,7 +215,7 @@ ebertPrelecDiscountFunc <- function(x, lnk, s)
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-ebertPrelecDiscountGradient <- function(x, lnk, s)
+dd_grad_func_ebertprelec <- function(x, lnk, s)
 {
   func <- expression(exp(-(exp(lnk)*x)^s))
   c(eval(stats::deriv(func, "lnk")),
@@ -245,7 +232,7 @@ ebertPrelecDiscountGradient <- function(x, lnk, s)
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
+integrand_ebertprelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 
 #' Ebert & Prelec's ep Integrand helper (log10)
 #'
@@ -257,4 +244,4 @@ integrandEbertPrelec <- function(x, lnK, s) {  exp(-(exp(lnK)*x)^s) }
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandEbertPrelecLog <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }
+integrand_ebertprelec_log10 <- function(x, lnK, s) {  exp(-(exp(lnK)*(10^x))^s) }

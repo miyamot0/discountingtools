@@ -160,13 +160,13 @@ dd_mbauc_log10_greenmyerson <- function(A, Lnk, s, startDelay, endDelay) {
   lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
   s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
 
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(dd_integrand_myersongreen_log10,
-                                                                  lower = minX,
-                                                                  upper = maxX,
-                                                                  lnK   = lnk,
-                                                                  s     = s)$value/maximumArea
+  area = stats::integrate(dd_integrand_myersongreen_log10,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = lnk,
+                          s     = s)$value/maximumArea
 
-  fittingObject
+  return(area)
 }
 
 #' Green & Myerson Value Function

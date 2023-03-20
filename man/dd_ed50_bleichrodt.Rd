@@ -4,12 +4,14 @@
 \alias{dd_ed50_bleichrodt}
 \title{dd_ed50_bleichrodt}
 \usage{
-dd_ed50_bleichrodt(fittingObject, id)
+dd_ed50_bleichrodt(Lnk, s, b, currentData)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{Lnk}{parameter}
 
-\item{id}{id tag}
+\item{s}{parameter}
+
+\item{b}{parameter}
 }
 \description{
 dd_ed50_bleichrodt

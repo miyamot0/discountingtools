@@ -156,13 +156,13 @@ dd_mbauc_log10_rachlin <- function(A, Lnk, s, startDelay, endDelay) {
   minX        = log10(startDelay)
   maximumArea = (maxX - minX) * A
 
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(dd_integrand_rachlin_log10,
-                                                                  lower = minX,
-                                                                  upper = maxX,
-                                                                  lnK   = Lnk,
-                                                                  s     = s)$value/maximumArea
+  area = stats::integrate(dd_integrand_rachlin_log10,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          s     = s)$value/maximumArea
 
-  fittingObject
+  return(area)
 }
 
 #' Rachlin Value Function

@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_bleichrodt <- function(fittingObject, id) {
 
@@ -38,8 +37,8 @@ dd_fit_bleichrodt <- function(fittingObject, id) {
   try(modelFitBleichrodt <- nls.lm(par              = startParams,
                                    fn               = residualFunction,
                                    jac              = jacobianMatrix,
-                                   valueFunction    = BleichrodtCRDIDiscountFunc,
-                                   jacobianFunction = BleichrodtCRDIDiscountGradient,
+                                   valueFunction    = dd_discount_func_bleichrodt_crdi,
+                                   jacobianFunction = dd_discount_grad_bleichrodt_crdi,
                                    x                = currentData$ddX,
                                    value            = currentData$ddY,
                                    upper            = c(beta = 1,
@@ -59,6 +58,27 @@ dd_fit_bleichrodt <- function(fittingObject, id) {
     modelResults[[ "RMSE"   ]] = sqrt(modelFitBleichrodt$deviance/length(modelFitBleichrodt$fvec))
     modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitBleichrodt))
     modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitBleichrodt))
+    modelResults[[ "ED50"        ]] = dd_ed50_bleichrodt(
+      Lnk = modelFitBleichrodt$par[["lnk"]],
+      s   = modelFitBleichrodt$par[["s"]],
+      b   = modelFitBleichrodt$par[["beta"]]
+    )
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_bleichrodt(
+      A = 1,
+      Lnk = modelFitBleichrodt$par[["lnk"]],
+      s   = modelFitBleichrodt$par[["s"]],
+      b   = modelFitBleichrodt$par[["beta"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_bleichrodt(
+      A = 1,
+      Lnk = modelFitBleichrodt$par[["lnk"]],
+      s   = modelFitBleichrodt$par[["s"]],
+      b   = modelFitBleichrodt$par[["beta"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
     modelResults[[ "Status" ]] = paste("Code:", modelFitBleichrodt$info,
                                        "- Message:", modelFitBleichrodt$message,
                                        sep = " ")
@@ -75,7 +95,6 @@ dd_fit_bleichrodt <- function(fittingObject, id) {
 #'
 #' @param currentData  current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_bleichrodt <- function(currentData) {
 
@@ -112,111 +131,82 @@ dd_start_bleichrodt <- function(currentData) {
 
 #' dd_ed50_bleichrodt
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param Lnk parameter
+#' @param s parameter
+#' @param b parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_bleichrodt <- function(fittingObject, id) {
-
-  lnk = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["S"]]
-  b   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Beta"]]
-
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
+dd_ed50_bleichrodt <- function(Lnk, s, b, currentData) {
   lowDelay <- 0
   highDelay <- max(currentData$ddX)*10
 
   while ((highDelay - lowDelay) > 0.001) {
-    lowEst  <- integrandBleichrodtCRDI(  lowDelay, lnk, s, b)
-    midEst  <- integrandBleichrodtCRDI( (lowDelay+highDelay)/2, lnk, s, b)
-    highEst <- integrandBleichrodtCRDI(  highDelay, lnk, s, b)
+    lowEst  <- integrand_bleichrodt_crdi(  lowDelay, Lnk, s, b)
+    midEst  <- integrand_bleichrodt_crdi( (lowDelay + highDelay)/2, Lnk, s, b)
+    highEst <- integrand_bleichrodt_crdi(  highDelay, Lnk, s, b)
 
     if (lowEst > 0.5 && midEst > 0.5) {
-      lowDelay <- (lowDelay+highDelay)/2
+      lowDelay <- (lowDelay + highDelay)/2
       highDelay <- highDelay
 
     } else if (highEst < 0.5 && midEst < 0.5) {
       lowDelay <- lowDelay
-      highDelay <- (lowDelay+highDelay)/2
+      highDelay <- (lowDelay + highDelay)/2
 
     }
   }
 
-  fittingObject$ed50[[as.character(id)]] = log((lowDelay+highDelay)/2)
-
-  fittingObject
+  return(log((lowDelay + highDelay)/2))
 }
 
 #' dd_mbauc_bleichrodt
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param b parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_bleichrodt <- function(fittingObject, id) {
+dd_mbauc_bleichrodt <- function(A, Lnk, s, b, startDelay, endDelay) {
+  maxX        = endDelay
+  minX        = startDelay
+  maximumArea = (maxX - minX) * A
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
+  area = stats::integrate(integrand_bleichrodt_crdi,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          s     = s,
+                          beta  = b)$value/maximumArea
 
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["S"]]
-  b   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Beta"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandBleichrodtCRDI,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             lnK   = lnk,
-                                                             s     = s,
-                                                             beta  = b)$value/maximumArea
-
-  fittingObject
+  return(area)
 }
 
 #' dd_mbauc_log10_bleichrodt
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param b parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_bleichrodt <- function(fittingObject, id) {
+dd_mbauc_log10_bleichrodt <- function(A, Lnk, s, b, startDelay, endDelay) {
+  maxX        = log10(endDelay)
+  minX        = log10(startDelay)
+  maximumArea = (maxX - minX) * A
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
+  area = stats::integrate(integrand_bleichrodt_crdi_log10,
+                          lower = minX,
+                          upper = maxX,
+                          lnK   = Lnk,
+                          s     = s,
+                          beta  = b)$value/maximumArea
 
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["S"]]
-  b   = fittingObject$results[[as.character(id)]][["bleichrodt"]][["Beta"]]
-
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandBleichrodtCRDILog,
-                                                                  lower = minX,
-                                                                  upper = maxX,
-                                                                  lnK   = lnk,
-                                                                  s     = s,
-                                                                  beta  = b)$value/maximumArea
-
-  fittingObject
+  return(area)
 }
 
 #' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Value Function
@@ -229,7 +219,7 @@ dd_mbauc_log10_bleichrodt <- function(fittingObject, id) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
+dd_discount_func_bleichrodt_crdi <- function(x, lnk, s, beta)
 {
   func <- beta * exp(-exp(lnk)*x^s)
   eval(func)
@@ -244,7 +234,7 @@ BleichrodtCRDIDiscountFunc <- function(x, lnk, s, beta)
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
+dd_discount_grad_bleichrodt_crdi <- function(x, lnk, s, beta)
 {
   func <- beta * exp(-exp(lnk)*x^s)
   c(eval(stats::deriv(func, "lnk")),
@@ -263,7 +253,7 @@ BleichrodtCRDIDiscountGradient <- function(x, lnk, s, beta)
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s) }
+integrand_bleichrodt_crdi <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s) }
 
 #' Bleichrodt et al. Constant Relative Decreasing Impatience (CRDI) Integrand helper (log10)
 #'
@@ -276,4 +266,4 @@ integrandBleichrodtCRDI <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*x^s
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandBleichrodtCRDILog <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*(10^x)^s) }
+integrand_bleichrodt_crdi_log10 <- function(x, lnK, s, beta) {  beta * exp(-exp(lnK)*(10^x)^s) }
