@@ -38,7 +38,7 @@ results = fit_dd_curves(
                   Individual = ids),
   maxValue = 1,
   #plan = c('mazur', 'exponential', 'noise', 'laibson', 'greenmyerson', 'rachlin', 'ebertprelec', 'bleichrodt', 'rodriguezlogue'),
-  plan = c('laibson'),
+  plan = c('greenmyerson'),
   verbose  = TRUE) |>
 dd_analyze(modelSelection = FALSE)
 
@@ -61,4 +61,4 @@ dd_analyze(modelSelection = FALSE)
 # lines(x = c(-2.5, 0),
 #       y = c(-2.5, 0))
 
-# summary(results, detailed = FALSE)
+summary(results, detailed = FALSE)
