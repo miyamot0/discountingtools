@@ -19,3 +19,24 @@ logLik.nls.lm <- function(fit, REML = FALSE, ...)
 
   logLikelihood
 }
+
+#' Workaround for varying bx for hypergeometric series
+#'
+#' Credit: Stéphane Laurent <laurent_step at yahoo.fr>
+#' Source: https://stats.stackexchange.com/questions/33451/computation-of-hypergeometric-function-in-r
+#' Licensed CC-BY-SA 3.0, as Per SA Guidelines
+#'
+#' @param a param
+#' @param b param
+#' @param c param
+#' @param x param
+#'
+#' @author Stéphane Laurent <laurent_step at yahoo.fr>
+#' @importFrom gsl hyperg_2F1
+gauss_2F1 <- function(a, b, c, x){
+  if (x >= 0 & x < 1) {
+    hyperg_2F1(a, b, c, x)
+  } else {
+    hyperg_2F1(c - a, b, c, 1 - 1 / (1 - x)) / (1 - x)^b
+  }
+}

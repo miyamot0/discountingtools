@@ -35,9 +35,6 @@
 
 \item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
-\value{
-
-}
 \description{
 This method overrides the base plot function to provide various plots relevant to the user.
 }

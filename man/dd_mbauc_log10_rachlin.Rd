@@ -4,15 +4,12 @@
 \alias{dd_mbauc_log10_rachlin}
 \title{dd_mbauc_log10_rachlin}
 \usage{
-dd_mbauc_log10_rachlin(fittingObject, id)
+dd_mbauc_log10_rachlin(A, Lnk, s, startDelay, endDelay)
 }
 \arguments{
 \item{fittingObject}{core dd fitting object}
 
 \item{id}{id tag}
-}
-\value{
-
 }
 \description{
 dd_mbauc_log10_rachlin

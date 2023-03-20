@@ -6,7 +6,6 @@
 #'
 #' @return A data frame of model screenings
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-#' @return
 #' @export
 johnsonBickelScreen <- function(fittingObject) {
 

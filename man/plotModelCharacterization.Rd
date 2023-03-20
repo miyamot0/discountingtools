@@ -17,9 +17,6 @@ plotModelCharacterization(fittingObject, position0, ylab0, xlab0, plotit)
 
 \item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
-\value{
-
-}
 \description{
 plotModelCharacterization
 }

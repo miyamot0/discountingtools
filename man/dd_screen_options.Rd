@@ -23,12 +23,6 @@ dd_screen_options(
 
 \item{filterPassing}{(char vector) which JB criteria to retain in dataset, e.g. c("JB1", "JB2")}
 }
-\value{
-
-}
 \description{
 This call applies screening criteria to a data dataset. Specifically, it can be used to apply criteria (no filtering) or apply criteria and filter based on one or more criteria (e.g., JB1, JB2)
-}
-\author{
-Shawn Gilroy <sgilroy1@lsu.edu>
 }

@@ -21,9 +21,6 @@ plotGroupRainbow(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit)
 
 \item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
-\value{
-
-}
 \description{
 Convenience method for illustrating individual fits when characterized by some a priori grouping.
 }

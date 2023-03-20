@@ -12,7 +12,6 @@
 #' @param id (num) participant number to focus
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export plot.discountingtools
 #' @export

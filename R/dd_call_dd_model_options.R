@@ -5,7 +5,6 @@
 #' @param fittingObject core dd fitting object
 #' @param plan (char vector) This vector contains a list of possible model candidates.
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_model_options <- function(fittingObject, plan) {

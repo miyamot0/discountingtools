@@ -17,7 +17,10 @@ dd_fit_bleichrodt <- function(fittingObject, id) {
     Beta       = NA,
     RMSE       = NA,
     BIC        = NA,
-    AIC        = NA
+    AIC        = NA,
+    ED50       = NA,
+    MBAUC      = NA,
+    Log10MBAUC = NA
   )
 
   currentData = fittingObject$data[

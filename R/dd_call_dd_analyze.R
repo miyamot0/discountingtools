@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param modelSelection (bool) this flag determines whether or not a model selection procedure will be applied in the results frame.
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_analyze <- function(fittingObject, modelSelection = TRUE) {

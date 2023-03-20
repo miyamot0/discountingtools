@@ -5,7 +5,6 @@
 #' @param fittingObject core dd fitting object
 #' @param metrics (char vector) This vector contains a list of possible cross-model metrics.
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_metric_options <- function(fittingObject, metrics) {

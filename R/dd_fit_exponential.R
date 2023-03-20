@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_exponential <- function(fittingObject, id) {
 
@@ -79,7 +78,6 @@ dd_fit_exponential <- function(fittingObject, id) {
 #' @param currentData  current data set
 #' @param increment step size for span
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_exponential <- function(currentData, increment = 1) {
 
@@ -109,7 +107,6 @@ dd_start_exponential <- function(currentData, increment = 1) {
 #'
 #' @param Lnk log transformed rate parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_ed50_exponential <- function(Lnk) {
@@ -123,7 +120,6 @@ dd_ed50_exponential <- function(Lnk) {
 #' @param startDelay start delay
 #' @param endDelay end delay
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_mbauc_exponential <- function(A, Lnk, startDelay, endDelay) {
@@ -140,7 +136,6 @@ dd_mbauc_exponential <- function(A, Lnk, startDelay, endDelay) {
 #' @param startDelay start delay
 #' @param endDelay end delay
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_exponential <- function(A, Lnk, startDelay, endDelay) {
 

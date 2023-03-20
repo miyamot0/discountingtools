@@ -11,9 +11,6 @@ dd_ed50_bleichrodt(fittingObject, id)
 
 \item{id}{id tag}
 }
-\value{
-
-}
 \description{
 dd_ed50_bleichrodt
 }

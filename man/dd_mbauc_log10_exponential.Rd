@@ -15,9 +15,6 @@ dd_mbauc_log10_exponential(A, Lnk, startDelay, endDelay)
 
 \item{endDelay}{end delay}
 }
-\value{
-
-}
 \description{
 dd_mbauc_log10_exponential
 }

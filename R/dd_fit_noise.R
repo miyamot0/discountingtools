@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_noise <- function(fittingObject, id) {
 
@@ -37,8 +36,8 @@ dd_fit_noise <- function(fittingObject, id) {
     modelResults[[ "Intercept"   ]]  = modelFitNoise$coefficients[["(Intercept)"]]
     modelResults[[ "RMSE"        ]]  = summary(modelFitNoise)[["sigma"]]
     modelResults[[ "ED50"        ]]  = NA
-    modelResults[[ "MBAUC"       ]]  = modelFitNoise$coefficients[["(Intercept)"]]
-    modelResults[[ "Log10MBAUC"  ]]  = modelFitNoise$coefficients[["(Intercept)"]]
+    modelResults[[ "MBAUC"       ]]  = modelFitNoise$coefficients[["(Intercept)"]] / as.numeric(fittingObject[[ "maxValue" ]])
+    modelResults[[ "Log10MBAUC"  ]]  = modelFitNoise$coefficients[["(Intercept)"]] / as.numeric(fittingObject[[ "maxValue" ]])
     modelResults[[ "BIC"         ]]  = ifelse(summary(modelFitNoise)[["sigma"]] == 0,
                                               Inf,
                                               stats::BIC(modelFitNoise))

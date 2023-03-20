@@ -11,9 +11,6 @@ message_debug(fittingObject, msg)
 
 \item{msg}{(char) message}
 }
-\value{
-
-}
 \description{
 Extension of message method, instead yolked to a flag defining level of verbosity.
 }

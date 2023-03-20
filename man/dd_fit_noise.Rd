@@ -11,9 +11,6 @@ dd_fit_noise(fittingObject, id)
 
 \item{id}{id tag}
 }
-\value{
-
-}
 \description{
 This fits an intercept only model to the data. Its trash, but its a testable alternative that inferring usefulness from an R2 value
 }

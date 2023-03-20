@@ -29,9 +29,6 @@ plotIndividualRainbow(
 
 \item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
-\value{
-
-}
 \description{
 This specific implementation shows cross-model fits, with series characterized by different models illustrated with different colors. A legend is also provided for convenience of interpretation.
 }

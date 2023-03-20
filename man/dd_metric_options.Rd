@@ -11,9 +11,6 @@ dd_metric_options(fittingObject, metrics)
 
 \item{metrics}{(char vector) This vector contains a list of possible cross-model metrics.}
 }
-\value{
-
-}
 \description{
 This call builds out the metrics used to conduct cross-model comparisons (e.g., ED50, MBAUC)
 }

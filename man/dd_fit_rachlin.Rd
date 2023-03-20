@@ -11,9 +11,6 @@ dd_fit_rachlin(fittingObject, id)
 
 \item{id}{id tag}
 }
-\value{
-
-}
 \description{
 This fits a hyperbolic model to the data.
 }

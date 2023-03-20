@@ -6,7 +6,6 @@
 #' @param xlab0 (char) x axis label
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, plotit) {
 

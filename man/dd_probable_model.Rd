@@ -11,9 +11,6 @@ dd_probable_model(fittingObject, id)
 
 \item{id}{id tag}
 }
-\value{
-
-}
 \description{
 This method is used to perform approximate Bayesian model selection using extracted Bayes Factors from calculated BIC values.
 }

@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_laibson <- function(fittingObject, id) {
 
@@ -16,7 +15,10 @@ dd_fit_laibson <- function(fittingObject, id) {
     Delta      = NA,
     RMSE       = NA,
     BIC        = NA,
-    AIC        = NA
+    AIC        = NA,
+    ED50       = NA,
+    MBAUC      = NA,
+    Log10MBAUC = NA
   )
 
   currentData = fittingObject$data[
@@ -34,8 +36,8 @@ dd_fit_laibson <- function(fittingObject, id) {
   try(modelFitLaibson <- nls.lm(par              = startParams,
                                 fn               = residualFunction,
                                 jac              = jacobianMatrix,
-                                valueFunction    = betaDeltaDiscountFunc,
-                                jacobianFunction = betaDeltaDiscountGradient,
+                                valueFunction    = dd_discount_func_laibson,
+                                jacobianFunction = dd_discount_grad_laibson,
                                 x                = currentData$ddX,
                                 value            = currentData$ddY,
                                 upper            = c(beta = 1, delta = 1),
@@ -45,11 +47,29 @@ dd_fit_laibson <- function(fittingObject, id) {
 
   if (!is.null(modelFitLaibson)) {
 
-    modelResults[[ "Beta"   ]] = modelFitLaibson$par[["beta"]]
-    modelResults[[ "Delta"  ]] = modelFitLaibson$par[["delta"]]
-    modelResults[[ "RMSE"   ]] = sqrt(modelFitLaibson$deviance/length(modelFitLaibson$fvec))
-    modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitLaibson))
-    modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitLaibson))
+    modelResults[[ "Beta"        ]] = modelFitLaibson$par[["beta"]]
+    modelResults[[ "Delta"       ]] = modelFitLaibson$par[["delta"]]
+    modelResults[[ "RMSE"        ]] = sqrt(modelFitLaibson$deviance/length(modelFitLaibson$fvec))
+    modelResults[[ "BIC"         ]] = stats::BIC(logLik.nls.lm(modelFitLaibson))
+    modelResults[[ "AIC"         ]] = stats::AIC(logLik.nls.lm(modelFitLaibson))
+    modelResults[[ "ED50"        ]] = dd_ed50_laibson(
+      b = modelFitLaibson$par[["beta"]],
+      d = modelFitLaibson$par[["delta"]]
+    )
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_laibson(
+      A = 1,
+      b = modelFitLaibson$par[["beta"]],
+      d = modelFitLaibson$par[["delta"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_laibson(
+      A = 1,
+      b = modelFitLaibson$par[["beta"]],
+      d = modelFitLaibson$par[["delta"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
     modelResults[[ "Status" ]] = paste("Code:", modelFitLaibson$info,
                                        "- Message:", modelFitLaibson$message,
                                        sep = " ")
@@ -66,7 +86,6 @@ dd_fit_laibson <- function(fittingObject, id) {
 #'
 #' @param currentData  current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_laibson <- function(currentData) {
 
@@ -105,50 +124,30 @@ dd_start_laibson <- function(currentData) {
 
 #' dd_ed50_laibson
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param b beta param
+#' @param d delta param
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_laibson <- function(fittingObject, id) {
-
-  b = fittingObject$results[[as.character(id)]][["laibson"]][["Beta"]]
-  d = fittingObject$results[[as.character(id)]][["laibson"]][["Delta"]]
-
-  fittingObject$ed50[[as.character(id)]] = log(log( (1/(2*b)),base = d))
-
-  fittingObject
+#' @export
+dd_ed50_laibson <- function(b, d) {
+  return(log(log( (1/(2*b)),base = d)))
 }
 
 #' dd_mbauc_laibson
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param b parameter value
+#' @param d parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_laibson <- function(fittingObject, id) {
+#' @export
+dd_mbauc_laibson <- function(A, b, d, startDelay, endDelay) {
+  bdFinal = (-A * b * exp(-(1 - d) * endDelay)) / (1 - d)
+  bdInitial = (-A * b * exp(-(1 - d) * startDelay)) / (1 - d)
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  b = fittingObject$results[[as.character(id)]][["laibson"]][["Beta"]]
-  d = fittingObject$results[[as.character(id)]][["laibson"]][["Delta"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandBetaDelta,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             beta  = b,
-                                                             delta = d)$value/maximumArea
-
-  fittingObject
+  return((bdFinal - bdInitial) / ((endDelay - startDelay) * A))
 }
 
 #' dd_mbauc_log10_laibson
@@ -156,22 +155,11 @@ dd_mbauc_laibson <- function(fittingObject, id) {
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_laibson <- function(fittingObject, id) {
-
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
-  maximumArea = maxX - minX
-
-  b = fittingObject$results[[as.character(id)]][["laibson"]][["Beta"]]
-  d = fittingObject$results[[as.character(id)]][["laibson"]][["Delta"]]
+dd_mbauc_log10_laibson <- function(A, b, d, startDelay, endDelay) {
+  maxX        = log10(endDelay)
+  minX        = log10(startDelay)
+  maximumArea = (maxX - minX) * A
 
   fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandBetaDeltaLog,
                                                                   lower = minX,
@@ -188,10 +176,9 @@ dd_mbauc_log10_laibson <- function(fittingObject, id) {
 #' @param beta fitted parameter
 #' @param delta fitted parameter
 #'
-#' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-betaDeltaDiscountFunc <- function(x, beta, delta)
+dd_discount_func_laibson <- function(x, beta, delta)
 {
   func <- beta*delta^x
   eval(func)
@@ -205,24 +192,12 @@ betaDeltaDiscountFunc <- function(x, beta, delta)
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-betaDeltaDiscountGradient <- function(x, beta, delta)
+dd_discount_grad_laibson <- function(x, beta, delta)
 {
   func <- expression(beta*delta^x)
   c(eval(stats::D(func, "delta")),
     eval(stats::D(func, "beta")))
 }
-
-#' Beta Delta Integrand helper
-#'
-#' This integrand helper is a projection of the integrand with delays represented as normal
-#'
-#' @param x observation at point n (X)
-#' @param beta fitted parameter
-#' @param delta fitted parameter
-#'
-#' @return Numerical Integration Projection
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 
 #' Beta Delta Integrand helper (log10)
 #'
@@ -234,4 +209,4 @@ integrandBetaDelta <- function(x, beta, delta) { beta*delta^x }
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandBetaDeltaLog <- function(x, beta, delta) { beta*delta^(10^x) }
+dd_integrand_laibson_log10 <- function(x, beta, delta) { beta*delta^(10^x) }

@@ -4,15 +4,12 @@
 \alias{dd_ed50_rachlin}
 \title{dd_ed50_rachlin}
 \usage{
-dd_ed50_rachlin(fittingObject, id)
+dd_ed50_rachlin(Lnk, s)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{Lnk}{parameter}
 
-\item{id}{id tag}
-}
-\value{
-
+\item{s}{parameter}
 }
 \description{
 dd_ed50_rachlin

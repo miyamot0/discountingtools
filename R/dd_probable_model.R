@@ -5,7 +5,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_probable_model <- function(fittingObject, id) {
 

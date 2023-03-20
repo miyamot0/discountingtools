@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_mazur <- function(fittingObject, id) {
 
@@ -78,7 +77,6 @@ dd_fit_mazur <- function(fittingObject, id) {
 #'
 #' @param currentData current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_mazur <- function(currentData) {
 
@@ -107,7 +105,6 @@ dd_start_mazur <- function(currentData) {
 #'
 #' @param Lnk log transformed rate parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_ed50_mazur <- function(Lnk) {
@@ -121,8 +118,6 @@ dd_ed50_mazur <- function(Lnk) {
 #' @param startDelay time point
 #' @param endDelay time point
 #'
-#' @return
-#' @export
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
 dd_mbauc_mazur <- function(A, Lnk, startDelay, endDelay) {
@@ -139,7 +134,6 @@ dd_mbauc_mazur <- function(A, Lnk, startDelay, endDelay) {
 #' @param startDelay start delay
 #' @param endDelay end delay
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_mazur <- function(A, Lnk, startDelay, endDelay) {
 

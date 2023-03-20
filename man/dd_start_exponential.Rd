@@ -11,9 +11,6 @@ dd_start_exponential(currentData, increment = 1)
 
 \item{increment}{step size for span}
 }
-\value{
-
-}
 \description{
 Extract starting parameters
 }

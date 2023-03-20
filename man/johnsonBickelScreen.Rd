@@ -11,8 +11,6 @@ johnsonBickelScreen(fittingObject)
 }
 \value{
 A data frame of model screenings
-
-
 }
 \description{
 This function applies the Johnson & Bickel screening criteria to included data series. The result of this procedure is a TRUE/FALSE response to one of two screening criteria.

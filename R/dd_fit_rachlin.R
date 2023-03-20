@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_rachlin <- function(fittingObject, id) {
 
@@ -16,7 +15,10 @@ dd_fit_rachlin <- function(fittingObject, id) {
     S          = NA,
     RMSE       = NA,
     BIC        = NA,
-    AIC        = NA
+    AIC        = NA,
+    ED50       = NA,
+    MBAUC      = NA,
+    Log10MBAUC = NA
   )
 
   currentData = fittingObject$data[
@@ -34,8 +36,8 @@ dd_fit_rachlin <- function(fittingObject, id) {
   try(modelFitRachlin <- nls.lm(par              = startParams,
                                 fn               = residualFunction,
                                 jac              = jacobianMatrix,
-                                valueFunction    = rachlinHyperboloidDiscountFunc,
-                                jacobianFunction = rachlinHyperboloidDiscountGradient,
+                                valueFunction    = dd_discount_func_rachlin,
+                                jacobianFunction = dd_discount_grad_rachlin,
                                 x                = currentData$ddX,
                                 value            = currentData$ddY,
                                 control          = nls.lm.control(maxiter = 1000)),
@@ -48,6 +50,24 @@ dd_fit_rachlin <- function(fittingObject, id) {
     modelResults[[ "RMSE"   ]] = sqrt(modelFitRachlin$deviance/length(modelFitRachlin$fvec))
     modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitRachlin))
     modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitRachlin))
+    modelResults[[ "ED50"        ]] = dd_ed50_rachlin(
+      Lnk = modelFitRachlin$par[["lnk"]],
+      s   = modelFitRachlin$par[["s"]]
+    )
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_rachlin(
+      A = 1,
+      Lnk = modelFitRachlin$par[["lnk"]],
+      s   = modelFitRachlin$par[["s"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_rachlin(
+      A = 1,
+      Lnk = modelFitRachlin$par[["lnk"]],
+      s   = modelFitRachlin$par[["s"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
     modelResults[[ "Status" ]] = paste("Code:", modelFitRachlin$info,
                                        "- Message:", modelFitRachlin$message,
                                        sep = " ")
@@ -64,7 +84,6 @@ dd_fit_rachlin <- function(fittingObject, id) {
 #'
 #' @param currentData  current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_rachlin <- function(currentData) {
 
@@ -100,50 +119,29 @@ dd_start_rachlin <- function(currentData) {
 
 #' dd_ed50_rachlin
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param Lnk parameter
+#' @param s parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_rachlin <- function(fittingObject, id) {
-
-  lnk = fittingObject$results[[as.character(id)]][["rachlin"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["rachlin"]][["S"]]
-
-  fittingObject$ed50[[as.character(id)]] = log( (1/(exp(lnk)))^(1/s))
-
-  fittingObject
+dd_ed50_rachlin <- function(Lnk, s) {
+  return(log( (1/(exp(Lnk)))^(1/s)))
 }
 
-#' dd_mbauc_rachlin
+#' dd_mbauc_laibson
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_rachlin <- function(fittingObject, id) {
+#' @export
+dd_mbauc_rachlin <- function(A, Lnk, s, startDelay, endDelay) {
+  rachFinal   <- A * endDelay * gauss_2F1((1.0), (1.0/s), (1 + (1.0/s)), (-exp(Lnk) * (endDelay )^s))
+  rachInitial <- A * startDelay * gauss_2F1((1.0), (1.0/s), (1 + (1.0/s)), (-exp(Lnk) * (startDelay )^s))
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["rachlin"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["rachlin"]][["S"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandRachlin,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             lnK   = lnk,
-                                                             s     = s)$value/maximumArea
-
-  fittingObject
+  return((rachFinal - rachInitial) / ((endDelay - startDelay) * A))
 }
 
 #' dd_mbauc_log10_rachlin
@@ -151,27 +149,17 @@ dd_mbauc_rachlin <- function(fittingObject, id) {
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_rachlin <- function(fittingObject, id) {
+dd_mbauc_log10_rachlin <- function(A, Lnk, s, startDelay, endDelay) {
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
+  maxX        = log10(endDelay)
+  minX        = log10(startDelay)
+  maximumArea = (maxX - minX) * A
 
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["rachlin"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["rachlin"]][["S"]]
-
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandRachlinLog,
+  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(dd_integrand_rachlin_log10,
                                                                   lower = minX,
                                                                   upper = maxX,
-                                                                  lnK   = lnk,
+                                                                  lnK   = Lnk,
                                                                   s     = s)$value/maximumArea
 
   fittingObject
@@ -186,7 +174,7 @@ dd_mbauc_log10_rachlin <- function(fittingObject, id) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
+dd_discount_func_rachlin <- function(x, lnk, s)
 {
   func <- (1 + exp(lnk)*(x^s))^(-1)
   eval(func)
@@ -200,24 +188,12 @@ rachlinHyperboloidDiscountFunc <- function(x, lnk, s)
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-rachlinHyperboloidDiscountGradient <- function(x, lnk, s)
+dd_discount_grad_rachlin <- function(x, lnk, s)
 {
   func <- expression((1 + exp(lnk)*x)^(-s))
   c(eval(stats::deriv(func, "lnk")),
     eval(stats::deriv(func, "s")))
 }
-
-#' Rachlin Integrand helper
-#'
-#' This integrand helper is a projection of the integrand with delays represented as normal
-#'
-#' @param x observation at point n (X)
-#' @param lnK fitted parameter
-#' @param s fitted parameter
-#'
-#' @return Numerical Integration Projection
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandRachlin <- function(x, lnK, s) { (1 + exp(lnK)*(x^s))^(-1) }
 
 #' Rachlin Integrand helper (log10)
 #'
@@ -229,4 +205,4 @@ integrandRachlin <- function(x, lnK, s) { (1 + exp(lnK)*(x^s))^(-1) }
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandRachlinLog <- function(x, lnK, s) { (1 + exp(lnK)*((10^x)^s))^(-1) }
+dd_integrand_rachlin_log10 <- function(x, lnK, s) { (1 + exp(lnK)*((10^x)^s))^(-1) }

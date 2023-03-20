@@ -11,9 +11,6 @@
 
 \item{detailed}{enable additional model metrics (default TRUE)}
 }
-\value{
-
-}
 \description{
 Override summary output. Rather than display the core fitting object, a data frame block of results is provided to the user for easy interpretation and further analysis
 }

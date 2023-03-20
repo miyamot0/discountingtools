@@ -21,6 +21,4 @@ Rodriguez & Logue Value Function
 }
 \author{
 Shawn Gilroy <sgilroy1@lsu.edu>
-
-Shawn Gilroy <sgilroy1@lsu.edu>
 }

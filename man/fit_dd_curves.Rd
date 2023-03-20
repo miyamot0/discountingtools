@@ -17,9 +17,6 @@ fit_dd_curves(data, settings, maxValue, strategy = "ind", verbose = FALSE)
 
 \item{verbose}{(bool) output level (default FALSE)}
 }
-\value{
-
-}
 \description{
 This is the entry point for users. It constructs a core fitting object that is passed through the program, with branching options based on those specified by the user.
 }

@@ -2,20 +2,23 @@
 % Please edit documentation in R/rachlin.R
 \name{dd_mbauc_rachlin}
 \alias{dd_mbauc_rachlin}
-\title{dd_mbauc_rachlin}
+\title{dd_mbauc_laibson}
 \usage{
-dd_mbauc_rachlin(fittingObject, id)
+dd_mbauc_rachlin(A, Lnk, s, startDelay, endDelay)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{A}{maximum value}
 
-\item{id}{id tag}
-}
-\value{
+\item{Lnk}{parameter value}
 
+\item{s}{parameter value}
+
+\item{startDelay}{time point}
+
+\item{endDelay}{time point}
 }
 \description{
-dd_mbauc_rachlin
+dd_mbauc_laibson
 }
 \author{
 Shawn Gilroy <sgilroy1@lsu.edu>

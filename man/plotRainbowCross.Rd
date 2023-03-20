@@ -13,9 +13,6 @@ plotRainbowCross(fittingObject, metric, plotit)
 
 \item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
-\value{
-
-}
 \description{
 plotRainbowCross
 }

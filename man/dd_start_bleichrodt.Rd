@@ -9,9 +9,6 @@ dd_start_bleichrodt(currentData)
 \arguments{
 \item{currentData}{current data set}
 }
-\value{
-
-}
 \description{
 Extract starting parameters
 }

@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_greenmyerson <- function(fittingObject, id) {
 
@@ -16,7 +15,10 @@ dd_fit_greenmyerson <- function(fittingObject, id) {
     S          = NA,
     RMSE       = NA,
     BIC        = NA,
-    AIC        = NA
+    AIC        = NA,
+    ED50       = NA,
+    MBAUC      = NA,
+    Log10MBAUC = NA
   )
 
   currentData = fittingObject$data[
@@ -34,8 +36,8 @@ dd_fit_greenmyerson <- function(fittingObject, id) {
   try(modelFitGreenMyerson <- nls.lm(par              = startParams,
                                      fn               = residualFunction,
                                      jac              = jacobianMatrix,
-                                     valueFunction    = myersonHyperboloidDiscountFunc,
-                                     jacobianFunction = myersonHyperboloidDiscountGradient,
+                                     valueFunction    = dd_discount_func_greenmyerson,
+                                     jacobianFunction = dd_discount_grad_greenmyerson,
                                      x                = currentData$ddX,
                                      value            = currentData$ddY,
                                      control          = nls.lm.control(maxiter = 1000)),
@@ -43,11 +45,29 @@ dd_fit_greenmyerson <- function(fittingObject, id) {
 
   if (!is.null(modelFitGreenMyerson)) {
 
-    modelResults[[ "Lnk"   ]]  = modelFitGreenMyerson$par[["lnk"]]
-    modelResults[[ "S"  ]]     = modelFitGreenMyerson$par[["s"]]
-    modelResults[[ "RMSE"   ]] = sqrt(modelFitGreenMyerson$deviance/length(modelFitGreenMyerson$fvec))
-    modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitGreenMyerson))
-    modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitGreenMyerson))
+    modelResults[[ "Lnk"         ]] = modelFitGreenMyerson$par[["lnk"]]
+    modelResults[[ "S"           ]] = modelFitGreenMyerson$par[["s"]]
+    modelResults[[ "RMSE"        ]] = sqrt(modelFitGreenMyerson$deviance/length(modelFitGreenMyerson$fvec))
+    modelResults[[ "BIC"         ]] = stats::BIC(logLik.nls.lm(modelFitGreenMyerson))
+    modelResults[[ "AIC"         ]] = stats::AIC(logLik.nls.lm(modelFitGreenMyerson))
+    modelResults[[ "ED50"        ]] = dd_ed50_greenmyerson(
+      Lnk = modelFitGreenMyerson$par[["lnk"]],
+      s   = modelFitGreenMyerson$par[["s"]]
+    )
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_greenmyerson(
+      A = 1,
+      Lnk = modelFitGreenMyerson$par[["lnk"]],
+      s   = modelFitGreenMyerson$par[["s"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_greenmyerson(
+      A = 1,
+      Lnk = modelFitGreenMyerson$par[["lnk"]],
+      s   = modelFitGreenMyerson$par[["s"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
     modelResults[[ "Status" ]] = paste("Code:", modelFitGreenMyerson$info,
                                        "- Message:", modelFitGreenMyerson$message,
                                        sep = " ")
@@ -64,7 +84,6 @@ dd_fit_greenmyerson <- function(fittingObject, id) {
 #'
 #' @param currentData  current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_greenmyerson <- function(currentData) {
 
@@ -100,50 +119,30 @@ dd_start_greenmyerson <- function(currentData) {
 
 #' dd_ed50_greenmyerson
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param Lnk parameter
+#' @param s parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_greenmyerson <- function(fittingObject, id) {
-
-  lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
-
-  fittingObject$ed50[[as.character(id)]] = log( (2^(1/s) - 1)/exp(lnk))
-
-  fittingObject
+#' @export
+dd_ed50_greenmyerson <- function(Lnk, s) {
+  return(log( (2^(1/s) - 1)/exp(Lnk)))
 }
 
-#' dd_mbauc_greenmyerson
+#' dd_mbauc_rachlin
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_greenmyerson <- function(fittingObject, id) {
+#' @export
+dd_mbauc_greenmyerson <- function(A, Lnk, s, startDelay, endDelay) {
+  mgFinal = (A * ((exp(mgLnk) * endDelay + 1)^(1 - s))) / (exp(Lnk) * (1 - s))
+  mgInitial = (A * ((exp(mgLnk) * startDelay + 1)^(1 - s))) / (exp(Lnk) * (1 - s))
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
-  s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandMyerson,
-                                                             lower = minX,
-                                                             upper = maxX,
-                                                             lnK   = lnk,
-                                                             s     = s)$value/maximumArea
-
-  fittingObject
+  return((mgFinal - mgInitial) / ((endDelay - startDelay) * A))
 }
 
 #' dd_mbauc_log10_greenmyerson
@@ -151,24 +150,17 @@ dd_mbauc_greenmyerson <- function(fittingObject, id) {
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
+dd_mbauc_log10_greenmyerson <- function(A, Lnk, s, startDelay, endDelay) {
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
+  maxX        = log10(endDelay)
+  minX        = log10(startDelay)
   maximumArea = maxX - minX
 
   lnk = fittingObject$results[[as.character(id)]][["greenmyerson"]][["Lnk"]]
   s   = fittingObject$results[[as.character(id)]][["greenmyerson"]][["S"]]
 
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandMyersonLog,
+  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(dd_integrand_myersongreen_log10,
                                                                   lower = minX,
                                                                   upper = maxX,
                                                                   lnK   = lnk,
@@ -186,7 +178,7 @@ dd_mbauc_log10_greenmyerson <- function(fittingObject, id) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-myersonHyperboloidDiscountFunc <- function(x, lnk, s)
+dd_discount_func_greenmyerson <- function(x, lnk, s)
 {
   func <- (1 + exp(lnk)*x)^(-s)
   eval(func)
@@ -200,24 +192,12 @@ myersonHyperboloidDiscountFunc <- function(x, lnk, s)
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-myersonHyperboloidDiscountGradient <- function(x, lnk, s)
+dd_discount_grad_greenmyerson <- function(x, lnk, s)
 {
   func <- expression((1 + exp(lnk)*x)^(-s))
   c(eval(stats::deriv(func, "lnk")),
     eval(stats::deriv(func, "s")))
 }
-
-#' Green & Myerson Integrand helper
-#'
-#' This integrand helper is a projection of the integrand with delays represented as normal
-#'
-#' @param x observation at point n (X)
-#' @param lnK fitted parameter
-#' @param s fitted parameter
-#'
-#' @return Numerical Integration Projection
-#' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandMyerson <- function(x, lnK, s) { (1 + exp(lnK)*x)^(-s) }
 
 #' Green & Myerson Integrand helper (log10)
 #'
@@ -229,4 +209,4 @@ integrandMyerson <- function(x, lnK, s) { (1 + exp(lnK)*x)^(-s) }
 #'
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandMyersonLog <- function(x, lnK, s) { (1 + exp(lnK)*(10^x))^(-s) }
+dd_integrand_myersongreen_log10 <- function(x, lnK, s) { (1 + exp(lnK)*(10^x))^(-s) }

@@ -8,7 +8,6 @@
 #' @param verbose (bool) output level (default FALSE)
 #' @param strategy (char) fit to individual ids (default) or group
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @importFrom rlang enexpr
 #' @export

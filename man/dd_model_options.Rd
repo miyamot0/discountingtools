@@ -11,9 +11,6 @@ dd_model_options(fittingObject, plan)
 
 \item{plan}{(char vector) This vector contains a list of possible model candidates.}
 }
-\value{
-
-}
 \description{
 This call builds out the model(s) included in subsequent regressions.
 }

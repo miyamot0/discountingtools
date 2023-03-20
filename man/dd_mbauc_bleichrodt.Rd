@@ -11,9 +11,6 @@ dd_mbauc_bleichrodt(fittingObject, id)
 
 \item{id}{id tag}
 }
-\value{
-
-}
 \description{
 dd_mbauc_bleichrodt
 }

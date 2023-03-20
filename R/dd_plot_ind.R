@@ -10,7 +10,6 @@
 #' @param yMin (num) y axis lower limit
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
 

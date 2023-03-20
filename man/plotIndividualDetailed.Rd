@@ -32,9 +32,6 @@ plotIndividualDetailed(
 
 \item{plotit}{(logical) bool of whether or not to print visual or output plotting frame}
 }
-\value{
-
-}
 \description{
 This implementation of plot singles out a particular responder, providing the fits to the observed data as well as the probability that the "probable" model characterizes the data
 }

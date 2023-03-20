@@ -9,9 +9,6 @@ dd_ed50_exponential(Lnk)
 \arguments{
 \item{Lnk}{log transformed rate parameter}
 }
-\value{
-
-}
 \description{
 dd_ed50_exponential
 }

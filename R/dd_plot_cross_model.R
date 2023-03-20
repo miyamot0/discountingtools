@@ -4,7 +4,6 @@
 #' @param metric (char) the cross model metric to be displayed
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotRainbowCross <- function(fittingObject, metric, plotit) {
 

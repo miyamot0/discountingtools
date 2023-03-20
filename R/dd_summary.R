@@ -5,7 +5,6 @@
 #' @param fittingObject core fitting object
 #' @param detailed enable additional model metrics (default TRUE)
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export summary.discountingtools
 #' @export

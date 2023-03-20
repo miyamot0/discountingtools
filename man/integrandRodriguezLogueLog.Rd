@@ -21,6 +21,4 @@ This integrand helper is a projection of the integrand (log10) with delays repre
 }
 \author{
 Shawn Gilroy <sgilroy1@lsu.edu>
-
-Shawn Gilroy <sgilroy1@lsu.edu>
 }

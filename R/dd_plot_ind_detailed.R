@@ -11,7 +11,6 @@
 #' @param id (num) participant id
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 plotIndividualDetailed <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, id, plotit) {
   if (!(id %in% names(fittingObject$results))) stop('id not found in results')
