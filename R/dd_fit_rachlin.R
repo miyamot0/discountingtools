@@ -127,7 +127,7 @@ dd_ed50_rachlin <- function(Lnk, s) {
   return(log( (1/(exp(Lnk)))^(1/s)))
 }
 
-#' dd_mbauc_laibson
+#' dd_mbauc_rachlin
 #'
 #' @param A maximum value
 #' @param Lnk parameter value

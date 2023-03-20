@@ -4,12 +4,18 @@
 \alias{dd_mbauc_log10_rodriguezlogue}
 \title{dd_mbauc_log10_rodriguezlogue}
 \usage{
-dd_mbauc_log10_rodriguezlogue(fittingObject, id)
+dd_mbauc_log10_rodriguezlogue(A, Lnk, b, startDelay, endDelay)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{A}{maximum value}
 
-\item{id}{id tag}
+\item{Lnk}{parameter value}
+
+\item{b}{parameter value}
+
+\item{startDelay}{time point}
+
+\item{endDelay}{time point}
 }
 \description{
 dd_mbauc_log10_rodriguezlogue

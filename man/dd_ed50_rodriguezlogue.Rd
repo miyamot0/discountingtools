@@ -4,12 +4,12 @@
 \alias{dd_ed50_rodriguezlogue}
 \title{dd_ed50_rodriguezlogue}
 \usage{
-dd_ed50_rodriguezlogue(fittingObject, id)
+dd_ed50_rodriguezlogue(Lnk, b)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{Lnk}{parameter}
 
-\item{id}{id tag}
+\item{b}{parameter}
 }
 \description{
 dd_ed50_rodriguezlogue

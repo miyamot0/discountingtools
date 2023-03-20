@@ -6,7 +6,6 @@
 #' @param fittingObject core dd fitting object
 #' @param id id tag
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_fit_rodriguezlogue <- function(fittingObject, id) {
 
@@ -37,8 +36,8 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
   try(modelFitRodriguezLogue <- nls.lm(par              = startParams,
                                        fn               = residualFunction,
                                        jac              = jacobianMatrix,
-                                       valueFunction    = RodriguezLogueDiscountFunc,
-                                       jacobianFunction = RodriguezLogueDiscountGradient,
+                                       valueFunction    = dd_discount_func_rodriguezlogue,
+                                       jacobianFunction = dd_discount_grad_rodriguezlogue,
                                        x                = currentData$ddX,
                                        value            = currentData$ddY,
                                        control          = nls.lm.control(maxiter = 1000)),
@@ -51,6 +50,24 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
     modelResults[[ "RMSE"   ]] = sqrt(modelFitRodriguezLogue$deviance/length(modelFitRodriguezLogue$fvec))
     modelResults[[ "BIC"    ]] = stats::BIC(logLik.nls.lm(modelFitRodriguezLogue))
     modelResults[[ "AIC"    ]] = stats::AIC(logLik.nls.lm(modelFitRodriguezLogue))
+    modelResults[[ "ED50"        ]] = dd_ed50_rodriguezlogue(
+      Lnk = modelFitRodriguezLogue$par[["lnk"]],
+      b   = modelFitRodriguezLogue$par[["beta"]]
+    )
+    modelResults[[ "MBAUC"       ]] = dd_mbauc_rodriguezlogue(
+      A = 1,
+      Lnk = modelFitRodriguezLogue$par[["lnk"]],
+      b   = modelFitRodriguezLogue$par[["beta"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
+    modelResults[[ "Log10MBAUC"  ]] = dd_mbauc_log10_rodriguezlogue(
+      A = 1,
+      Lnk = modelFitRodriguezLogue$par[["lnk"]],
+      b   = modelFitRodriguezLogue$par[["beta"]],
+      startDelay = min(currentData$ddX),
+      endDelay = max(currentData$ddX)
+    )
     modelResults[[ "Status" ]] = paste("Code:", modelFitRodriguezLogue$info,
                                        "- Message:", modelFitRodriguezLogue$message,
                                        sep = " ")
@@ -67,7 +84,6 @@ dd_fit_rodriguezlogue <- function(fittingObject, id) {
 #'
 #' @param currentData  current data set
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_start_rodriguezlogue <- function(currentData) {
 
@@ -98,16 +114,11 @@ dd_start_rodriguezlogue <- function(currentData) {
 
 #' dd_ed50_rodriguezlogue
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param Lnk parameter
+#' @param b parameter
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_ed50_rodriguezlogue <- function(fittingObject, id) {
-
-  lnk = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Lnk"]]
-  b   = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Beta"]]
-
+dd_ed50_rodriguezlogue <- function(Lnk, b) {
   currentData = fittingObject$data[
     which(fittingObject$data[,
                              as.character(fittingObject$settings['Individual'])] == id),]
@@ -118,52 +129,42 @@ dd_ed50_rodriguezlogue <- function(fittingObject, id) {
   highDelay <- max(currentData$ddX)*10
 
   while ((highDelay - lowDelay) > 0.001) {
-    lowEst  <- integrandRodriguezLogue(  lowDelay, lnk, b)
-    midEst  <- integrandRodriguezLogue( (lowDelay+highDelay)/2, lnk, b)
-    highEst <- integrandRodriguezLogue(  highDelay, lnk, b)
+    lowEst  <- dd_integrand_rodriguezlogue(  lowDelay, Lnk, b)
+    midEst  <- dd_integrand_rodriguezlogue( (lowDelay + highDelay)/2, Lnk, b)
+    highEst <- dd_integrand_rodriguezlogue(  highDelay, Lnk, b)
 
     if (lowEst > 0.5 && midEst > 0.5) {
-      lowDelay <- (lowDelay+highDelay)/2
+      lowDelay <- (lowDelay + highDelay)/2
       highDelay <- highDelay
 
     } else if (highEst < 0.5 && midEst < 0.5) {
       lowDelay <- lowDelay
-      highDelay <- (lowDelay+highDelay)/2
+      highDelay <- (lowDelay + highDelay) / 2
 
     }
   }
 
-  fittingObject$ed50[[as.character(id)]] = log((lowDelay+highDelay)/2)
-
-  fittingObject
+  return(log((lowDelay + highDelay)/2))
 }
 
 #' dd_mbauc_rodriguezlogue
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param b parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
+dd_mbauc_rodriguezlogue <- function(A, Lnk, b, startDelay, endDelay) {
+  maxX        = endDelay
+  minX        = startDelay
+  maximumArea = (maxX - minX) * A
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = max(currentData$ddX)
-  minX        = min(currentData$ddX)
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Lnk"]]
-  b   = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Beta"]]
-
-  fittingObject$mbauc[[as.character(id)]] = stats::integrate(integrandRodriguezLogue,
+  fittingObject$mbauc[[as.character(id)]] = stats::integrate(dd_integrand_rodriguezlogue,
                                                              lower = minX,
                                                              upper = maxX,
-                                                             lnK   = lnk,
+                                                             lnK   = Lnk,
                                                              beta  = b)$value/maximumArea
 
   fittingObject
@@ -171,30 +172,22 @@ dd_mbauc_rodriguezlogue <- function(fittingObject, id) {
 
 #' dd_mbauc_log10_rodriguezlogue
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param b parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
-#' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
+dd_mbauc_log10_rodriguezlogue <- function(A, Lnk, b, startDelay, endDelay) {
+  maxX        = log10(endDelay)
+  minX        = log10(startDelay)
+  maximumArea = (maxX - minX) * A
 
-  currentData = fittingObject$data[
-    which(fittingObject$data[,
-                             as.character(fittingObject$settings['Individual'])] == id),]
-
-  currentData$ddX = currentData[,as.character(fittingObject$settings['Delays'])]
-
-  maxX        = log10(max(currentData$ddX))
-  minX        = log10(min(currentData$ddX))
-  maximumArea = maxX - minX
-
-  lnk = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Lnk"]]
-  b   = fittingObject$results[[as.character(id)]][["rodriguezlogue"]][["Beta"]]
-
-  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(integrandRodriguezLogueLog,
+  fittingObject$mbauclog10[[as.character(id)]] = stats::integrate(dd_integrand_rodriguezlogue_log10,
                                                                   lower = minX,
                                                                   upper = maxX,
-                                                                  lnK   = lnk,
+                                                                  lnK   = Lnk,
                                                                   beta  = b)$value/maximumArea
 
   fittingObject
@@ -209,7 +202,7 @@ dd_mbauc_log10_rodriguezlogue <- function(fittingObject, id) {
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @export
-RodriguezLogueDiscountFunc <- function(x, lnk, beta)
+dd_discount_func_rodriguezlogue <- function(x, lnk, beta)
 {
   func <- (1 + x * exp(lnk))^(-exp(beta) / exp(lnk))
   eval(func)
@@ -223,7 +216,7 @@ RodriguezLogueDiscountFunc <- function(x, lnk, beta)
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-RodriguezLogueDiscountGradient <- function(x, lnk, beta)
+dd_discount_grad_rodriguezlogue <- function(x, lnk, beta)
 {
   func <- expression((1 + x * exp(lnk))^(-exp(beta) / exp(lnk)))
   c(eval(stats::deriv(func, "lnk")),
@@ -240,7 +233,7 @@ RodriguezLogueDiscountGradient <- function(x, lnk, beta)
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-exp(beta) / exp(lnK)) }
+dd_integrand_rodriguezlogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-exp(beta) / exp(lnK)) }
 
 #' Rodriguez & Logue Integrand helper
 #'
@@ -252,4 +245,4 @@ integrandRodriguezLogue <- function(x, lnK, beta) { (1 + x * exp(lnK))^(-exp(bet
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @return Numerical Integration Projection
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-integrandRodriguezLogueLog <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-exp(beta) / exp(lnK)) }
+dd_integrand_rodriguezlogue_log10 <- function(x, lnK, beta) { (1 + (10^x) * exp(lnK))^(-exp(beta) / exp(lnK)) }
