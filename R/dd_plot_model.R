@@ -1,4 +1,4 @@
-#' plotModelCharacterization
+#' plot_model_characterization
 #'
 #' @param fittingObject core fitting object
 #' @param position0 (char) position of legend
@@ -7,9 +7,10 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, plotit) {
+plot_model_characterization <- function(fittingObject, position0, ylab0, xlab0, plotit = TRUE) {
 
   if (!("Group" %in% names(fittingObject$settings))) {
+
     resultFrame = summary(fittingObject)
 
     prePlot = table(resultFrame$ProbableModel)
@@ -21,10 +22,11 @@ plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, pl
     prePlotDfFinal = prePlotDf
 
     if (plotit) {
-      print(barchart(Counts ~ Model,
-                     data = prePlotDfFinal,
-                     main = "Model Characterization",
-                     scales = list(x = list(rot = 45))))
+      return(barchart(Counts ~ Model,
+                      data = prePlotDfFinal,
+                      main = "Model Characterization",
+                      scales = list(x = list(rot = 45))))
+
     }
   } else {
     resultFrame = summary(fittingObject)
@@ -51,12 +53,12 @@ plotModelCharacterization <- function(fittingObject, position0, ylab0, xlab0, pl
     }
 
     if (plotit) {
-      print(barchart(Counts ~ Model | Group,
-                     data = prePlotDfFinal,
-                     groups = Group,
-                     main = "Model Characterization",
-                     stack = TRUE,
-                     scales = list(x = list(rot = 45))))
+      return(barchart(Counts ~ Model | Group,
+                      data = prePlotDfFinal,
+                      groups = Group,
+                      main = "Model Characterization",
+                      stack = TRUE,
+                      scales = list(x = list(rot = 45))))
     }
   }
 

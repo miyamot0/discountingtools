@@ -1,4 +1,4 @@
-#' plotGroupRainbow
+#' plot_group_rainbow
 #'
 #' Convenience method for illustrating individual fits when characterized by some a priori grouping.
 #'
@@ -11,7 +11,7 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotGroupRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
+plot_group_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
 
   if (is.null(fittingObject$settings[["Group"]])) stop('No Group aesthetic specified')
 

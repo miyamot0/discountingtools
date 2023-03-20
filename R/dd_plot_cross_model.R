@@ -1,11 +1,11 @@
-#' plotRainbowCross
+#' plot_cross_rainbow
 #'
 #' @param fittingObject core fitting object
 #' @param metric (char) the cross model metric to be displayed
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotRainbowCross <- function(fittingObject, metric, plotit) {
+plot_cross_rainbow <- function(fittingObject, metric, plotit) {
 
   if (!("Group" %in% names(fittingObject$settings))) {
     vecGroups = "sample"

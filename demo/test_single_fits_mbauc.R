@@ -37,33 +37,12 @@ results = fit_dd_curves(
                   Values     = Value,
                   Individual = ids),
   maxValue = 1,
-  plan = c('mazur'),
+  plan = c('mazur', 'exponential', 'rachlin', 'laibson'),
   verbose  = TRUE) |>
-dd_analyze(modelSelection = FALSE)
+  dd_analyze(modelSelection = TRUE)
 
-data_frame_results <- summary(results)
+png(filename = "../man/figures/single_fits_mbauc.png", width = 8, height = 6, res = 300, units = "in")
 
-png(filename = "../man/figures/single_fits_recovery.png",
-    width = 8,
-    height = 4,
-    res = 600,
-    units = "in")
-
-par(mfrow = c(1, 2))
-
-plot(results,
-     logAxis = "x",
-     position = "topright")
-
-plot(data_frame_results$Mazur.Lnk,
-     dataFrame$ks,
-     main = "Fitted vs. Simulated",
-     ylab = "Fitted",
-     xlab = "Simulated",
-     ylim = c(-4.5, -1),
-     xlim = c(-4.5, -1))
-
-lines(x = c(-4.5, -1),
-      y = c(-4.5, -1))
+plot(results, which = "MBAUC")
 
 dev.off()

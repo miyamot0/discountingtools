@@ -1,4 +1,4 @@
-#' plotIndividualDetailed
+#' plot_individual_detailed
 #'
 #' This implementation of plot singles out a particular responder, providing the fits to the observed data as well as the probability that the "probable" model characterizes the data
 #'
@@ -12,7 +12,7 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotIndividualDetailed <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, id, plotit) {
+plot_individual_detailed <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, id, plotit) {
   if (!(id %in% names(fittingObject$results))) stop('id not found in results')
 
   if (plotit) {

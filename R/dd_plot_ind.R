@@ -1,4 +1,4 @@
-#' plotIndividualRainbow
+#' plot_individual_rainbow
 #'
 #' This specific implementation shows cross-model fits, with series characterized by different models illustrated with different colors. A legend is also provided for convenience of interpretation.
 #'
@@ -11,7 +11,7 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
+plot_individual_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
 
   if (plotit) {
     preDraw = TRUE
@@ -42,15 +42,14 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
                max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
 
       if (model == "noise")          yhat = rep(result$Intercept, length(xs))
-
-      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
-      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
-      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
-      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
-      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
-      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+      if (model == "bleichrodt")     yhat = dd_discount_func_bleichrodt_crdi(xs, result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = dd_discount_func_ebertprelec(xs,     result$Lnk,  result$S)
+      if (model == "exponential")    yhat = dd_discount_func_exponential(xs,     result$Lnk)
+      if (model == "greenmyerson")   yhat = dd_discount_func_greenmyerson(xs,    result$Lnk,  result$S)
+      if (model == "laibson")        yhat = dd_discount_func_laibson(xs,         result$Beta, result$Delta)
+      if (model == "mazur")          yhat = dd_discount_func_mazur(xs,           result$Lnk)
+      if (model == "rachlin")        yhat = dd_discount_func_rachlin(xs,         result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = dd_discount_func_rodriguezlogue(xs,  result$Lnk,  result$Beta)
 
       if (length(vecColors) == 1) {
         col = vecColors
@@ -125,15 +124,14 @@ plotIndividualRainbow <- function(fittingObject, position0, ylab0, xlab0, logAxi
                max(ogData[,as.character(fittingObject$settings['Delays'])]), length.out = 2000)
 
       if (model == "noise")          yhat = rep(result$Intercept, length(xs))
-
-      if (model == "bleichrodt")     yhat = BleichrodtCRDIDiscountFunc(xs,     result$Lnk,  result$S, result$Beta)
-      if (model == "ebertprelec")    yhat = ebertPrelecDiscountFunc(xs,        result$Lnk,  result$S)
-      if (model == "exponential")    yhat = exponentialDiscountFunc(xs,        result$Lnk)
-      if (model == "greenmyerson")   yhat = myersonHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "laibson")        yhat = betaDeltaDiscountFunc(xs,          result$Beta, result$Delta)
-      if (model == "mazur")          yhat = hyperbolicDiscountFunc(xs,         result$Lnk)
-      if (model == "rachlin")        yhat = rachlinHyperboloidDiscountFunc(xs, result$Lnk,  result$S)
-      if (model == "rodriguezlogue") yhat = RodriguezLogueDiscountFunc(xs,     result$Lnk,  result$Beta)
+      if (model == "bleichrodt")     yhat = dd_discount_func_bleichrodt_crdi(xs, result$Lnk,  result$S, result$Beta)
+      if (model == "ebertprelec")    yhat = dd_discount_func_ebertprelec(xs,     result$Lnk,  result$S)
+      if (model == "exponential")    yhat = dd_discount_func_exponential(xs,     result$Lnk)
+      if (model == "greenmyerson")   yhat = dd_discount_func_greenmyerson(xs,    result$Lnk,  result$S)
+      if (model == "laibson")        yhat = dd_discount_func_laibson(xs,         result$Beta, result$Delta)
+      if (model == "mazur")          yhat = dd_discount_func_mazur(xs,           result$Lnk)
+      if (model == "rachlin")        yhat = dd_discount_func_rachlin(xs,         result$Lnk,  result$S)
+      if (model == "rodriguezlogue") yhat = dd_discount_func_rodriguezlogue(xs,  result$Lnk,  result$Beta)
 
       if (length(vecColors) == 1) {
         col = vecColors
