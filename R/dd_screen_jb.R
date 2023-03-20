@@ -13,7 +13,7 @@ johnsonBickelScreen <- function(fittingObject) {
   listOfIds = unique(fittingObject$data[[as.character(fittingObject$settings['Individual'])]])
 
   for (id in listOfIds) {
-    messageDebug(fittingObject, paste("JB Screen: ", id))
+    message_debug(fittingObject, paste("JB Screen: ", id))
 
     currentData = fittingObject$data[
       which(fittingObject$data[,
@@ -38,7 +38,7 @@ johnsonBickelScreen <- function(fittingObject) {
       curr = currentData[index,     "ddY"]
 
       if ((curr - prev) > as.numeric(fittingObject[[ "JB1Flag" ]])) {
-        messageDebug(fittingObject, paste("JB Screen: ", id, "[Fail JB1]"))
+        message_debug(fittingObject, paste("JB Screen: ", id, "[Fail JB1]"))
 
         fittingObject$data[
           which(fittingObject$data[,
@@ -50,7 +50,7 @@ johnsonBickelScreen <- function(fittingObject) {
     curr <- currentData[length(currentData$ddX), "ddY"]
 
     if ((prev - curr) < as.numeric(fittingObject[[ "JB2Flag" ]])) {
-      messageDebug(fittingObject, paste("JB Screen: ", id, "[Fail JB2]"))
+      message_debug(fittingObject, paste("JB Screen: ", id, "[Fail JB2]"))
 
       fittingObject$data[
         which(fittingObject$data[,

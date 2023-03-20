@@ -4,7 +4,7 @@
 
 rm(list = ls())
 
-library(dplyr)
+library(tidyverse)
 library(discountingtools)
 
 set.seed(65535)
@@ -60,19 +60,19 @@ data_frame_long = data_frame %>%
   mutate(Value = ifelse(Value < 0, 0, Value)) %>%
   mutate(Value = ifelse(Value > 1, 0, Value))
 
-results = fitDDCurves(data = data_frame_long,
+results = fit_dd_curves(data = data_frame_long,
             settings = list(Delays     = Delay,
                             Values     = Value,
                             Individual = ids,
                             Group      = grp),
             maxValue = 1,
             verbose  = TRUE) |>
-  dd_modelOptions(plan = c("mazur", "exponential"))  |>
-  dd_metricOptions(metrics = c("mbauc"))  |>
-  dd_screenOption(screen = FALSE)  |>
+  dd_model_options(plan = c("mazur", "exponential"))  |>
+  #dd_metric_options(metrics = c("mbauc"))  |>
+  dd_screen_options(screen = FALSE)  |>
   dd_analyze(modelSelection = FALSE)
 
-#summary(results)
+summary(results)
 
 # data_frame_results <- summary(results)
 #

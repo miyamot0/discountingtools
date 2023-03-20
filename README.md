@@ -388,6 +388,7 @@ Questions? Suggestions for features? [sgilroy1\@lsu.edu](mailto:sgilroy1@lsu.edu
 
 ## To Do
 
+-   Add in fix for AUC at individual model level
 -   Update vignettes
 -   Add model-based visuals to README.md
 

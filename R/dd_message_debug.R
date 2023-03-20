@@ -1,4 +1,4 @@
-#' messageDebug
+#' message_debug
 #'
 #' Extension of message method, instead yolked to a flag defining level of verbosity.
 #'
@@ -7,6 +7,6 @@
 #'
 #' @return
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
-messageDebug <- function(fittingObject, msg) {
+message_debug <- function(fittingObject, msg) {
   if (fittingObject[[ "verbose"  ]] == TRUE) message(msg)
 }
