@@ -338,9 +338,9 @@ summary.discountingtools <- function(fittingObject, detailed = FALSE) {
       resFrame[index, "ProbableModel.Prob"] = fittingObject$rotation[[name]]$ProbableModel.Prob
 
       for (metric in fittingObject[["metrics"]]) {
-        if (metric == "lned50")   resFrame[index, "LnED50"]     = fittingObject$ed50[[name]]
-        if (metric == "mbauc")    resFrame[index, "MBAUC"]      = fittingObject$mbauc[[name]]
-        if (metric == "logmbauc") resFrame[index, "Log10MBAUC"] = fittingObject$mbauclog10[[name]]
+        if (metric == "lned50")   resFrame[index, "ProbableModel.LnED50"]     = fittingObject$ed50[[name]]
+        if (metric == "mbauc")    resFrame[index, "ProbableModel.MBAUC"]      = fittingObject$mbauc[[name]]
+        if (metric == "logmbauc") resFrame[index, "ProbableModel.Log10MBAUC"] = fittingObject$mbauclog10[[name]]
       }
     }
   }

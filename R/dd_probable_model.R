@@ -51,5 +51,11 @@ dd_probable_model <- function(fittingObject, id) {
     ProbableModel.Prob  = modelComparison$Probs[[mostProbModel]]
   )
 
+  for (metric in fittingObject[["metrics"]]) {
+    if (metric == "lned50")   fittingObject$ed50[[as.character(id)]]       = currentResults[[mostProbModel]]$ED50
+    if (metric == "mbauc")    fittingObject$mbauc[[as.character(id)]]      = currentResults[[mostProbModel]]$MBAUC
+    if (metric == "logmbauc") fittingObject$mbauclog10[[as.character(id)]] = currentResults[[mostProbModel]]$Log10MBAUC
+  }
+
   fittingObject
 }

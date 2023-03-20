@@ -3,9 +3,9 @@ rm(list = ls())
 library(discountingtools)
 
 og_k <- -0.7925272
-og_ln_ed50 <- 0.4260143
-og_mb_auc <- 0.0001626005
-og_mb_auc_log <- 0.06856932
+og_ln_ed50 <- 0.7890187
+og_mb_auc <- 0.000617341
+og_mb_auc_log <- 0.1198922
 
 data_frame = data.frame(
   ids = 1,
@@ -50,17 +50,16 @@ describe("dd_fit: Model Selection Rotation", {
     )
   })
 
-  it("Should be close to simulated parameter (15%)", {
+  it("Should find EP to be best model", {
     testthat::expect_equal(
-      cached_results[1, 'Exponential.Lnk'],
-      og_k,
-      tolerance = 0.15
+      cached_results[1, 'ProbableModel'],
+      'ebertprelec'
     )
   })
 
   it("Should be close to expected LnED50", {
     testthat::expect_equal(
-      cached_results[1, 'Exponential.LnED50'],
+      cached_results[1, 'ProbableModel.LnED50'],
       og_ln_ed50,
       tolerance = 0.1
     )
@@ -68,7 +67,7 @@ describe("dd_fit: Model Selection Rotation", {
 
   it("Should be close to expected MBAUC", {
     testthat::expect_equal(
-      cached_results[1, 'Exponential.MBAUC'],
+      cached_results[1, 'ProbableModel.MBAUC'],
       og_mb_auc,
       tolerance = 0.05
     )
@@ -76,7 +75,7 @@ describe("dd_fit: Model Selection Rotation", {
 
   it("Should be close to expected Log10 MBAUC", {
     testthat::expect_equal(
-      cached_results[1, 'Exponential.Log10MBAUC'],
+      cached_results[1, 'ProbableModel.Log10MBAUC'],
       og_mb_auc_log,
       tolerance = 0.05
     )

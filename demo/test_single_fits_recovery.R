@@ -8,7 +8,7 @@ library(tidyverse)
 library(discountingtools)
 
 dataFrame = data.frame(
-  ids = 1:100,
+  ids = 1:1,
   ks  = NA
 )
 
@@ -37,10 +37,9 @@ results = fit_dd_curves(
                   Values     = Value,
                   Individual = ids),
   maxValue = 1,
-  #plan = c('mazur', 'exponential', 'noise', 'laibson', 'greenmyerson', 'rachlin', 'ebertprelec', 'bleichrodt', 'rodriguezlogue'),
-  plan = c('greenmyerson'),
+  plan = c('mazur', 'exponential', 'noise', 'laibson', 'greenmyerson', 'rachlin', 'ebertprelec', 'bleichrodt', 'rodriguezlogue'),
   verbose  = TRUE) |>
-dd_analyze(modelSelection = FALSE)
+dd_analyze(modelSelection = TRUE)
 
 #data_frame_results <- summary(results)
 

@@ -73,12 +73,6 @@ dd_analyze <- function(fittingObject, modelSelection = FALSE) {
 
     if (modelSelection == TRUE) {
       fittingObject = dd_probable_model(fittingObject, id)
-
-      for (metric in fittingObject[["metrics"]]) {
-        if (metric == "lned50")   fittingObject = get_ED50(fittingObject, id)
-        if (metric == "mbauc")    fittingObject = get_MBAUC(fittingObject, id)
-        if (metric == "logmbauc") fittingObject = get_MBAUC_log10(fittingObject, id)
-      }
     }
   }
 
