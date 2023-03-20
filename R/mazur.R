@@ -132,6 +132,28 @@ dd_mbauc_mazur <- function(fittingObject, id) {
   fittingObject
 }
 
+#' dd_mbauc_mazur_exact
+#'
+#' @param A maximum value
+#' @param hypLnk logged parameter value
+#' @param startDelay time point
+#' @param endDelay time point
+#'
+#' @return
+#' @export
+#' @author Shawn Gilroy <sgilroy1@lsu.edu>
+dd_mbauc_mazur_exact <- function(A, hypLnk, startDelay, endDelay) {
+  hypFinal = (A * log((exp(hypLnk) * endDelay) + 1)) / exp(hypLnk)
+  hypInitial = (A * log((exp(hypLnk) * startDelay) + 1)) / exp(hypLnk)
+
+  return((hypFinal - hypInitial) / ((endDelay - startDelay) * A))
+}
+
+
+
+
+
+
 #' dd_mbauc_log10_mazur
 #'
 #' @param fittingObject core dd fitting object

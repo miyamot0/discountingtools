@@ -1,10 +1,11 @@
+# Example: Simulated individual fits and parameter recovery
+
 rm(list = ls())
+
+set.seed(65535)
 
 library(dplyr)
 library(discountingtools)
-library(tidyr)
-
-set.seed(65535)
 
 dataFrame = data.frame(
   ids = 1:100,
@@ -16,7 +17,7 @@ dataFrame$ks  = log(dataFrame$ks)
 
 delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
 
-for (row in 1:nrow(dataFrame)) {
+for (row in seq_len(nrow(dataFrame))) {
   ys = hyperbolicDiscountFunc(delays, dataFrame[row, "ks"]) + rnorm(length(delays),
                                                                     0,
                                                                     0.025)
@@ -35,17 +36,28 @@ results = fitDDCurves(data = dataFrame.long,
                             Values     = Value,
                             Individual = ids),
             maxValue = 1,
-            verbose  = TRUE) %>%
-  dd_modelOptions(plan   = c("mazur")) %>%
-  dd_screenOption(screen = FALSE) %>%
+            verbose  = FALSE) |>
+  dd_modelOptions(plan   = c("mazur")) |>
+  dd_screenOption(screen = FALSE) |>
   dd_analyze(modelSelection = FALSE)
 
 summary(results)
 
-png(filename = "SingleModelEvaluation.png", width = 6, height = 6, res = 300, units = "in")
+data_frame_results <- summary(results)
+
+par(mfrow = c(1, 2))
 
 plot(results,
      logAxis = "x",
      position = "topright")
 
-dev.off()
+plot(data_frame_results$Mazur.Lnk,
+     dataFrame$ks,
+     main = "Fitted vs. Simulated",
+     ylab = "Fitted",
+     xlab = "Simulated",
+     ylim = c(-2.5, 0),
+     xlim = c(-2.5, 0))
+
+lines(x = c(-2.5, 0),
+      y = c(-2.5, 0))
