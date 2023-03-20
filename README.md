@@ -55,25 +55,25 @@ library(discountingtools)
 
 Various users may wish to explore delay discounting phenomena with an a priori assumption regarding the underlying data-generating process. The *discountingtools* package can be used to load a data frame (i.e., data = ...), map settings to the data frame (i.e., Delays, Values, and Individuals have references mapped via settings = ...). Modeling options are specified using *dd_modelOptions* and *dd_analyze* (with model selection disabled) can be used to evaluate a single model.
 
-A short snippet is illustrated below and a complete example of this approach is illustrated in demo/testSingle.R.
+A short snippet is illustrated below and a complete example of this approach is illustrated in demo/test_single_fits_recovery.R.
 
 ``` r
-results = fitDDCurves(data = dataFrame.long,
-                      settings = list(Delays     = Delay,
-                                      Values     = Value,
-                                      Individual = ids),
-                      maxValue = 1,
-                      verbose  = TRUE) %>%
-          dd_modelOptions(plan   = c("mazur")) %>%
-          dd_screenOption(screen = FALSE) %>%
-          dd_analyze(modelSelection = FALSE)
+results = fit_dd_curves(
+  data = dataFrame.long,
+  settings = list(Delays     = Delay,
+                  Values     = Value,
+                  Individual = ids),
+  maxValue = 1,
+  plan = c('mazur', 'exponential', 'noise', 'laibson', 'greenmyerson', 'rachlin', 'ebertprelec', 'bleichrodt', 'rodriguezlogue'),
+  verbose  = TRUE) |>
+dd_analyze(modelSelection = TRUE)
 
 summary(results)
 ```
 
 ![Figure of Single Model Evaluation](figures/SingleModelEvaluation.png "Single Model Evaluation")
 
-### Multi-Model Evaluation
+### TODO: Multi-Model Evaluation
 
 More recent discussions on delay discounting patterns and processes have questioned whether *any* a priori assumptions regarding discounting models are tenable. As such, it is now more common for investigators to explore competing models before conducting terminal analyses. The *discountingtools* package can be used to load delay discounting data and specify a range of modeling options (e.g., hyperbolic, exponential). Specifically, a range of modeling options can be specified using *dd_modelOptions* and *dd_analyze* (with model selection *enabled*) and approximate Bayesian model selection will be perform to identify the best-performing candidate (at the individual level).
 
