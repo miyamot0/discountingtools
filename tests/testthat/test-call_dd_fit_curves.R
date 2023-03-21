@@ -38,7 +38,7 @@ describe("dd_fit_curves", {
         maxValue = 1,
         plan = c('mazur'),
         verbose = TRUE) |>
-        dd_screen_options() |>
+        dd_screen() |>
         dd_analyze(modelSelection = FALSE)
     )
   })
@@ -53,8 +53,102 @@ describe("dd_fit_curves", {
         maxValue = 1,
         plan = c('mazur'),
         verbose = TRUE) |>
-        dd_screen_options() |>
+        dd_screen() |>
         dd_analyze(modelSelection = TRUE)
+    )
+  })
+
+  it("Should pass - with filtering for JB1", {
+    testthat::expect_no_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen(filterPassing = c("JB1")) |>
+        dd_analyze(modelSelection = TRUE)
+    )
+  })
+
+  it("Should pass - with filtering for JB2", {
+    testthat::expect_no_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen(filterPassing = c("JB2")) |>
+        dd_analyze(modelSelection = TRUE)
+    )
+  })
+
+  it("Should fail: Bad screening arg", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen(filterPassing = c("JB3")) |>
+        dd_analyze(modelSelection = TRUE),
+      'Only `JB1` or `JB2` screening supported'
+    )
+  })
+
+  it("Should fail: Bad screen var", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen(screen = c("JB1")) |>
+        dd_analyze(modelSelection = TRUE),
+      'screen must be a boolean'
+    )
+  })
+
+  it("Should fail: Bad JB1Flag var", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen(JB1Flag = c("0.1")) |>
+        dd_analyze(modelSelection = TRUE),
+      'JB1Flag must be numeric'
+    )
+  })
+
+  it("Should fail: Bad JB2Flag var", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen(JB2Flag = c("0.1")) |>
+        dd_analyze(modelSelection = TRUE),
+      'JB2Flag must be numeric'
     )
   })
 

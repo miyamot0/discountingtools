@@ -28,7 +28,9 @@ plot_individual_rainbow <- function(fittingObject, position0, ylab0, xlab0, logA
 
     for (id in names(fittingObject$results)) {
 
-      ogData = subset(fittingObject$data, ids == id)
+      ogData = fittingObject$data[
+        fittingObject$data[[as.character(fittingObject$settings['Individual'])]] == id,
+      ]
 
       # Hack: Check if even multiple models
 
@@ -110,7 +112,9 @@ plot_individual_rainbow <- function(fittingObject, position0, ylab0, xlab0, logA
 
     for (id in names(fittingObject$results)) {
 
-      ogData = subset(fittingObject$data, ids == id)
+      ogData = fittingObject$data[
+        fittingObject$data[[as.character(fittingObject$settings['Individual'])]] == id,
+      ]
 
       # Hack: Check if even multiple models
 
@@ -135,29 +139,11 @@ plot_individual_rainbow <- function(fittingObject, position0, ylab0, xlab0, logA
       if (model == "rachlin")        yhat = dd_discount_func_rachlin(xs,         result$Lnk,  result$S)
       if (model == "rodriguezlogue") yhat = dd_discount_func_rodriguezlogue(xs,  result$Lnk,  result$Beta)
 
-      if (length(vecColors) == 1) {
-        col = vecColors
-      } else {
-        col = vecColors[match(model, vecModels)]
-      }
-
       modelP = gsub("ebertprelec",    "ebert prelec",    model)
       modelP = gsub("greenmyerson",   "green myerson",   modelP)
       modelP = gsub("rodriguezlogue", "rodriguez logue", modelP)
 
       modelC = tools::toTitleCase(modelP)
-
-      if (!(modelC %in% legendBuildModel)) {
-        if (!preBuiltLegend) {
-          legendBuildModel = c(modelC)
-          legendBuildColor = c(col)
-
-          preBuiltLegend   = TRUE
-        } else {
-          legendBuildModel = c(legendBuildModel, modelC)
-          legendBuildColor = c(legendBuildColor, col)
-        }
-      }
 
       if (grepl("y", logAxis) == TRUE) {
         yhat    = yhat[yhat >= 0]

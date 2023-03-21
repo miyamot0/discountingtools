@@ -26,7 +26,8 @@ describe("dd_plot: Various Individuals", {
     tidyr::gather(Delay, Value, -ids, -ks) %>%
     dplyr::mutate(Delay = as.numeric(Delay)) %>%
     dplyr::mutate(Value = ifelse(Value < 0, 0, Value)) %>%
-    dplyr::mutate(Value = ifelse(Value > 1, 0, Value))
+    dplyr::mutate(Value = ifelse(Value > 1, 0, Value)) %>%
+    as.data.frame()
 
   results = fit_dd_curves(
     data = data_frame,
@@ -45,9 +46,40 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
+  it("Plots individually: Predictions [plotit = F]", {
+    expect_no_error(
+      plot(results, plotit = FALSE)
+    )
+  })
+
+  it("Plots individually: Single predictions", {
+    expect_no_error(
+      plot(results,
+           logAxis = "x",
+           id = "1",
+           position = "topright")
+    )
+  })
+
+  it("Plots individually: Single predictions [plotit = F]", {
+    expect_no_error(
+      plot(results,
+           id = 1,
+           plotit = FALSE)
+    )
+  })
+
   it("Plots individually: ED50", {
     expect_no_error(
       plot(results, which = "ED50")
+    )
+  })
+
+  it("Plots individually: ED50 [plotit = F]", {
+    expect_no_error(
+      plot(results,
+           plotit = FALSE,
+           which = "ED50")
     )
   })
 
@@ -57,9 +89,25 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
+  it("Plots individually: MBAUC [plotit = F]", {
+    expect_no_error(
+      plot(results,
+           plotit = FALSE,
+           which = "MBAUC")
+    )
+  })
+
   it("Plots individually: MBAUC Log10 Scaled", {
     expect_no_error(
       plot(results, which = "Log10MBAUC")
+    )
+  })
+
+  it("Plots individually: MBAUC Log10 Scaled [plotit = F]", {
+    expect_no_error(
+      plot(results,
+           plotit = FALSE,
+           which = "Log10MBAUC")
     )
   })
 })
