@@ -1,4 +1,4 @@
-<img src="https://codecov.io/gh/miyamot0/fxl/branch/main/graph/badge.svg?token=44IIUS80AQ"/> <img src="https://zenodo.org/badge/98114371.svg" alt="DOI"/>
+<img src="https://codecov.io/gh/miyamot0/discountingtools/branch/master/graph/badge.svg?token=44IIUS80AQ"/> <img src="https://zenodo.org/badge/98114371.svg" alt="DOI"/>
 
 # discountingtools
 
