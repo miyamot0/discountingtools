@@ -60,7 +60,7 @@ describe("dd_plot: Various Individuals", {
                                           Values     = Value,
                                           Individual = ids,
                                           Group      = grp),
-                          plan = c("mazur", "exponential"),
+                          plan = c("mazur", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "bleichrodt", "rodriguezlogue"),
                           maxValue = 1,
                           verbose  = FALSE) |>
     dd_analyze(modelSelection = TRUE)
@@ -83,6 +83,43 @@ describe("dd_plot: Various Individuals", {
     expect_no_error(
       plot(results, logAxis = "x", position = "topright",
            which = "group", id = "1")
+    )
+  })
+
+  it("Should fail: no single model to focus", {
+    testthat::expect_error(
+      fit_dd_curves(data = data_frame_long,
+                    settings = list(Delays     = Delay,
+                                    Values     = Value,
+                                    Individual = ids,
+                                    Group      = grp),
+                    plan = c("mazur", "exponential"),
+                    maxValue = 1,
+                    verbose  = FALSE) |>
+        dd_analyze(modelSelection = FALSE) |>
+        plot(logAxis = "x",
+           position = "topright",
+           which = "group",
+           id = "1"),
+      'Cannot plot individual fits without selecting a single model or using model selection'
+    )
+  })
+
+  it("Should fail: no Group specified", {
+    testthat::expect_error(
+      fit_dd_curves(data = data_frame_long,
+                    settings = list(Delays     = Delay,
+                                    Values     = Value,
+                                    Individual = ids),
+                    plan = c("mazur"),
+                    maxValue = 1,
+                    verbose  = FALSE) |>
+        dd_analyze(modelSelection = TRUE) |>
+        plot(logAxis = "x",
+             position = "topright",
+             which = "group",
+             id = "1"),
+      'No Group aesthetic specified'
     )
   })
 
