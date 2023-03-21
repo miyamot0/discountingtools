@@ -2,11 +2,19 @@ Package: discountingtools
 Title: Delay Discounting Tools
 Version: 0.0.3.2
 Authors@R: person("Shawn", "Gilroy", email = "sgilroy1@lsu.edu", role = c("aut", "cre"))
+Maintainer: Shawn Gilroy <sgilroy1@lsu.edu>
+Suggests: 
+  covr,
+  knitr,
+  rmarkdown,
+  testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Description: This R package provides a base source of methods for applying approximate Bayesian model selection for discount models commonly (and less commonly) used in the existing literature.  A range of models and fitting apparatus are included a Bayesian model averaging procedure is included to determine "true" models for individual instances of temporal discounting.  Models presently included as a model candidates are the Exponential (Samuelson, 1937), the Hyperbolic (Mazur, 1987), the Generalized Hyperboloid (Rodriguez & Logue, 1997), the Quasi-Hyperbolic (Laibson, 1997), the Green & Myerson (Green & Myerson, 2004), the Ebert & Prelec Constant Sensitivity Model (Ebert & Prelec, 2007), and the Bleichrodt et al. Constant Relative Decreasing Impatience Model (Bleichrodt et al., 2009).  An intercept-only model is also included (Noise) as a simpler alternative to the included models.  Following the model selection procedure, generalized indices are performed upon the "true" model for each series.  Generalized indices include the Effective Delay 50 (ED50; Yoon & Higgins, 2008) as well as numerical integration performed upon the "true" model in normal and log10 scaling. 
-Depends: R (>= 2.5.0), minpack.lm, lattice
+Depends: R (>= 4.1.0), minpack.lm, lattice, gsl, rlang, stats
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: stats, lattice, grDevices, minpack.lm
+Imports: grDevices
 URL: http://www.smallnstats.com
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
+Config/testthat/edition: 3
