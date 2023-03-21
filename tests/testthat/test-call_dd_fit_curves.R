@@ -27,8 +27,21 @@ data_frame[, 'value'] <- dd_discount_func_mazur(
 
 ## TODO: need good tests here
 
-describe("dd_fit: Mazur Model", {
-  it("Should not fail with simple data", {
+describe("dd_fit_curves", {
+  it("Should pass", {
+    testthat::expect_no_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur')) |>
+        dd_analyze(modelSelection = FALSE)
+    )
+  })
+
+  it("Should fail: Missing Delays", {
     testthat::expect_error(
       fit_dd_curves(
         data = data_frame,
@@ -37,7 +50,74 @@ describe("dd_fit: Mazur Model", {
         maxValue = 1,
         plan = c('mazur')) |>
         dd_analyze(modelSelection = FALSE),
-      ""
+      "No Delays aesthetic specified"
+    )
+  })
+
+  it("Should fail: Missing Values", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur')) |>
+        dd_analyze(modelSelection = FALSE),
+      "No Values aesthetic specified"
+    )
+  })
+
+  it("Should fail: Missing Individuals", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value),
+        maxValue = 1,
+        plan = c('mazur')) |>
+        dd_analyze(modelSelection = FALSE),
+      "No Individual aesthetic specified"
+    )
+  })
+
+  it("Should fail: No models", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1) |>
+        dd_analyze(modelSelection = FALSE),
+      "No models specified"
+    )
+  })
+
+  it("Should fail: No max value specified", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        plan = c('mazur')) |>
+        dd_analyze(modelSelection = FALSE),
+      "No maximum value specified"
+    )
+  })
+
+  it("Should fail: bad strategy specified", {
+    testthat::expect_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        plan = c('mazur'),
+        maxValue = 1,
+        strategy = "individualized") |>
+        dd_analyze(modelSelection = FALSE),
+      "Only `ind` or `group` strategies supported"
     )
   })
 

@@ -1,7 +1,7 @@
 
 describe("dd_plot: Various Individuals", {
-  library(tidyr)
-  library(dplyr)
+  suppressPackageStartupMessages(library(tidyr))
+  suppressPackageStartupMessages(library(dplyr))
   library(discountingtools)
 
   n_per_group <- 5
