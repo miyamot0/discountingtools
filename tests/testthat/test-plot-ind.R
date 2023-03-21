@@ -9,7 +9,7 @@ describe("dd_plot: Various Individuals", {
     ks  = NA
   )
 
-  dataFrame$ks  = rnorm(length(dataFrame$ids), 0.07, 0.03)
+  dataFrame$ks  = rnorm(length(dataFrame$ids), 0.15, 0.03)
   dataFrame$ks  = log(dataFrame$ks)
 
   delays = c(1, 30, 180, 540, 1080, 2160, 4320, 8640)
@@ -35,7 +35,7 @@ describe("dd_plot: Various Individuals", {
                     Values     = Value,
                     Individual = ids),
     maxValue = 1,
-    plan = c('mazur')) |>
+    plan = c("mazur", "exponential", "laibson", "greenmyerson", "rachlin", "ebertprelec", "bleichrodt", "rodriguezlogue")) |>
     dd_analyze(modelSelection = TRUE)
 
   it("Plots individually: Predictions", {
@@ -108,6 +108,20 @@ describe("dd_plot: Various Individuals", {
       plot(results,
            plotit = FALSE,
            which = "Log10MBAUC")
+    )
+  })
+
+  it("Plots individually: Model", {
+    expect_no_error(
+      plot(results, which = "model")
+    )
+  })
+
+  it("Plots individually: Model [plotit = F]", {
+    expect_no_error(
+      plot(results,
+           plotit = FALSE,
+           which = "model")
     )
   })
 })
