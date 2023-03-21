@@ -71,12 +71,13 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
-  # it("Plots individually in groups: Predictions [plotit = false]", {
-  #   expect_no_error(
-  #     res = plot(results, logAxis = "x", position = "topright", which = "group",
-  #          plotit = FALSE)
-  #   )
-  # })
+  it("Plots individually in groups: Predictions [plotit = false]", {
+    expect_no_error(
+      plot(results,
+           which = "group",
+           plotit = FALSE)
+    )
+  })
 
   it("Plots individually in groups: Single Predictions", {
     expect_no_error(
@@ -85,13 +86,14 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
-  # it("Plots individually in groups: Single Predictions [plotit = false]", {
-  #   expect_no_error(
-  #     res = plot(results, logAxis = "x", position = "topright",
-  #          which = "group", id = "1",
-  #          plotit = FALSE)
-  #   )
-  # })
+  it("Plots individually in groups: Single Predictions [plotit = false]", {
+    expect_no_error(
+      plot(results,
+           which = "group",
+           id = "1",
+           plotit = FALSE)
+    )
+  })
 
   it("Plots individually in groups: models", {
     expect_no_error(
@@ -99,12 +101,13 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
-  # it("Plots individually in groups: models [plotit = false]", {
-  #   res = expect_no_error(
-  #     plot(results, logAxis = "x", position = "topright", which = "model",
-  #          plotit = FALSE)
-  #   )
-  # })
+  it("Plots individually in groups: models [plotit = false]", {
+    expect_no_error(
+      plot(results,
+           which = "model",
+           plotit = FALSE)
+    )
+  })
 
   it("Plots individually: ED50", {
     expect_no_error(
@@ -112,12 +115,13 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
-  # it("Plots individually: ED50 [plotit = false]", {
-  #   res = expect_no_error(
-  #     plot(results, logAxis = "x", position = "topright", which = "ED50",
-  #          plotit = FALSE)
-  #   )
-  # })
+  it("Plots individually: ED50 [plotit = false]", {
+    expect_no_error(
+      plot(results,
+           which = "ED50",
+           plotit = FALSE)
+    )
+  })
 
   it("Plots individually: MBAUC", {
     expect_no_error(
@@ -125,12 +129,13 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
-  # it("Plots individually: MBAUC [plotit = false]", {
-  #   res = expect_no_error(
-  #     plot(results, logAxis = "x", position = "topright", which = "MBAUC",
-  #          plotit = FALSE)
-  #   )
-  # })
+  it("Plots individually: MBAUC [plotit = false]", {
+    expect_no_error(
+      plot(results,
+           which = "MBAUC",
+           plotit = FALSE)
+    )
+  })
 
   it("Plots individually: MBAUC Log10 Scaled", {
     expect_no_error(
@@ -138,11 +143,12 @@ describe("dd_plot: Various Individuals", {
     )
   })
 
-  # it("Plots individually: MBAUC Log10 Scaled [plotit = false]", {
-  #   res = expect_no_error(
-  #     plot(results, logAxis = "x", position = "topright", which = "Log10MBAUC",
-  #          plotit = FALSE)
-  #   )
-  # })
+  it("Plots individually: MBAUC Log10 Scaled [plotit = false]", {
+    expect_no_error(
+      plot(results,
+           which = "Log10MBAUC",
+           plotit = FALSE)
+    )
+  })
 })
 
