@@ -1,3 +1,5 @@
+<img src="https://codecov.io/gh/miyamot0/fxl/branch/main/graph/badge.svg?token=44IIUS80AQ"/> <img src="https://zenodo.org/badge/98114371.svg" alt="DOI"/>
+
 # discountingtools
 
 The *discountingtools* R package was designed to support researchers in conducting delay discounting analyses. This approach and methodology features considerable variability and this package has been designed for use as a modular toolkit for approaching questions related to delay discounting. For example, this package can be used to evaluate individual, specific models (e.g., hyperbolic model), explore and compare competing models (e.g., cross-model questions), or simply as a tool to characterize data (e.g., systematic vs. non-systematic responding). Specific features and usage scenarios are illustrated in the sections below.
