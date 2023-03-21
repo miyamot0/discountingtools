@@ -69,7 +69,7 @@ results = fit_dd_curves(
   maxValue = 1,
   strategy = 'group',
   plan = c('mazur', 'rachlin'),
-  verbose  = TRUE) |>
+  verbose  = FALSE) |>
 dd_analyze(modelSelection = TRUE)
 
 data_frame_results <- summary(results)

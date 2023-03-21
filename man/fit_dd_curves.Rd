@@ -7,7 +7,7 @@
 fit_dd_curves(
   data,
   settings,
-  maxValue,
+  maxValue = NULL,
   strategy = "ind",
   verbose = FALSE,
   plan = NULL,

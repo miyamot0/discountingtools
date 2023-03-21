@@ -13,12 +13,13 @@
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @importFrom rlang enexpr
 #' @export
-fit_dd_curves <- function(data, settings, maxValue, strategy = "ind", verbose = FALSE, plan = NULL, metrics = c('lned50', 'mbauc', 'logmbauc')) {
+fit_dd_curves <- function(data, settings, maxValue = NULL, strategy = "ind", verbose = FALSE, plan = NULL, metrics = c('lned50', 'mbauc', 'logmbauc')) {
+
+  cached_settings = enexpr(settings)
 
   fittingObject = list()                             # Primary object
-  fittingObject[[ "settings" ]] = enexpr(settings)   # Settings
+  fittingObject[[ "settings" ]] = cached_settings    # Settings
   fittingObject[[ "data"     ]] = data               # Stored data
-  fittingObject[[ "models"   ]] = character(0)       # Model selections
   fittingObject[[ "strategy" ]] = strategy           # Analytical strategy
   fittingObject[[ "metrics"  ]] = character(0)       # Cross-model Metrics
   fittingObject[[ "results"  ]] = list()             # Result frame
@@ -29,11 +30,14 @@ fit_dd_curves <- function(data, settings, maxValue, strategy = "ind", verbose = 
 
   class(fittingObject) <- c("discountingtools")
 
-  if (is.null(fittingObject$settings[["Delays"]]))     stop('No Delays aesthetic specified')
-  if (is.null(fittingObject$settings[["Values"]]))     stop('No Values aesthetic specified')
-  if (is.null(fittingObject$settings[["Individual"]])) stop('No Individual aesthetic specified')
+  if (!("Delays" %in% names(cached_settings)))     stop('No Delays aesthetic specified')
+  if (!("Values" %in% names(cached_settings)))     stop('No Values aesthetic specified')
+  if (!("Individual" %in% names(cached_settings))) stop('No Individual aesthetic specified')
 
-  if (is.null(fittingObject[["models"]]))              stop('No model(s) specified')
+  if (is.null(fittingObject[["models"]]))          stop('No models specified')
+  if (is.null(fittingObject[["maxValue"]]))        stop('No maximum value specified')
+
+  if (!(strategy %in% c('ind', 'group')))          stop('Only `ind` or `group` strategies supported')
 
   fittingObject
 }
