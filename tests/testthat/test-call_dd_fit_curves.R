@@ -36,8 +36,25 @@ describe("dd_fit_curves", {
                         Values     = value,
                         Individual = ids),
         maxValue = 1,
-        plan = c('mazur')) |>
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen_options() |>
         dd_analyze(modelSelection = FALSE)
+    )
+  })
+
+  it("Should pass - with model selection", {
+    testthat::expect_no_error(
+      fit_dd_curves(
+        data = data_frame,
+        settings = list(Delays     = delay,
+                        Values     = value,
+                        Individual = ids),
+        maxValue = 1,
+        plan = c('mazur'),
+        verbose = TRUE) |>
+        dd_screen_options() |>
+        dd_analyze(modelSelection = TRUE)
     )
   })
 

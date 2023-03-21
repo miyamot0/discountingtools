@@ -9,6 +9,8 @@
 #' @export
 johnsonBickelScreen <- function(fittingObject) {
 
+  # TODO: needs full testing
+
   listOfIds = unique(fittingObject$data[[as.character(fittingObject$settings['Individual'])]])
 
   for (id in listOfIds) {

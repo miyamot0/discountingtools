@@ -6,7 +6,7 @@
 \usage{
 dd_screen_options(
   fittingObject,
-  screen,
+  screen = TRUE,
   JB1Flag = 0.2,
   JB2Flag = 0.1,
   filterPassing = NULL
