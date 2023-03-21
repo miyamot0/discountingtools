@@ -11,6 +11,8 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom grDevices rainbow
+#' @importFrom graphics lines legend
 plot_individual_rainbow <- function(fittingObject, position0, ylab0, xlab0, logAxis, yMin, plotit) {
 
   if (plotit) {

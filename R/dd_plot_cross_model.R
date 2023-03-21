@@ -5,6 +5,8 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom grDevices rainbow
+#' @importFrom stats as.formula
 plot_cross_rainbow <- function(fittingObject, metric, plotit) {
 
   if (!("Group" %in% names(fittingObject$settings))) {
