@@ -7,6 +7,7 @@
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 #' @importFrom grDevices rainbow
 #' @importFrom stats as.formula
+#' @importFrom lattice panel.histogram panel.superpose histogram
 plot_cross_rainbow <- function(fittingObject, metric, plotit) {
 
   if (!("Group" %in% names(fittingObject$settings))) {

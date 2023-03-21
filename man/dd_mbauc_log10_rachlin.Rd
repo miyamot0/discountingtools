@@ -7,9 +7,15 @@
 dd_mbauc_log10_rachlin(A, Lnk, s, startDelay, endDelay)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{A}{maximum value}
 
-\item{id}{id tag}
+\item{Lnk}{parameter value}
+
+\item{s}{parameter value}
+
+\item{startDelay}{time point}
+
+\item{endDelay}{time point}
 }
 \description{
 dd_mbauc_log10_rachlin

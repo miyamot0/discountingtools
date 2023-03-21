@@ -10,6 +10,8 @@ dd_ed50_rodriguezlogue(Lnk, b, currentData)
 \item{Lnk}{parameter}
 
 \item{b}{parameter}
+
+\item{currentData}{current data}
 }
 \description{
 dd_ed50_rodriguezlogue

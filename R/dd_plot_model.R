@@ -7,6 +7,7 @@
 #' @param plotit (logical) bool of whether or not to print visual or output plotting frame
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom lattice barchart
 plot_model_characterization <- function(fittingObject, position0, ylab0, xlab0, plotit = TRUE) {
 
   if (!("Group" %in% names(fittingObject$settings))) {

@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom minpack.lm nls.lm nls.lm.control
 dd_fit_rachlin <- function(fittingObject, id) {
 
   modelResults = list(
@@ -146,8 +147,11 @@ dd_mbauc_rachlin <- function(A, Lnk, s, startDelay, endDelay) {
 
 #' dd_mbauc_log10_rachlin
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param Lnk parameter value
+#' @param s parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_rachlin <- function(A, Lnk, s, startDelay, endDelay) {

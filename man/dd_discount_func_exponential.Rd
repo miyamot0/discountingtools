@@ -9,7 +9,7 @@ dd_discount_func_exponential(x, lnk)
 \arguments{
 \item{x}{observation at point n (X)}
 
-\item{Lnk}{fitted parameter}
+\item{lnk}{fitted parameter}
 }
 \value{
 projected, subjective value

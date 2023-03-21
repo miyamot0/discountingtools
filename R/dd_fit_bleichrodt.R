@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom minpack.lm nls.lm nls.lm.control
 dd_fit_bleichrodt <- function(fittingObject, id) {
 
   modelResults = list(

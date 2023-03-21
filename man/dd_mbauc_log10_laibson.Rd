@@ -7,9 +7,15 @@
 dd_mbauc_log10_laibson(A, b, d, startDelay, endDelay)
 }
 \arguments{
-\item{fittingObject}{core dd fitting object}
+\item{A}{maximum value}
 
-\item{id}{id tag}
+\item{b}{parameter value}
+
+\item{d}{parameter value}
+
+\item{startDelay}{time point}
+
+\item{endDelay}{time point}
 }
 \description{
 dd_mbauc_log10_laibson

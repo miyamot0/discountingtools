@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom minpack.lm nls.lm nls.lm.control
 dd_fit_exponential <- function(fittingObject, id) {
 
   modelResults = list(
@@ -153,7 +154,7 @@ dd_mbauc_log10_exponential <- function(A, Lnk, startDelay, endDelay) {
 #' Exponential discounting function
 #'
 #' @param x observation at point n (X)
-#' @param Lnk fitted parameter
+#' @param lnk fitted parameter
 #'
 #' @return projected, subjective value
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>

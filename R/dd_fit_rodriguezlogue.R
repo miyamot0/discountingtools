@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom minpack.lm nls.lm nls.lm.control
 dd_fit_rodriguezlogue <- function(fittingObject, id) {
 
   modelResults = list(
@@ -117,6 +118,7 @@ dd_start_rodriguezlogue <- function(currentData) {
 #'
 #' @param Lnk parameter
 #' @param b parameter
+#' @param currentData current data
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_ed50_rodriguezlogue <- function(Lnk, b, currentData) {

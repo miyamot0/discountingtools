@@ -1,6 +1,6 @@
 test_grouped_fits                    R code for testing fx
 test_single_fits_ed50                R code for testing fx
-test_single_fits_grouped ed50        R code for testing fx
+test_single_fits_grouped_ed50        R code for testing fx
 test_single_fits_grouped_mbauc_log10 R code for testing fx
 test_single_fits_grouped_mbauc       R code for testing fx
 test_single_fits_grouped             R code for testing fx

@@ -7,6 +7,7 @@
 #' @param id id tag
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
+#' @importFrom minpack.lm nls.lm nls.lm.control
 dd_fit_laibson <- function(fittingObject, id) {
 
   modelResults = list(
@@ -152,8 +153,11 @@ dd_mbauc_laibson <- function(A, b, d, startDelay, endDelay) {
 
 #' dd_mbauc_log10_laibson
 #'
-#' @param fittingObject core dd fitting object
-#' @param id id tag
+#' @param A maximum value
+#' @param b parameter value
+#' @param d parameter value
+#' @param startDelay time point
+#' @param endDelay time point
 #'
 #' @author Shawn Gilroy <sgilroy1@lsu.edu>
 dd_mbauc_log10_laibson <- function(A, b, d, startDelay, endDelay) {
